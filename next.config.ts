@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Avoid stale locked `.next` on Windows when multiple dev servers were run
-  distDir: process.env.NEXT_DIST_DIR ?? ".next-dev",
+  // Local dev uses `.next-dev` to avoid stale locked `.next` on Windows; Vercel/production uses `.next`
+  distDir:
+    process.env.NODE_ENV === "production"
+      ? ".next"
+      : (process.env.NEXT_DIST_DIR ?? ".next-dev"),
   reactStrictMode: true,
   images: {
     remotePatterns: [
