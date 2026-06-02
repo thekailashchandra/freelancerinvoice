@@ -1,0 +1,9 @@
+node_modules
+.next
+.next-dev
+out
+coverage
+.git
+ogo/logo.ai
+Untitled
+*.log
