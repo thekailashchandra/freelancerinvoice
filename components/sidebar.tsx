@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { brand, navItems } from "@/data/navigation";
+import { navItems } from "@/data/navigation";
+import { SiteLogo } from "@/components/site-logo";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -12,26 +13,15 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname();
-  const BrandIcon = brand.icon;
-
   return (
     <aside className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-2 py-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-violet-600 shadow-lg shadow-primary/30">
-          <BrandIcon className="h-5 w-5 text-white" />
-        </div>
-        <div>
-          <p className="font-bold tracking-tight">{brand.name}</p>
-          <p className="text-xs text-muted-foreground">{brand.tagline}</p>
-        </div>
+      <div className="px-2 py-2">
+        <SiteLogo variant="compact" href="/dashboard" priority />
       </div>
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+          const isActive = pathname.startsWith(item.href);
           const Icon = item.icon;
 
           return (
@@ -63,7 +53,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       <div className="mt-auto rounded-xl border border-border/50 bg-gradient-to-br from-primary/10 to-violet-500/10 p-4">
         <p className="text-xs font-medium text-muted-foreground">Pro tip</p>
         <p className="mt-1 text-sm">
-          Save invoices locally — your data stays on this device.
+          Invoices sync to your secure cloud account at invoiceforfreelance.com.
         </p>
       </div>
     </aside>

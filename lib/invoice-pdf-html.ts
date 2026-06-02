@@ -1,6 +1,8 @@
-import { calculateTotals, deriveInvoiceStatus } from "@/lib/calculations";
-import { invoiceDesign, invoiceStatusColors } from "@/lib/invoice-design";
+import { calculateTotals } from "@/lib/calculations";
+import { invoiceDesign } from "@/lib/invoice-design";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { paymentHasVisibleDetails } from "@/lib/country";
+import { getPaymentLinesForDisplay } from "@/lib/payment-display";
 import type { Invoice } from "@/types/invoice";
 
 const d = invoiceDesign;
@@ -51,32 +53,50 @@ function buildLogoCell(invoice: Invoice): string {
 /** Table-based layout — reliable with html2canvas (no flex, no web fonts) */
 export function buildInvoicePdfHtml(invoice: Invoice): string {
   const totals = calculateTotals(invoice.services, invoice.taxDiscount);
-  const status = deriveInvoiceStatus(invoice.status, invoice.invoice.dueDate);
-  const badge = invoiceStatusColors[status];
+  const currency = invoice.currencyCode;
+  const taxOn =
+    invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
+  const taxPct =
+    invoice.taxDiscount.taxPercentage ??
+    invoice.taxDiscount.gstPercentage ??
+    0;
+  const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
 
   const serviceRows = invoice.services
     .map(
       (item) => `
       <tr>
-        ${cell(`style="padding:12px 14px;border-bottom:1px solid ${d.colors.border};${text.base}"`, escapeHtml(item.name || "Service"))}
-        ${cell(`width="56" align="center" style="padding:12px 8px;border-bottom:1px solid ${d.colors.border};${text.body}"`, String(item.quantity))}
-        ${cell(`width="110" align="right" style="padding:12px 14px;border-bottom:1px solid ${d.colors.border};${text.body}"`, formatCurrency(item.price))}
-        ${cell(`width="110" align="right" style="padding:12px 14px;border-bottom:1px solid ${d.colors.border};font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(item.quantity * item.price))}
+        ${cell(
+          `style="padding:14px 16px;border-bottom:1px solid ${d.colors.border}"`,
+          `<div style="font-family:${F};font-size:14px;line-height:20px;font-weight:bold;color:${d.colors.text}">${escapeHtml(item.name || "Service")}</div>${
+            item.description
+              ? `<div style="margin-top:4px;font-family:${F};font-size:12px;line-height:16px;color:${d.colors.textMuted};white-space:pre-wrap">${escapeHtml(item.description)}</div>`
+              : ""
+          }`
+        )}
+        ${cell(`width="72" align="center" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};${text.body}"`, String(item.quantity))}
+        ${cell(`width="120" align="right" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};${text.body}"`, formatCurrency(item.price, currency))}
+        ${cell(`width="120" align="right" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(item.quantity * item.price, currency))}
       </tr>`
     )
     .join("");
 
+  const paymentLines = getPaymentLinesForDisplay(
+    invoice.payment,
+    invoice.company.countryCode
+  );
   const paymentBlock =
-    invoice.payment.bankName ||
-    invoice.payment.accountNumber ||
-    invoice.payment.upiId
+    paymentHasVisibleDetails(invoice.payment, invoice.company.countryCode)
       ? `
       <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:24px;font-family:${F}">
-        <tr><td style="padding:16px 18px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:8px">
+        <tr><td style="padding:20px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:12px">
           <div style="${text.label}">Payment Details</div>
-          ${invoice.payment.bankName ? `<div style="margin-top:10px;${text.base}"><strong style="color:${d.colors.label}">Bank:</strong> ${escapeHtml(invoice.payment.bankName)}</div>` : ""}
-          ${invoice.payment.accountNumber ? `<div style="margin-top:6px;${text.base}"><strong style="color:${d.colors.label}">Account:</strong> ${escapeHtml(invoice.payment.accountNumber)}</div>` : ""}
-          ${invoice.payment.upiId ? `<div style="margin-top:6px;${text.base}"><strong style="color:${d.colors.label}">UPI:</strong> ${escapeHtml(invoice.payment.upiId)}</div>` : ""}
+          ${paymentLines
+            .map(
+              (line, i) =>
+                `<div style="margin-top:${i === 0 ? 10 : 6}px;${text.base}"><strong style="color:${d.colors.label}">${escapeHtml(line.label)}:</strong> ${escapeHtml(line.value)}</div>`
+            )
+            .join("")}
         </td></tr>
       </table>`
       : "";
@@ -135,11 +155,8 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
           <div style="${text.body}">${escapeHtml(invoice.company.companyPhone)}</div>
         </td>
         <td width="200" align="right" valign="top" style="padding-left:16px">
-          <div style="font-family:${F};font-size:26px;font-weight:bold;line-height:30px;color:${d.colors.text};letter-spacing:normal">INVOICE</div>
+          <div style="font-family:${F};font-size:28px;font-weight:bold;line-height:30px;color:${d.colors.text};letter-spacing:normal">INVOICE</div>
           <div style="margin-top:6px;font-family:${F};font-size:13px;line-height:18px;color:${d.colors.textSecondary};letter-spacing:normal">${escapeHtml(invoice.invoice.invoiceNumber)}</div>
-          <div style="margin-top:8px">
-            <span style="display:inline-block;padding:4px 10px;font-family:${F};font-size:11px;font-weight:bold;border:1px solid ${badge.border};background:${badge.bg};color:${badge.color};border-radius:12px;letter-spacing:normal">${status}</span>
-          </div>
         </td>
       </tr>
     </table>
@@ -171,47 +188,47 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
     </table>
 
     <!-- Line items -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;border:1px solid ${d.colors.border};font-family:${F}">
+    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:32px;border:1px solid ${d.colors.border};border-radius:12px;font-family:${F};overflow:hidden">
       <thead>
         <tr style="background:${d.colors.surface}">
-          ${cell(`style="padding:10px 14px;${text.label}"`, "Description")}
-          ${cell(`width="56" align="center" style="padding:10px 8px;${text.label}"`, "Qty")}
-          ${cell(`width="110" align="right" style="padding:10px 14px;${text.label}"`, "Rate")}
-          ${cell(`width="110" align="right" style="padding:10px 14px;${text.label}"`, "Amount")}
+          ${cell(`style="padding:12px 16px;${text.label}"`, "Description")}
+          ${cell(`width="72" align="center" style="padding:12px 16px;${text.label}"`, "Qty")}
+          ${cell(`width="120" align="right" style="padding:12px 16px;${text.label}"`, "Rate")}
+          ${cell(`width="120" align="right" style="padding:12px 16px;${text.label}"`, "Amount")}
         </tr>
       </thead>
       <tbody>${serviceRows}</tbody>
     </table>
 
     <!-- Totals -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:20px;font-family:${F}">
+    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:24px;font-family:${F}">
       <tr>
         <td>&nbsp;</td>
-        <td width="280" valign="top">
-          <table width="280" cellpadding="0" cellspacing="0" style="width:280px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:8px;font-family:${F}">
+        <td width="300" valign="top">
+          <table width="300" cellpadding="0" cellspacing="0" style="width:300px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:12px;font-family:${F}">
             <tr>
               ${cell(`style="padding:14px 16px 6px;${text.base}"`, "Subtotal")}
-              ${cell(`align="right" style="padding:14px 16px 6px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(totals.subtotal))}
+              ${cell(`align="right" style="padding:14px 16px 6px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(totals.subtotal, currency))}
             </tr>
             ${
               totals.discountAmount > 0
                 ? `<tr>
               ${cell(`style="padding:4px 16px;${text.base};color:#059669"`, "Discount")}
-              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:#059669;letter-spacing:normal"`, `-${formatCurrency(totals.discountAmount)}`)}
+              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:#059669;letter-spacing:normal"`, `-${formatCurrency(totals.discountAmount, currency)}`)}
             </tr>`
                 : ""
             }
             ${
-              invoice.taxDiscount.gstEnabled
+              taxOn
                 ? `<tr>
-              ${cell(`style="padding:4px 16px;${text.base}"`, `GST (${invoice.taxDiscount.gstPercentage}%)`)}
-              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(totals.gstAmount))}
+              ${cell(`style="padding:4px 16px;${text.base}"`, `${escapeHtml(invoice.taxLabel)} (${taxPct}%)`)}
+              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(taxAmt, currency))}
             </tr>`
                 : ""
             }
             <tr>
               ${cell(`style="padding:12px 16px 14px;border-top:2px solid ${d.colors.text};font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, "Total")}
-              ${cell(`align="right" style="padding:12px 16px 14px;border-top:2px solid ${d.colors.text};font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.accent};letter-spacing:normal"`, formatCurrency(totals.total))}
+              ${cell(`align="right" style="padding:12px 16px 14px;border-top:2px solid ${d.colors.text};font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.accent};letter-spacing:normal"`, formatCurrency(totals.total, currency))}
             </tr>
           </table>
         </td>

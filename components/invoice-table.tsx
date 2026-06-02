@@ -2,20 +2,35 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye, Trash2 } from "lucide-react";
-import type { Invoice } from "@/types/invoice";
-import { getInvoiceTotals } from "@/lib/calculations";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import {
+  CheckCircle2,
+  Eye,
+  Loader2,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import type { Invoice, InvoiceStatus } from "@/types/invoice";
+import { getInvoiceTotals, deriveInvoiceStatus } from "@/lib/calculations";
+import { formatDate } from "@/lib/utils";
+import { formatMoney } from "@/lib/currency";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
-import { deriveInvoiceStatus } from "@/lib/calculations";
 
 interface InvoiceTableProps {
   invoices: Invoice[];
   onDelete: (id: string) => void;
+  onMarkPaid?: (id: string) => Promise<void>;
+  markingPaidId?: string | null;
+  currencyCode?: string;
 }
 
-export function InvoiceTable({ invoices, onDelete }: InvoiceTableProps) {
+export function InvoiceTable({
+  invoices,
+  onDelete,
+  onMarkPaid,
+  markingPaidId = null,
+  currencyCode = "USD",
+}: InvoiceTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border/50">
       <div className="overflow-x-auto">
@@ -49,6 +64,10 @@ export function InvoiceTable({ invoices, onDelete }: InvoiceTableProps) {
                 invoice.status,
                 invoice.invoice.dueDate
               );
+              const isPaid = status === "paid";
+              const canMarkPaid =
+                !isPaid && status !== "draft" && Boolean(onMarkPaid);
+              const isMarking = markingPaidId === invoice.id;
 
               return (
                 <motion.tr
@@ -56,7 +75,11 @@ export function InvoiceTable({ invoices, onDelete }: InvoiceTableProps) {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
-                  className="border-b border-border/30 transition-colors hover:bg-accent/20"
+                  className={
+                    isPaid
+                      ? "border-b border-border/30 bg-emerald-500/[0.03] transition-colors hover:bg-emerald-500/[0.06]"
+                      : "border-b border-border/30 transition-colors hover:bg-amber-500/[0.04]"
+                  }
                 >
                   <td className="px-4 py-3 font-mono text-xs sm:text-sm">
                     {invoice.invoice.invoiceNumber}
@@ -73,23 +96,62 @@ export function InvoiceTable({ invoices, onDelete }: InvoiceTableProps) {
                     {formatDate(invoice.invoice.invoiceDate)}
                   </td>
                   <td className="px-4 py-3 font-medium">
-                    {formatCurrency(total)}
+                    {formatMoney(total, currencyCode)}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={status} />
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/create?id=${invoice.id}`}>
+                    <div className="flex justify-end gap-0.5">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        title="View invoice"
+                      >
+                        <Link href={`/invoice-history/${invoice.id}`}>
                           <Eye className="h-4 w-4" />
                           <span className="sr-only">View</span>
                         </Link>
                       </Button>
+
+                      {!isPaid && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          asChild
+                          title="Edit invoice"
+                        >
+                          <Link href={`/create-invoice?id=${invoice.id}`}>
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Edit</span>
+                          </Link>
+                        </Button>
+                      )}
+
+                      {canMarkPaid && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-emerald-600 hover:text-emerald-600"
+                          title="Mark as paid"
+                          disabled={isMarking}
+                          onClick={() => onMarkPaid?.(invoice.id)}
+                        >
+                          {isMarking ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="h-4 w-4" />
+                          )}
+                          <span className="sr-only">Mark as paid</span>
+                        </Button>
+                      )}
+
                       <Button
                         variant="ghost"
                         size="icon"
                         className="text-destructive hover:text-destructive"
+                        title="Delete"
                         onClick={() => onDelete(invoice.id)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -105,4 +167,13 @@ export function InvoiceTable({ invoices, onDelete }: InvoiceTableProps) {
       </div>
     </div>
   );
+}
+
+export function matchesHistoryFilter(
+  status: InvoiceStatus,
+  filter: InvoiceStatus | "all" | "unpaid"
+): boolean {
+  if (filter === "all") return true;
+  if (filter === "unpaid") return status !== "paid";
+  return status === filter;
 }

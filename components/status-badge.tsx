@@ -3,8 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const labels: Record<InvoiceStatus, string> = {
+  draft: "Draft",
   paid: "Paid",
   pending: "Pending",
+  sent: "Sent",
   overdue: "Overdue",
 };
 

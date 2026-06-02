@@ -5,21 +5,22 @@ import {
   PlusCircle,
   Settings,
 } from "lucide-react";
+import { siteConfig } from "@/data/site";
 
 export const navItems = [
   {
     title: "Dashboard",
-    href: "/",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
     title: "Create Invoice",
-    href: "/create",
+    href: "/create-invoice",
     icon: PlusCircle,
   },
   {
     title: "Invoice History",
-    href: "/history",
+    href: "/invoice-history",
     icon: History,
   },
   {
@@ -30,7 +31,8 @@ export const navItems = [
 ] as const;
 
 export const brand = {
-  name: "InvoiceFlow",
-  tagline: "Freelancer Invoice Generator",
+  name: siteConfig.name,
+  tagline: siteConfig.tagline,
+  url: siteConfig.url,
   icon: FileText,
 };

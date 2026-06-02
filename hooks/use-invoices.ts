@@ -3,18 +3,23 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Invoice } from "@/types/invoice";
 import {
-  deleteInvoice as removeInvoice,
-  getInvoices,
-  saveInvoice,
-} from "@/lib/storage";
+  deleteInvoiceAction,
+  fetchInvoicesAction,
+  saveInvoiceAction,
+} from "@/lib/actions/invoices";
 
 export function useInvoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const refresh = useCallback(() => {
-    setInvoices(getInvoices());
-    setLoading(false);
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await fetchInvoicesAction();
+      setInvoices(data);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -22,17 +27,18 @@ export function useInvoices() {
   }, [refresh]);
 
   const upsert = useCallback(
-    (invoice: Invoice) => {
-      saveInvoice({ ...invoice, updatedAt: new Date().toISOString() });
-      refresh();
+    async (invoice: Invoice) => {
+      const { id } = await saveInvoiceAction(invoice);
+      await refresh();
+      return id;
     },
     [refresh]
   );
 
   const remove = useCallback(
-    (id: string) => {
-      removeInvoice(id);
-      refresh();
+    async (id: string) => {
+      await deleteInvoiceAction(id);
+      await refresh();
     },
     [refresh]
   );

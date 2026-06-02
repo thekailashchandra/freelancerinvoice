@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { DashboardLayout } from "@/components/dashboard-layout";
 import { Toaster } from "sonner";
+import { siteConfig } from "@/data/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,9 +16,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InvoiceFlow — Freelancer Invoice Generator",
-  description:
-    "Create beautiful professional invoices for freelancers and agencies. Export PDF, track history, all in your browser.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: `${siteConfig.name} — ${siteConfig.tagline}`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  openGraph: {
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    type: "website",
+  },
+  icons: {
+    icon: [
+      { url: "/brand/logo-dark.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/brand/logo-light.png", media: "(prefers-color-scheme: light)" },
+    ],
+    apple: "/brand/logo-light.png",
+  },
 };
 
 export default function RootLayout({
@@ -37,7 +54,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <DashboardLayout>{children}</DashboardLayout>
+          {children}
           <Toaster
             richColors
             position="top-right"

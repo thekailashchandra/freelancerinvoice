@@ -1,26 +1,37 @@
-import type { Invoice, ServiceItem } from "@/types/invoice";
+import type { CompanySettings, Invoice, ServiceItem } from "@/types/invoice";
 import { generateId, generateInvoiceNumber } from "@/lib/utils";
 import { defaultCompanySettings } from "@/lib/storage";
+import { emptyPaymentDetails, getCountryConfig } from "@/lib/country";
+
+function newInvoiceId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return generateId();
+}
 
 export function createEmptyService(): ServiceItem {
   return {
     id: generateId(),
     name: "",
+    description: "",
     quantity: 1,
     price: 0,
   };
 }
 
-export function createDefaultInvoice(company = defaultCompanySettings): Invoice {
+export function createDefaultInvoice(company: CompanySettings = defaultCompanySettings): Invoice {
   const today = new Date().toISOString().split("T")[0];
   const due = new Date();
   due.setDate(due.getDate() + 14);
 
   return {
-    id: generateId(),
+    id: newInvoiceId(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     status: "pending",
+    currencyCode: company.currencyCode,
+    taxLabel: company.taxLabel,
     client: {
       name: "",
       email: "",
@@ -37,20 +48,17 @@ export function createDefaultInvoice(company = defaultCompanySettings): Invoice 
       {
         id: generateId(),
         name: "Web Design",
+        description: "",
         quantity: 1,
         price: 15000,
       },
     ],
     taxDiscount: {
-      gstEnabled: true,
-      gstPercentage: 18,
+      taxEnabled: true,
+      taxPercentage: getCountryConfig(company.countryCode).defaultTaxPercent,
       discount: 0,
     },
-    payment: {
-      bankName: "",
-      accountNumber: "",
-      upiId: "",
-    },
+    payment: { ...company.defaultPayment },
     notes: "Thank you for your business! Payment is due within 14 days.",
     company,
   };

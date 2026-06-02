@@ -1,4 +1,5 @@
 import type { CompanySettings, DashboardStats, Invoice } from "@/types/invoice";
+import { emptyPaymentDetails } from "@/lib/country";
 import { getInvoiceTotals } from "./calculations";
 
 const INVOICES_KEY = "freelancer-invoices";
@@ -11,6 +12,10 @@ export const defaultCompanySettings: CompanySettings = {
   companyAddress: "123 Creative Lane, Mumbai, India",
   logo: null,
   signature: null,
+  countryCode: "US",
+  currencyCode: "USD",
+  taxLabel: "VAT",
+  defaultPayment: emptyPaymentDetails(),
 };
 
 function safeParse<T>(value: string | null, fallback: T): T {
@@ -83,5 +88,6 @@ export function getDashboardStats(invoices: Invoice[]): DashboardStats {
     paidInvoices,
     pendingAmount,
     totalRevenue,
+    currencyCode: "USD",
   };
 }

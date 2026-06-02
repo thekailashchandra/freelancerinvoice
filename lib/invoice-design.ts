@@ -34,7 +34,9 @@ export const invoiceDesign = {
 } as const;
 
 export const invoiceStatusColors = {
+  draft: { bg: "#f1f5f9", color: "#475569", border: "#cbd5e1" },
   paid: { bg: "#ecfdf5", color: "#047857", border: "#6ee7b7" },
   pending: { bg: "#fffbeb", color: "#b45309", border: "#fcd34d" },
+  sent: { bg: "#eff6ff", color: "#1d4ed8", border: "#93c5fd" },
   overdue: { bg: "#fef2f2", color: "#b91c1c", border: "#fca5a5" },
 } as const;

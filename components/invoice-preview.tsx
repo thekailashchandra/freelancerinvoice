@@ -1,10 +1,12 @@
 "use client";
 
 import { Inter } from "next/font/google";
-import type { Invoice, InvoiceStatus } from "@/types/invoice";
-import { calculateTotals, deriveInvoiceStatus } from "@/lib/calculations";
-import { invoiceDesign, invoiceStatusColors } from "@/lib/invoice-design";
+import type { Invoice } from "@/types/invoice";
+import { calculateTotals } from "@/lib/calculations";
+import { invoiceDesign } from "@/lib/invoice-design";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { paymentHasVisibleDetails } from "@/lib/country";
+import { getPaymentLinesForDisplay } from "@/lib/payment-display";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,29 +35,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     >
       {children}
     </p>
-  );
-}
-
-function StatusBadge({ status }: { status: InvoiceStatus }) {
-  const s = invoiceStatusColors[status];
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        borderRadius: 9999,
-        border: `1px solid ${s.border}`,
-        backgroundColor: s.bg,
-        color: s.color,
-        padding: "4px 12px",
-        fontSize: 11,
-        fontWeight: 600,
-        textTransform: "capitalize",
-        letterSpacing: "normal",
-      }}
-    >
-      {status}
-    </span>
   );
 }
 
@@ -124,21 +103,28 @@ export function InvoicePreview({
   previewId = "invoice-preview",
 }: InvoicePreviewProps) {
   const totals = calculateTotals(invoice.services, invoice.taxDiscount);
-  const displayStatus = deriveInvoiceStatus(
-    invoice.status,
-    invoice.invoice.dueDate
-  );
+  const currency = invoice.currencyCode;
+  const taxOn =
+    invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
+  const taxPct =
+    invoice.taxDiscount.taxPercentage ??
+    invoice.taxDiscount.gstPercentage ??
+    0;
+  const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
 
   return (
     <div
       id={previewId}
       className={`invoice-print-area mx-auto w-full max-w-2xl overflow-hidden rounded-2xl ${inter.className}`}
       style={{
+        fontFamily: d.font,
         backgroundColor: d.colors.bg,
         color: d.colors.text,
         border: `1px solid ${d.colors.border}`,
         boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.12)",
         padding: "36px 40px",
+        width: "100%",
+        maxWidth: d.page.widthPx,
       }}
     >
       {/* Accent bar */}
@@ -224,9 +210,6 @@ export function InvoicePreview({
           >
             {invoice.invoice.invoiceNumber}
           </p>
-          <div style={{ marginTop: 10, display: "flex", justifyContent: "flex-end" }}>
-            <StatusBadge status={displayStatus} />
-          </div>
         </div>
       </div>
 
@@ -382,12 +365,26 @@ export function InvoicePreview({
                   style={{
                     padding: "14px 16px",
                     fontSize: 14,
-                    fontWeight: 500,
                     color: d.colors.textSecondary,
                     borderBottom: `1px solid ${d.colors.border}`,
                   }}
                 >
-                  {item.name || "Service"}
+                  <div style={{ fontWeight: 600, color: d.colors.text }}>
+                    {item.name || "Service"}
+                  </div>
+                  {item.description && (
+                    <div
+                      style={{
+                        marginTop: 4,
+                        fontSize: 12,
+                        lineHeight: "16px",
+                        color: d.colors.textMuted,
+                        whiteSpace: "pre-wrap",
+                      }}
+                    >
+                      {item.description}
+                    </div>
+                  )}
                 </td>
                 <td
                   style={{
@@ -409,7 +406,7 @@ export function InvoicePreview({
                     borderBottom: `1px solid ${d.colors.border}`,
                   }}
                 >
-                  {formatCurrency(item.price)}
+                  {formatCurrency(item.price, currency)}
                 </td>
                 <td
                   style={{
@@ -421,7 +418,7 @@ export function InvoicePreview({
                     borderBottom: `1px solid ${d.colors.border}`,
                   }}
                 >
-                  {formatCurrency(item.quantity * item.price)}
+                  {formatCurrency(item.quantity * item.price, currency)}
                 </td>
               </tr>
             ))}
@@ -450,7 +447,7 @@ export function InvoicePreview({
           >
             <span style={{ fontWeight: 500 }}>Subtotal</span>
             <span style={{ fontWeight: 600, color: d.colors.text }}>
-              {formatCurrency(totals.subtotal)}
+              {formatCurrency(totals.subtotal, currency)}
             </span>
           </div>
           {totals.discountAmount > 0 && (
@@ -464,11 +461,11 @@ export function InvoicePreview({
             >
               <span style={{ fontWeight: 500 }}>Discount</span>
               <span style={{ fontWeight: 600 }}>
-                -{formatCurrency(totals.discountAmount)}
+                -{formatCurrency(totals.discountAmount, currency)}
               </span>
             </div>
           )}
-          {invoice.taxDiscount.gstEnabled && (
+          {taxOn && (
             <div
               style={{
                 display: "flex",
@@ -478,10 +475,10 @@ export function InvoicePreview({
               }}
             >
               <span style={{ fontWeight: 500 }}>
-                GST ({invoice.taxDiscount.gstPercentage}%)
+                {invoice.taxLabel} ({taxPct}%)
               </span>
               <span style={{ fontWeight: 600, color: d.colors.text }}>
-                {formatCurrency(totals.gstAmount)}
+                {formatCurrency(taxAmt, currency)}
               </span>
             </div>
           )}
@@ -498,16 +495,17 @@ export function InvoicePreview({
               Total
             </span>
             <span style={{ fontSize: 15, fontWeight: 700, color: d.colors.accent }}>
-              {formatCurrency(totals.total)}
+              {formatCurrency(totals.total, currency)}
             </span>
           </div>
         </div>
       </div>
 
       {/* Payment */}
-      {(invoice.payment.bankName ||
-        invoice.payment.accountNumber ||
-        invoice.payment.upiId) && (
+      {paymentHasVisibleDetails(
+        invoice.payment,
+        invoice.company.countryCode
+      ) && (
         <div
           style={{
             marginTop: 28,
@@ -518,8 +516,12 @@ export function InvoicePreview({
           }}
         >
           <SectionLabel>Payment Details</SectionLabel>
-          {invoice.payment.bankName && (
+          {getPaymentLinesForDisplay(
+            invoice.payment,
+            invoice.company.countryCode
+          ).map((line) => (
             <p
+              key={line.label}
               style={{
                 marginTop: 12,
                 fontSize: 14,
@@ -527,39 +529,11 @@ export function InvoicePreview({
                 color: d.colors.textSecondary,
               }}
             >
-              <span style={{ color: d.colors.label }}>Bank</span>
+              <span style={{ color: d.colors.label }}>{line.label}</span>
               {"  "}
-              {invoice.payment.bankName}
+              {line.value}
             </p>
-          )}
-          {invoice.payment.accountNumber && (
-            <p
-              style={{
-                marginTop: 6,
-                fontSize: 14,
-                fontWeight: 500,
-                color: d.colors.textSecondary,
-              }}
-            >
-              <span style={{ color: d.colors.label }}>Account</span>
-              {"  "}
-              {invoice.payment.accountNumber}
-            </p>
-          )}
-          {invoice.payment.upiId && (
-            <p
-              style={{
-                marginTop: 6,
-                fontSize: 14,
-                fontWeight: 500,
-                color: d.colors.textSecondary,
-              }}
-            >
-              <span style={{ color: d.colors.label }}>UPI</span>
-              {"  "}
-              {invoice.payment.upiId}
-            </p>
-          )}
+          ))}
         </div>
       )}
 
