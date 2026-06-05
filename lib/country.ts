@@ -1,15 +1,9 @@
 import type { PaymentDetails } from "@/types/invoice";
 import { CURRENCY_OPTIONS } from "@/lib/currency";
+import { getIsoCountry, getIsoCountryName, ISO_COUNTRIES } from "@/lib/iso-data";
 
-/** ISO 3166-1 alpha-2 */
-export type CountryCode =
-  | "IN"
-  | "US"
-  | "GB"
-  | "AU"
-  | "CA"
-  | "EU"
-  | "OTHER";
+/** ISO 3166-1 alpha-2 or legacy codes (EU, OTHER). */
+export type CountryCode = string;
 
 export type PaymentFieldKey = keyof PaymentDetails;
 
@@ -28,17 +22,21 @@ export interface CountryConfig {
   paymentFields: PaymentFieldConfig[];
 }
 
-export const COUNTRY_OPTIONS: { code: CountryCode; label: string }[] = [
-  { code: "IN", label: "India" },
-  { code: "US", label: "United States" },
-  { code: "GB", label: "United Kingdom" },
-  { code: "AU", label: "Australia" },
-  { code: "CA", label: "Canada" },
-  { code: "EU", label: "European Union" },
-  { code: "OTHER", label: "Other / International" },
+export const COUNTRY_OPTIONS: { code: CountryCode; label: string }[] =
+  ISO_COUNTRIES.map((c) => ({ code: c.code, label: c.name }));
+
+const EURO_ZONE = new Set([
+  "AD", "AT", "BE", "CY", "DE", "EE", "ES", "FI", "FR", "GR", "HR", "IE", "IT",
+  "LT", "LU", "LV", "MT", "NL", "PT", "SI", "SK", "MC", "SM", "VA", "ME",
+]);
+
+const OTHER_PAYMENT_FIELDS: PaymentFieldConfig[] = [
+  { key: "bankName", label: "Bank name", placeholder: "Your bank" },
+  { key: "accountNumber", label: "Account number", placeholder: "XXXXXXXXXX" },
+  { key: "iban", label: "IBAN / SWIFT reference (optional)", placeholder: "" },
 ];
 
-const COUNTRY_CONFIGS: Record<CountryCode, CountryConfig> = {
+const PROFILE_COUNTRY_CONFIGS: Record<string, CountryConfig> = {
   IN: {
     code: "IN",
     label: "India",
@@ -118,23 +116,55 @@ const COUNTRY_CONFIGS: Record<CountryCode, CountryConfig> = {
     currencyCode: "USD",
     taxLabel: "VAT",
     defaultTaxPercent: 0,
-    paymentFields: [
-      { key: "bankName", label: "Bank name", placeholder: "Your bank" },
-      { key: "accountNumber", label: "Account number", placeholder: "XXXXXXXXXX" },
-      { key: "iban", label: "IBAN / SWIFT reference (optional)", placeholder: "" },
-    ],
+    paymentFields: OTHER_PAYMENT_FIELDS,
   },
 };
 
-export function normalizeCountryCode(code: string | null | undefined): CountryCode {
-  if (code && code in COUNTRY_CONFIGS) {
-    return code as CountryCode;
+function buildGenericConfig(code: string): CountryConfig {
+  const iso = getIsoCountry(code);
+  const currencyCode = iso?.currencyCode ?? "USD";
+  const label = iso?.name ?? code;
+
+  if (EURO_ZONE.has(code)) {
+    return {
+      code,
+      label,
+      currencyCode: "EUR",
+      taxLabel: "VAT",
+      defaultTaxPercent: 20,
+      paymentFields: PROFILE_COUNTRY_CONFIGS.EU.paymentFields,
+    };
   }
-  return "OTHER";
+
+  return {
+    code,
+    label,
+    currencyCode,
+    taxLabel: "VAT",
+    defaultTaxPercent: 0,
+    paymentFields: OTHER_PAYMENT_FIELDS,
+  };
+}
+
+export function normalizeCountryCode(code: string | null | undefined): CountryCode {
+  if (!code) return "US";
+  if (code in PROFILE_COUNTRY_CONFIGS) return code;
+  if (getIsoCountry(code)) return code;
+  return "US";
 }
 
 export function getCountryConfig(code: string | null | undefined): CountryConfig {
-  return COUNTRY_CONFIGS[normalizeCountryCode(code)];
+  const normalized = normalizeCountryCode(code);
+  if (PROFILE_COUNTRY_CONFIGS[normalized]) {
+    return PROFILE_COUNTRY_CONFIGS[normalized];
+  }
+  return buildGenericConfig(normalized);
+}
+
+export function getCountryLabel(code: string | null | undefined): string {
+  if (!code) return "";
+  if (PROFILE_COUNTRY_CONFIGS[code]) return PROFILE_COUNTRY_CONFIGS[code].label;
+  return getIsoCountryName(code);
 }
 
 export function getPaymentFieldsForCountry(
@@ -154,7 +184,6 @@ export function emptyPaymentDetails(): PaymentDetails {
   };
 }
 
-/** Drop values for payment fields that do not apply in the selected country. */
 export function sanitizePaymentForCountry(
   payment: PaymentDetails,
   countryCode: string | null | undefined
@@ -194,34 +223,20 @@ export function applyCountryDefaults(
 } {
   const config = getCountryConfig(countryCode);
   return {
-    countryCode,
+    countryCode: config.code,
     currencyCode: config.currencyCode,
     taxLabel: config.taxLabel,
     payment: sanitizePaymentForCountry(
       current?.payment ?? emptyPaymentDetails(),
-      countryCode
+      config.code
     ),
   };
 }
 
-/** Currencies shown in settings — primary for country first, then common alternatives. */
+/** All ISO currencies, with the country's default currency listed first. */
 export function getCurrencyOptionsForCountry(countryCode: string | null | undefined) {
   const primary = getCountryConfig(countryCode).currencyCode;
-  const codes = new Set<string>([primary]);
-  const extras: Record<CountryCode, string[]> = {
-    IN: ["USD", "EUR"],
-    US: ["EUR", "GBP", "CAD"],
-    GB: ["EUR", "USD"],
-    AU: ["USD", "NZD"],
-    CA: ["USD"],
-    EU: ["GBP", "USD"],
-    OTHER: ["EUR", "GBP", "INR"],
-  };
-  for (const c of extras[normalizeCountryCode(countryCode)]) {
-    codes.add(c);
-  }
-  const ordered = [primary, ...[...codes].filter((c) => c !== primary)];
-  return ordered
-    .map((code) => CURRENCY_OPTIONS.find((c) => c.code === code))
-    .filter((c): c is (typeof CURRENCY_OPTIONS)[number] => Boolean(c));
+  const rest = CURRENCY_OPTIONS.filter((c) => c.code !== primary);
+  const first = CURRENCY_OPTIONS.find((c) => c.code === primary);
+  return first ? [first, ...rest] : CURRENCY_OPTIONS;
 }

@@ -8,6 +8,38 @@ import type { Invoice } from "@/types/invoice";
 
 const PREVIEW_ID = "invoice-preview";
 
+const INVOICE_FRAME_BASE_CSS = `
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  * { box-sizing: border-box; }
+  .invoice-print-area thead tr,
+  .invoice-print-area thead th,
+  .invoice-table-header,
+  .invoice-table-header th {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+  }
+  .invoice-balance-due {
+    background-color: #f3f4f6 !important;
+  }
+`;
+
+const INVOICE_PRINT_CSS = `
+  @page { margin: 12mm; size: auto; }
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  .invoice-print-area {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+  }
+`;
+
 function sanitizeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*]/g, "-").trim() || "invoice";
 }
@@ -40,6 +72,69 @@ async function waitForFonts(doc: Document): Promise<void> {
   await new Promise((r) => setTimeout(r, 150));
 }
 
+function buildInvoiceFrameHtml(width: number, includePrintCss = false): string {
+  const extraCss = includePrintCss ? INVOICE_PRINT_CSS : "";
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+${INVOICE_FRAME_BASE_CSS}
+${extraCss}
+</style>
+</head>
+<body></body>
+</html>`;
+}
+
+function createOffScreenIframe(width: number, title: string): HTMLIFrameElement {
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("title", title);
+  iframe.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;border:none;visibility:hidden;overflow:hidden`;
+  document.body.appendChild(iframe);
+  return iframe;
+}
+
+async function waitForIframeReady(
+  iframe: HTMLIFrameElement,
+  doc: Document
+): Promise<void> {
+  await new Promise<void>((resolve) => {
+    if (doc.readyState === "complete") resolve();
+    else iframe.onload = () => resolve();
+  });
+}
+
+function createInvoiceClone(
+  preview: HTMLElement,
+  previewId: string,
+  width: number
+): HTMLElement {
+  const clone = preview.cloneNode(true) as HTMLElement;
+  clone.id = `${previewId}-export-clone`;
+  clone.className = "invoice-print-area";
+  clone.style.fontFamily = invoiceDesign.font;
+  clone.style.width = `${width}px`;
+  clone.style.maxWidth = `${width}px`;
+  clone.style.margin = "0";
+  clone.style.border = "none";
+  clone.style.boxShadow = "none";
+  clone.style.borderRadius = "0";
+  clone.style.backgroundColor = "#ffffff";
+
+  clone.querySelectorAll("img").forEach((img) => {
+    const el = img as HTMLImageElement;
+    if (el.src) {
+      el.crossOrigin = "anonymous";
+    }
+  });
+
+  return clone;
+}
+
 /**
  * Clones the on-screen Live Preview into an isolated iframe and captures it.
  * This guarantees the PDF matches the preview pixel-for-pixel.
@@ -53,11 +148,7 @@ async function captureLivePreviewToCanvas(
   const width = preview.offsetWidth;
   if (width < 1) return null;
 
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("title", "PDF export");
-  iframe.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;border:none;visibility:hidden;overflow:hidden`;
-
-  document.body.appendChild(iframe);
+  const iframe = createOffScreenIframe(width, "PDF export");
 
   const doc = iframe.contentDocument;
   if (!doc) {
@@ -66,42 +157,12 @@ async function captureLivePreviewToCanvas(
   }
 
   doc.open();
-  doc.write(`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  html, body { margin: 0; padding: 0; background: #ffffff; }
-  * { box-sizing: border-box; }
-</style>
-</head>
-<body></body>
-</html>`);
+  doc.write(buildInvoiceFrameHtml(width));
   doc.close();
 
-  await new Promise<void>((resolve) => {
-    if (doc.readyState === "complete") resolve();
-    else iframe.onload = () => resolve();
-  });
+  await waitForIframeReady(iframe, doc);
 
-  const clone = preview.cloneNode(true) as HTMLElement;
-  clone.id = `${previewId}-pdf-clone`;
-  clone.className = "invoice-print-area";
-  clone.style.fontFamily = invoiceDesign.font;
-  clone.style.width = `${width}px`;
-  clone.style.maxWidth = `${width}px`;
-  clone.style.margin = "0";
-
-  clone.querySelectorAll("img").forEach((img) => {
-    const el = img as HTMLImageElement;
-    if (el.src) {
-      el.crossOrigin = "anonymous";
-    }
-  });
-
+  const clone = createInvoiceClone(preview, previewId, width);
   doc.body.appendChild(clone);
 
   await waitForImages(clone);
@@ -255,10 +316,68 @@ export async function downloadInvoicePdf(
   buildPdfFromCanvas(canvas, filename);
 }
 
-/** Open browser print dialog for invoice preview on screen */
-export function printInvoice(): void {
+/**
+ * Print only the invoice in an isolated iframe (same clone as PDF export).
+ * Avoids printing the full app layout, which caused many blank pages.
+ */
+export async function printInvoice(options?: {
+  previewId?: string;
+}): Promise<void> {
   if (typeof window === "undefined") return;
-  const preview = document.getElementById(PREVIEW_ID);
-  preview?.scrollIntoView({ block: "center" });
-  window.print();
+
+  const previewId = options?.previewId ?? PREVIEW_ID;
+  const preview = document.getElementById(previewId);
+  if (!preview) {
+    throw new Error("Invoice preview not found.");
+  }
+
+  preview.scrollIntoView({ block: "nearest" });
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+  const width = preview.offsetWidth || invoiceDesign.page.widthPx;
+  const iframe = createOffScreenIframe(width, "Print invoice");
+
+  try {
+    const doc = iframe.contentDocument;
+    const win = iframe.contentWindow;
+    if (!doc || !win) {
+      throw new Error("Could not open print frame.");
+    }
+
+    doc.open();
+    doc.write(buildInvoiceFrameHtml(width, true));
+    doc.close();
+
+    await waitForIframeReady(iframe, doc);
+
+    const clone = createInvoiceClone(preview, previewId, width);
+    doc.body.appendChild(clone);
+
+    await waitForImages(clone);
+    await waitForFonts(doc);
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    iframe.style.height = `${clone.scrollHeight + 24}px`;
+
+    await new Promise<void>((resolve) => {
+      const cleanup = () => {
+        iframe.remove();
+        resolve();
+      };
+      const backup = window.setTimeout(cleanup, 30_000);
+      win.addEventListener(
+        "afterprint",
+        () => {
+          clearTimeout(backup);
+          cleanup();
+        },
+        { once: true }
+      );
+      win.focus();
+      win.print();
+    });
+  } catch (err) {
+    iframe.remove();
+    throw err;
+  }
 }

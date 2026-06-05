@@ -106,24 +106,16 @@
 
   .invoice-print-area {
     @apply bg-white text-slate-900;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 }
 
-/* Print styles */
+/* Use the Print button for invoice output (isolated iframe in lib/pdf.ts). */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .invoice-print-area,
-  .invoice-print-area * {
-    visibility: visible;
-  }
-
-  .invoice-print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+  @page {
+    margin: 12mm;
+    size: auto;
   }
 }

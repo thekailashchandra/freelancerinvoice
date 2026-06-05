@@ -13,24 +13,34 @@ export interface ServiceItem {
   price: number;
 }
 
+export type GstSupplyType = "intra" | "inter";
+
 export interface ClientDetails {
   name: string;
   email: string;
   phone: string;
   company: string;
   address: string;
+  gstin?: string;
 }
 
 export interface InvoiceDetails {
   invoiceNumber: string;
   invoiceDate: string;
   dueDate: string;
+  /** e.g. "Due on receipt", "Net 30" */
+  paymentTerms?: string;
+  purchaseOrder?: string;
+  projectName?: string;
 }
 
 export interface TaxDiscount {
   taxEnabled: boolean;
   taxPercentage: number;
   discount: number;
+  shippingFee?: number;
+  /** Indian GST: intra-state (CGST+SGST) or inter-state (IGST) */
+  gstSupplyType?: GstSupplyType;
   /** @deprecated Use taxEnabled */
   gstEnabled?: boolean;
   /** @deprecated Use taxPercentage */
@@ -57,6 +67,7 @@ export interface CompanySettings {
   countryCode: string;
   currencyCode: string;
   taxLabel: string;
+  gstin?: string;
   /** Default payment details copied onto new invoices */
   defaultPayment: PaymentDetails;
 }
@@ -74,14 +85,29 @@ export interface Invoice {
   taxDiscount: TaxDiscount;
   payment: PaymentDetails;
   notes: string;
+  termsAndConditions?: string;
   company: CompanySettings;
+}
+
+export interface GstTaxLine {
+  rate: number;
+  amount: number;
+}
+
+export interface GstBreakdown {
+  type: GstSupplyType | "standard";
+  cgst?: GstTaxLine;
+  sgst?: GstTaxLine;
+  igst?: GstTaxLine;
 }
 
 export interface InvoiceTotals {
   subtotal: number;
   taxAmount: number;
   discountAmount: number;
+  shippingFee?: number;
   total: number;
+  gstBreakdown?: GstBreakdown;
   /** @deprecated Use taxAmount */
   gstAmount?: number;
 }

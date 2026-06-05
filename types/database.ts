@@ -63,6 +63,13 @@ export interface InvoiceRow {
   tax_label: string;
   status: InvoiceStatusDb;
   notes: string;
+  payment_terms: string;
+  purchase_order: string;
+  project_name: string;
+  terms_and_conditions: string;
+  gst_supply_type: string;
+  seller_gstin: string;
+  client_gstin: string;
   bank_name: string;
   account_number: string;
   upi_id: string;

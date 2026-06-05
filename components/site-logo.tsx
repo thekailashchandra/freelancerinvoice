@@ -23,11 +23,11 @@ export function SiteLogo({
 
   const lightClass = cn(
     "w-auto object-contain object-left dark:hidden",
-    isFull ? "h-10 md:h-12" : "h-8"
+    isFull ? "h-16 md:h-24" : "h-14"
   );
   const darkClass = cn(
     "hidden w-auto object-contain object-left dark:block",
-    isFull ? "h-9 md:h-11" : "h-7"
+    isFull ? "h-14 md:h-20" : "h-12"
   );
 
   const content = (
@@ -35,16 +35,16 @@ export function SiteLogo({
       <Image
         src={siteConfig.logos.light}
         alt={siteConfig.name}
-        width={isFull ? 280 : 200}
-        height={isFull ? 72 : 40}
+        width={isFull ? 480 : 300}
+        height={isFull ? 96 : 56}
         className={lightClass}
         priority={priority}
       />
       <Image
         src={siteConfig.logos.dark}
         alt={siteConfig.name}
-        width={isFull ? 200 : 160}
-        height={isFull ? 48 : 32}
+        width={isFull ? 400 : 260}
+        height={isFull ? 80 : 48}
         className={darkClass}
         priority={priority}
       />

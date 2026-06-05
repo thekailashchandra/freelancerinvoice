@@ -12,21 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useProfile } from "@/hooks/use-profile";
 import { uploadProfileAssetAction } from "@/lib/actions/profile-assets";
 import { AssetFileField } from "@/components/asset-file-field";
+import { CountrySelect } from "@/components/country-select";
+import { CurrencySelect } from "@/components/currency-select";
 import {
   applyCountryDefaults,
-  COUNTRY_OPTIONS,
   emptyPaymentDetails,
-  getCurrencyOptionsForCountry,
   type CountryCode,
 } from "@/lib/country";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
@@ -38,8 +31,6 @@ export default function SettingsPage() {
   const [form, setForm] = useState<CompanySettings>(settings);
   const [defaultPayment, setDefaultPayment] = useState(emptyPaymentDetails());
   const [saving, setSaving] = useState(false);
-
-  const currencyOptions = getCurrencyOptionsForCountry(form.countryCode);
 
   const handleCountryChange = (countryCode: CountryCode) => {
     const defaults = applyCountryDefaults(countryCode);
@@ -106,7 +97,8 @@ export default function SettingsPage() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">
-          Default company details for new invoices
+          Your profile details for new invoices — works for individuals and
+          businesses
         </p>
       </div>
 
@@ -118,13 +110,15 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Building2 className="h-4 w-4 text-primary" />
-              Company Profile
+              Profile & billing defaults
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="companyName">Company Name</Label>
+                <Label htmlFor="companyName">
+                  Name on invoices (you or your business)
+                </Label>
                 <Input
                   id="companyName"
                   value={form.companyName}
@@ -156,21 +150,10 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label>Country / region</Label>
-                <Select
+                <CountrySelect
                   value={form.countryCode}
                   onValueChange={(v) => handleCountryChange(v as CountryCode)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {COUNTRY_OPTIONS.map((c) => (
-                      <SelectItem key={c.code} value={c.code}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
                 <p className="text-xs text-muted-foreground">
                   Updates default currency, tax label, and which payment fields
                   appear on invoices (e.g. UPI is only for India).
@@ -189,23 +172,12 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label>Default currency</Label>
-                <Select
+                <CurrencySelect
                   value={form.currencyCode}
                   onValueChange={(v) =>
                     setForm({ ...form, currencyCode: v })
                   }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {currencyOptions.map((c) => (
-                      <SelectItem key={c.code} value={c.code}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="taxLabel">Tax label</Label>

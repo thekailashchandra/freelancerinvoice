@@ -76,16 +76,68 @@ export async function updateProfileAction(
   revalidatePath("/create-invoice");
 }
 
-export async function completeOnboardingAction(input: {
+export type OnboardingInput = {
   companyName: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  companyAddress?: string;
   countryCode: string;
   currencyCode: string;
   taxLabel: string;
-}): Promise<void> {
+  defaultPayment?: CompanySettings["defaultPayment"];
+  logo?: string | null;
+  signature?: string | null;
+};
+
+export async function completeOnboardingAction(
+  input: OnboardingInput
+): Promise<void> {
+  const name = input.companyName.trim();
+  if (!name) {
+    throw new Error("Name is required to finish setup.");
+  }
+
   await updateProfileAction({
-    companyName: input.companyName,
+    companyName: name,
+    companyEmail: input.companyEmail,
+    companyPhone: input.companyPhone,
+    companyAddress: input.companyAddress,
     countryCode: input.countryCode,
     currencyCode: input.currencyCode,
     taxLabel: input.taxLabel,
+    defaultPayment: input.defaultPayment,
+    logo: input.logo,
+    signature: input.signature,
   });
+
+  revalidatePath("/onboarding");
+  revalidatePath("/dashboard");
+}
+
+export async function skipOnboardingAction(): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const defaultName =
+    (typeof user.user_metadata?.full_name === "string" &&
+      user.user_metadata.full_name.trim()) ||
+    (typeof user.user_metadata?.name === "string" &&
+      user.user_metadata.name.trim()) ||
+    user.email?.split("@")[0] ||
+    "My Invoices";
+
+  await updateProfileAction({
+    companyName: defaultName,
+    companyEmail: user.email ?? "",
+    countryCode: "US",
+    currencyCode: "USD",
+    taxLabel: "Sales Tax",
+  });
+
+  revalidatePath("/onboarding");
+  revalidatePath("/dashboard");
 }

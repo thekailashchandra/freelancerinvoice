@@ -1,252 +1,361 @@
 import { calculateTotals } from "@/lib/calculations";
+
 import { invoiceDesign } from "@/lib/invoice-design";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { paymentHasVisibleDetails } from "@/lib/country";
-import { getPaymentLinesForDisplay } from "@/lib/payment-display";
+
+import { invoiceMoneyHtml } from "@/lib/currency-display";
+import { formatDate, formatInvoiceAmount } from "@/lib/utils";
+
+import {
+  getInvoicePaymentInfo,
+  hasInvoicePaymentInfo,
+} from "@/lib/invoice-payment-display";
+
 import type { Invoice } from "@/types/invoice";
 
 const d = invoiceDesign;
+
 const W = d.page.contentWidthPx;
+
 const F = d.pdfFont;
 
-/** Base text style — normal spacing (html2canvas breaks with letter-spacing) */
-const text = {
-  base: `font-family:${F};font-size:14px;line-height:22px;color:${d.colors.textSecondary};letter-spacing:normal;word-spacing:normal`,
-  body: `font-family:${F};font-size:13px;line-height:20px;color:${d.colors.textMuted};letter-spacing:normal;word-spacing:normal`,
-  strong: `font-family:${F};font-size:16px;line-height:24px;font-weight:bold;color:${d.colors.text};letter-spacing:normal`,
-  label: `font-family:${F};font-size:11px;line-height:16px;font-weight:bold;color:${d.colors.label};text-transform:uppercase;letter-spacing:normal;word-spacing:normal`,
-};
-
 function escapeHtml(text: string): string {
+
   return text
+
     .replace(/&/g, "&amp;")
+
     .replace(/</g, "&lt;")
+
     .replace(/>/g, "&gt;")
+
     .replace(/"/g, "&quot;");
+
 }
 
 function cell(attrs = "", inner = ""): string {
+
   return `<td ${attrs}>${inner}</td>`;
+
 }
 
-function buildLogoCell(invoice: Invoice): string {
-  const box = d.logo.boxSize;
-  const maxImg = d.logo.imageMax;
+function metaRow(label: string, value: string): string {
 
-  if (invoice.company.logo) {
-    return cell(
-      `width="80" valign="middle" style="padding-right:16px"`,
-      `<table cellpadding="0" cellspacing="0"><tr><td align="center" valign="middle" style="width:${box}px;height:${box}px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:10px">
-        <img src="${invoice.company.logo}" alt="" width="${maxImg}" style="display:block;max-width:${maxImg}px;max-height:${maxImg}px;width:auto;height:auto;border:0" />
-      </td></tr></table>`
-    );
-  }
+  if (!value) return "";
 
-  return cell(
-    `width="80" valign="middle" style="padding-right:16px"`,
-    `<table cellpadding="0" cellspacing="0"><tr><td align="center" valign="middle" style="width:${box}px;height:${box}px;background:${d.colors.accent};border-radius:10px;font-family:${F};font-size:20px;font-weight:bold;color:#ffffff">
-      ${escapeHtml(invoice.company.companyName.charAt(0) || "?")}
-    </td></tr></table>`
-  );
+  return `<div style="display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-family:${F};font-size:13px;line-height:20px">
+
+    <span style="color:${d.colors.textMuted};white-space:nowrap">${escapeHtml(label)}</span>
+
+    <span style="color:${d.colors.text};font-weight:500;text-align:right">${escapeHtml(value)}</span>
+
+  </div>`;
+
 }
 
-/** Table-based layout — reliable with html2canvas (no flex, no web fonts) */
 export function buildInvoicePdfHtml(invoice: Invoice): string {
-  const totals = calculateTotals(invoice.services, invoice.taxDiscount);
+
+  const totals = calculateTotals(
+    invoice.services,
+    invoice.taxDiscount,
+    invoice.taxLabel
+  );
   const currency = invoice.currencyCode;
+
   const taxOn =
+
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
+
   const taxPct =
+
     invoice.taxDiscount.taxPercentage ??
+
     invoice.taxDiscount.gstPercentage ??
+
     0;
+
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
 
-  const serviceRows = invoice.services
-    .map(
-      (item) => `
-      <tr>
-        ${cell(
-          `style="padding:14px 16px;border-bottom:1px solid ${d.colors.border}"`,
-          `<div style="font-family:${F};font-size:14px;line-height:20px;font-weight:bold;color:${d.colors.text}">${escapeHtml(item.name || "Service")}</div>${
-            item.description
-              ? `<div style="margin-top:4px;font-family:${F};font-size:12px;line-height:16px;color:${d.colors.textMuted};white-space:pre-wrap">${escapeHtml(item.description)}</div>`
-              : ""
-          }`
-        )}
-        ${cell(`width="72" align="center" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};${text.body}"`, String(item.quantity))}
-        ${cell(`width="120" align="right" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};${text.body}"`, formatCurrency(item.price, currency))}
-        ${cell(`width="120" align="right" style="padding:14px 16px;border-bottom:1px solid ${d.colors.border};font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(item.quantity * item.price, currency))}
-      </tr>`
-    )
-    .join("");
+  const shipping = totals.shippingFee ?? 0;
 
-  const paymentLines = getPaymentLinesForDisplay(
-    invoice.payment,
-    invoice.company.countryCode
-  );
-  const paymentBlock =
-    paymentHasVisibleDetails(invoice.payment, invoice.company.countryCode)
-      ? `
-      <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:24px;font-family:${F}">
-        <tr><td style="padding:20px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:12px">
-          <div style="${text.label}">Payment Details</div>
-          ${paymentLines
-            .map(
-              (line, i) =>
-                `<div style="margin-top:${i === 0 ? 10 : 6}px;${text.base}"><strong style="color:${d.colors.label}">${escapeHtml(line.label)}:</strong> ${escapeHtml(line.value)}</div>`
-            )
-            .join("")}
-        </td></tr>
-      </table>`
-      : "";
+  const paymentTerms =
 
-  const notesBlock = invoice.notes
-    ? `
-      <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:20px;font-family:${F}">
-        <tr><td>
-          <div style="${text.label}">Notes</div>
-          <div style="margin-top:8px;${text.base};white-space:pre-wrap">${escapeHtml(invoice.notes)}</div>
-        </td></tr>
-      </table>`
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
+
+  const clientLines = [
+
+    invoice.client.address,
+
+    invoice.client.email,
+
+    invoice.client.phone,
+
+  ].filter(Boolean) as string[];
+
+  const logoImg = invoice.company.logo
+    ? `<img src="${invoice.company.logo}" alt="" style="display:block;height:${d.logo.boxSize}px;max-width:${d.logo.maxWidth}px;width:auto;object-fit:contain;border:0" />`
     : "";
 
-  const signatureCell = invoice.company.signature
-    ? cell(
-        `width="50%" align="right" valign="bottom"`,
-        `<img src="${invoice.company.signature}" alt="" style="display:block;margin-left:auto;max-height:${d.signature.maxHeight}px;max-width:${d.signature.maxWidth}px;border:0" />`
-      )
-    : cell(
-        `width="50%" align="right" valign="bottom"`,
-        `<div style="border-top:1px solid ${d.colors.borderStrong};padding-top:8px;${text.body};text-align:right">Authorized Signature</div>`
-      );
+  const initialBlock = `<div style="width:${d.logo.boxSize}px;height:${d.logo.boxSize}px;border-radius:50%;background:${d.colors.accent};color:#fff;font-family:${F};font-size:30px;font-weight:bold;text-align:center;line-height:${d.logo.boxSize}px">${escapeHtml((invoice.company.companyName || "Y").charAt(0).toUpperCase())}</div>`;
+
+  const companyNameBlock = `<div style="font-family:${F};font-size:17px;font-weight:bold;color:${d.colors.text}">${escapeHtml(invoice.company.companyName || "Your business")}</div>`;
+
+  const companyAddress = invoice.company.companyAddress
+
+    ? `<div style="margin-top:6px;font-family:${F};font-size:12px;line-height:18px;color:${d.colors.textMuted};white-space:pre-wrap">${escapeHtml(invoice.company.companyAddress)}</div>`
+
+    : "";
+
+  const companyGstin = invoice.company.gstin?.trim()
+    ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${d.colors.textSecondary}">GSTIN: ${escapeHtml(invoice.company.gstin.trim())}</div>`
+    : "";
+
+  const companyDetailsBlock = `${companyNameBlock}${companyAddress}${companyGstin}`;
+
+  const companyMark = invoice.company.logo ? logoImg : initialBlock;
+
+  const companyBlock = `<div>${companyMark}<div style="margin-top:10px">${companyDetailsBlock}</div></div>`;
+
+  const clientLineHtml = clientLines
+
+    .map(
+
+      (l) =>
+
+        `<div style="margin-top:4px;font-family:${F};font-size:13px;color:${d.colors.textMuted};white-space:pre-wrap">${escapeHtml(l)}</div>`
+
+    )
+
+    .join("");
+
+  const clientCompany = invoice.client.company
+
+    ? `<div style="margin-top:4px;font-family:${F};font-size:13px;color:${d.colors.textSecondary}">${escapeHtml(invoice.client.company)}</div>`
+
+    : "";
+
+  const serviceRows = invoice.services
+
+    .map((item, index) => {
+
+      const border =
+
+        index < invoice.services.length - 1
+
+          ? `border-bottom:1px solid ${d.colors.border};`
+
+          : "";
+
+      const lineAmount = item.quantity * item.price;
+
+      return `<tr>
+
+        ${cell(`width="36" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, String(index + 1))}
+
+        ${cell(`valign="top" style="padding:14px 12px;${border}min-width:0;overflow:hidden;${d.wrapTextCss}"`, `<div style="font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};${d.wrapTextCss}">${escapeHtml(item.name || "Service")}</div>${item.description ? `<div style="margin-top:4px;font-family:${F};font-size:12px;line-height:18px;color:${d.colors.textMuted};white-space:pre-wrap;${d.wrapTextCss}">${escapeHtml(item.description)}</div>` : ""}`)}
+
+        ${cell(`width="64" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, formatInvoiceAmount(item.quantity))}
+
+        ${cell(`width="88" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, invoiceMoneyHtml(item.price, currency))}
+
+        ${cell(`width="56" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, taxOn ? `${taxPct}%` : "—")}
+
+        ${cell(`width="96" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;font-weight:bold;color:${d.colors.text}"`, invoiceMoneyHtml(lineAmount, currency))}
+
+      </tr>`;
+
+    })
+
+    .join("");
+
+  const paymentBlock = hasInvoicePaymentInfo(invoice.payment)
+    ? `<div style="margin-bottom:20px">
+        <div style="font-family:${F};font-size:10px;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;color:${d.colors.textMuted}">Payment Information</div>
+        ${getInvoicePaymentInfo(invoice.payment)
+          .map(
+            (line) =>
+              `<div style="margin-top:4px;font-family:${F};font-size:13px;line-height:20px;color:${d.colors.textSecondary}"><strong style="color:${d.colors.text}">${escapeHtml(line.label)}:</strong> ${escapeHtml(line.value)}</div>`
+          )
+          .join("")}
+      </div>`
+    : "";
+
+  const notesBlock = invoice.notes
+
+    ? `<div style="margin-bottom:20px">
+
+        <div style="font-family:${F};font-size:10px;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;color:${d.colors.textMuted}">Notes</div>
+
+        <div style="margin-top:6px;font-family:${F};font-size:13px;color:${d.colors.textSecondary};white-space:pre-wrap">${escapeHtml(invoice.notes)}</div>
+
+      </div>`
+
+    : "";
+
+  const termsBlock = invoice.termsAndConditions
+
+    ? `<div>
+
+        <div style="font-family:${F};font-size:10px;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;color:${d.colors.textMuted}">Terms &amp; Conditions</div>
+
+        <div style="margin-top:6px;font-family:${F};font-size:12px;line-height:18px;color:${d.colors.textMuted};white-space:pre-wrap">${escapeHtml(invoice.termsAndConditions)}</div>
+
+      </div>`
+
+    : "";
+
+  const discountRow =
+
+    totals.discountAmount > 0
+
+      ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.discount}"><span>Discount</span><span style="display:inline-flex;align-items:center;gap:2px"><span>−</span>${invoiceMoneyHtml(totals.discountAmount, currency)}</span></div>`
+
+      : "";
+
+  const taxRow = taxOn && totals.gstBreakdown?.type === "intra"
+    ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>CGST (@${totals.gstBreakdown.cgst?.rate.toFixed(1)}%)</span>${invoiceMoneyHtml(totals.gstBreakdown.cgst?.amount ?? 0, currency)}</div>
+       <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>SGST (@${totals.gstBreakdown.sgst?.rate.toFixed(1)}%)</span>${invoiceMoneyHtml(totals.gstBreakdown.sgst?.amount ?? 0, currency)}</div>`
+    : taxOn && totals.gstBreakdown?.type === "inter"
+      ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>IGST (@${totals.gstBreakdown.igst?.rate.toFixed(1)}%)</span>${invoiceMoneyHtml(totals.gstBreakdown.igst?.amount ?? 0, currency)}</div>`
+      : taxOn
+        ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>Total Tax</span>${invoiceMoneyHtml(taxAmt, currency)}</div>`
+        : "";
+
+  const shippingRow =
+
+    shipping > 0
+
+      ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
+
+      : "";
 
   return `<!DOCTYPE html>
+
 <html lang="en">
-<head>
-<meta charset="utf-8" />
+
+<head><meta charset="utf-8" />
+
 <style>
-  html, body { margin: 0; padding: 0; background: #ffffff; }
-  body {
-    width: ${d.page.widthPx}px;
-    padding: ${d.page.paddingPx}px;
-    font-family: ${F};
-    letter-spacing: normal;
-    word-spacing: normal;
-  }
-  table { border-collapse: collapse; }
-  img { border: 0; }
-</style>
-</head>
+
+  html,body{margin:0;padding:0;background:#fff}
+
+  body{width:${d.page.widthPx}px;padding:${d.page.paddingPx}px;font-family:${F}}
+
+  table{border-collapse:collapse} img{border:0}
+
+</style></head>
+
 <body>
-  <div id="invoice-root" style="width:${W}px;font-family:${F};letter-spacing:normal;word-spacing:normal">
 
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-bottom:24px">
-      <tr><td style="height:3px;background:${d.colors.accent};font-size:0;line-height:0">&nbsp;</td></tr>
-    </table>
+<div id="invoice-root" style="width:${W}px;font-family:${F}">
 
-    <!-- Header -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-bottom:24px;border-bottom:1px solid ${d.colors.border}">
-      <tr>
-        ${buildLogoCell(invoice)}
-        <td valign="middle">
-          <div style="font-family:${F};font-size:17px;font-weight:bold;line-height:24px;color:${d.colors.text};letter-spacing:normal">${escapeHtml(invoice.company.companyName || "Your Company")}</div>
-          <div style="margin-top:4px;${text.body}">${escapeHtml(invoice.company.companyEmail)}</div>
-          <div style="${text.body}">${escapeHtml(invoice.company.companyPhone)}</div>
-        </td>
-        <td width="200" align="right" valign="top" style="padding-left:16px">
-          <div style="font-family:${F};font-size:28px;font-weight:bold;line-height:30px;color:${d.colors.text};letter-spacing:normal">INVOICE</div>
-          <div style="margin-top:6px;font-family:${F};font-size:13px;line-height:18px;color:${d.colors.textSecondary};letter-spacing:normal">${escapeHtml(invoice.invoice.invoiceNumber)}</div>
-        </td>
-      </tr>
-    </table>
+<table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:36px">
 
-    <!-- Bill to + dates -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-bottom:28px">
-      <tr>
-        <td width="58%" valign="top" style="padding-right:24px">
-          <div style="${text.label}">Bill To</div>
-          <div style="margin-top:8px;${text.strong}">${escapeHtml(invoice.client.name || "Client Name")}</div>
-          ${invoice.client.company ? `<div style="margin-top:4px;${text.base}">${escapeHtml(invoice.client.company)}</div>` : ""}
-          <div style="margin-top:6px;${text.body};white-space:pre-wrap">${escapeHtml(invoice.client.address || "")}</div>
-          ${invoice.client.email ? `<div style="margin-top:4px;${text.body}">${escapeHtml(invoice.client.email)}</div>` : ""}
-          ${invoice.client.phone ? `<div style="${text.body}">${escapeHtml(invoice.client.phone)}</div>` : ""}
-        </td>
-        <td width="42%" valign="top" align="right">
-          <table cellpadding="0" cellspacing="0" align="right" style="font-family:${F}">
-            <tr>
-              <td style="padding:5px 16px 5px 0;${text.body};color:${d.colors.label};white-space:nowrap">Invoice Date</td>
-              <td align="right" style="padding:5px 0;font-family:${F};font-size:13px;font-weight:bold;color:${d.colors.text};letter-spacing:normal;white-space:nowrap">${formatDate(invoice.invoice.invoiceDate)}</td>
-            </tr>
-            <tr>
-              <td style="padding:5px 16px 5px 0;${text.body};color:${d.colors.label};white-space:nowrap">Due Date</td>
-              <td align="right" style="padding:5px 0;font-family:${F};font-size:13px;font-weight:bold;color:${d.colors.text};letter-spacing:normal;white-space:nowrap">${formatDate(invoice.invoice.dueDate)}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+<tr>
 
-    <!-- Line items -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:32px;border:1px solid ${d.colors.border};border-radius:12px;font-family:${F};overflow:hidden">
-      <thead>
-        <tr style="background:${d.colors.surface}">
-          ${cell(`style="padding:12px 16px;${text.label}"`, "Description")}
-          ${cell(`width="72" align="center" style="padding:12px 16px;${text.label}"`, "Qty")}
-          ${cell(`width="120" align="right" style="padding:12px 16px;${text.label}"`, "Rate")}
-          ${cell(`width="120" align="right" style="padding:12px 16px;${text.label}"`, "Amount")}
-        </tr>
-      </thead>
-      <tbody>${serviceRows}</tbody>
-    </table>
+  <td width="55%" valign="top">
 
-    <!-- Totals -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:24px;font-family:${F}">
-      <tr>
-        <td>&nbsp;</td>
-        <td width="300" valign="top">
-          <table width="300" cellpadding="0" cellspacing="0" style="width:300px;background:${d.colors.surface};border:1px solid ${d.colors.border};border-radius:12px;font-family:${F}">
-            <tr>
-              ${cell(`style="padding:14px 16px 6px;${text.base}"`, "Subtotal")}
-              ${cell(`align="right" style="padding:14px 16px 6px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(totals.subtotal, currency))}
-            </tr>
-            ${
-              totals.discountAmount > 0
-                ? `<tr>
-              ${cell(`style="padding:4px 16px;${text.base};color:#059669"`, "Discount")}
-              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:#059669;letter-spacing:normal"`, `-${formatCurrency(totals.discountAmount, currency)}`)}
-            </tr>`
-                : ""
-            }
-            ${
-              taxOn
-                ? `<tr>
-              ${cell(`style="padding:4px 16px;${text.base}"`, `${escapeHtml(invoice.taxLabel)} (${taxPct}%)`)}
-              ${cell(`align="right" style="padding:4px 16px;font-family:${F};font-size:14px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, formatCurrency(taxAmt, currency))}
-            </tr>`
-                : ""
-            }
-            <tr>
-              ${cell(`style="padding:12px 16px 14px;border-top:2px solid ${d.colors.text};font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text};letter-spacing:normal"`, "Total")}
-              ${cell(`align="right" style="padding:12px 16px 14px;border-top:2px solid ${d.colors.text};font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.accent};letter-spacing:normal"`, formatCurrency(totals.total, currency))}
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    ${companyBlock}
 
-    ${paymentBlock}
-    ${notesBlock}
+    <div style="margin-top:28px">
 
-    <!-- Footer -->
-    <table width="${W}" cellpadding="0" cellspacing="0" style="width:${W}px;margin-top:32px;padding-top:20px;border-top:1px solid ${d.colors.border};font-family:${F}">
-      <tr>
-        ${cell(`width="50%" valign="bottom"`, `<div style="${text.body};color:${d.colors.label}">Thank you for your business</div>`)}
-        ${signatureCell}
-      </tr>
-    </table>
+      <div style="font-family:${F};font-size:10px;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;color:${d.colors.textMuted}">Bill To</div>
 
-  </div>
-</body>
-</html>`;
+      <div style="margin-top:8px;font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text}">${escapeHtml(invoice.client.name || "Client name")}</div>
+
+      ${clientCompany}
+
+      ${clientLineHtml}
+      ${invoice.client.gstin?.trim() ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${d.colors.textSecondary}">GSTIN: ${escapeHtml(invoice.client.gstin.trim())}</div>` : ""}
+
+    </div>
+
+  </td>
+
+  <td width="45%" valign="top" align="right">
+
+    <div style="font-family:${F};font-size:32px;font-weight:bold;letter-spacing:0.12em;color:${d.colors.text}">INVOICE</div>
+
+    <div style="margin-top:10px;font-family:${F};font-size:14px;color:${d.colors.textSecondary}">Invoice# ${escapeHtml(invoice.invoice.invoiceNumber)}</div>
+
+    <div style="margin-top:8px;font-family:${F};font-size:28px;font-weight:bold;color:${d.colors.text}">${invoiceMoneyHtml(totals.total, currency)}</div>
+
+    <div style="margin-top:20px;text-align:left">
+
+      ${metaRow("Invoice Date", formatDate(invoice.invoice.invoiceDate))}
+
+      ${metaRow("Terms", paymentTerms)}
+
+      ${metaRow("Due Date", formatDate(invoice.invoice.dueDate))}
+
+      ${metaRow("P.O.#", invoice.invoice.purchaseOrder ?? "")}
+
+      ${metaRow("Project Name", invoice.invoice.projectName ?? "")}
+
+    </div>
+
+  </td>
+
+</tr>
+
+</table>
+
+<table width="${W}" style="font-family:${F};table-layout:fixed;border-collapse:collapse">
+<colgroup>
+  <col width="36" />
+  <col />
+  <col width="64" />
+  <col width="88" />
+  <col width="56" />
+  <col width="96" />
+</colgroup>
+<thead><tr style="background:${d.colors.tableHeader}">
+
+  ${cell(`width="36" style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "#")}
+
+  ${cell(`style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "Item &amp; Description")}
+
+  ${cell(`width="64" align="right" style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "Qty")}
+
+  ${cell(`width="88" align="right" style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "Rate")}
+
+  ${cell(`width="56" align="right" style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "Tax")}
+
+  ${cell(`width="96" align="right" style="padding:11px 12px;font-family:${F};font-size:10px;font-weight:bold;color:${d.colors.tableHeaderText}"`, "Amount")}
+
+</tr></thead>
+
+<tbody>${serviceRows}</tbody>
+
+</table>
+
+<table width="${W}" style="margin-top:24px;font-family:${F}"><tr><td></td>
+
+<td width="280" valign="top">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>Sub Total</span>${invoiceMoneyHtml(totals.subtotal, currency)}</div>
+
+  ${discountRow}
+
+  ${taxRow}
+
+  ${shippingRow}
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 12px;font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text};border-bottom:1px solid ${d.colors.border}"><span>Grand Total</span>${invoiceMoneyHtml(totals.total, currency)}</div>
+
+  <div style="margin-top:12px;padding:12px 16px;background:${d.colors.balanceDueBg};border-radius:${d.radius.sm}px;display:flex;justify-content:space-between;align-items:center;font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text}"><span>Balance Due</span>${invoiceMoneyHtml(totals.total, currency)}</div>
+
+</td></tr></table>
+
+<table width="${W}" style="margin-top:32px;font-family:${F}"><tr><td>
+
+  ${notesBlock}
+
+  ${paymentBlock}
+
+  ${termsBlock}
+
+</td></tr></table>
+
+</div></body></html>`;
+
 }

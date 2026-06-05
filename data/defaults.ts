@@ -38,11 +38,15 @@ export function createDefaultInvoice(company: CompanySettings = defaultCompanySe
       phone: "",
       company: "",
       address: "",
+      gstin: "",
     },
     invoice: {
       invoiceNumber: generateInvoiceNumber(),
       invoiceDate: today,
       dueDate: due.toISOString().split("T")[0],
+      paymentTerms: "Due on receipt",
+      purchaseOrder: "",
+      projectName: "",
     },
     services: [
       {
@@ -57,9 +61,14 @@ export function createDefaultInvoice(company: CompanySettings = defaultCompanySe
       taxEnabled: true,
       taxPercentage: getCountryConfig(company.countryCode).defaultTaxPercent,
       discount: 0,
+      gstSupplyType:
+        getCountryConfig(company.countryCode).taxLabel === "GST"
+          ? "intra"
+          : undefined,
     },
     payment: { ...company.defaultPayment },
-    notes: "Thank you for your business! Payment is due within 14 days.",
+    notes: "Thanks for your business.",
+    termsAndConditions: "",
     company,
   };
 }

@@ -71,11 +71,15 @@ export function dbInvoiceToApp(
       phone: row.client_phone_snapshot,
       company: row.client_company_snapshot,
       address: row.client_address_snapshot,
+      gstin: row.client_gstin ?? "",
     },
     invoice: {
       invoiceNumber: row.invoice_number,
       invoiceDate: row.invoice_date,
       dueDate: row.due_date,
+      paymentTerms: row.payment_terms ?? "Due on receipt",
+      purchaseOrder: row.purchase_order ?? "",
+      projectName: row.project_name ?? "",
     },
     services: items.map((item) => ({
       id: item.id,
@@ -88,6 +92,8 @@ export function dbInvoiceToApp(
       taxEnabled: Number(row.tax_percent) > 0,
       taxPercentage: Number(row.tax_percent),
       discount: Number(row.discount_amount),
+      gstSupplyType:
+        row.gst_supply_type === "inter" ? "inter" : "intra",
     },
     payment: {
       bankName: row.bank_name,
@@ -98,7 +104,11 @@ export function dbInvoiceToApp(
       sortCode: row.sort_code ?? "",
     },
     notes: row.notes,
-    company,
+    termsAndConditions: row.terms_and_conditions ?? "",
+    company: {
+      ...company,
+      gstin: row.seller_gstin ?? "",
+    },
   };
 }
 
@@ -137,6 +147,13 @@ export function appInvoiceToDbPayload(
       tax_label: invoice.taxLabel,
       status: mapUiStatusToDb(invoice.status),
       notes: invoice.notes,
+      payment_terms: invoice.invoice.paymentTerms ?? "Due on receipt",
+      purchase_order: invoice.invoice.purchaseOrder ?? "",
+      project_name: invoice.invoice.projectName ?? "",
+      terms_and_conditions: invoice.termsAndConditions ?? "",
+      gst_supply_type: invoice.taxDiscount.gstSupplyType ?? "intra",
+      seller_gstin: invoice.company.gstin ?? "",
+      client_gstin: invoice.client.gstin ?? "",
       bank_name: payment.bankName,
       account_number: payment.accountNumber,
       upi_id: payment.upiId,

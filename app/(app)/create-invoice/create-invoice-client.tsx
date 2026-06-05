@@ -79,9 +79,15 @@ export function CreateInvoiceClient() {
     }
   };
 
-  const handlePrint = () => {
-    printInvoice();
+  const handlePrint = async () => {
     toast.info("Opening print dialog…");
+    try {
+      await printInvoice();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Could not open print dialog.";
+      toast.error("Print failed", { description: message });
+    }
   };
 
   if (settingsLoading || !invoice) {
@@ -150,7 +156,7 @@ export function CreateInvoiceClient() {
           <p className="mb-4 text-sm font-medium text-muted-foreground lg:hidden">
             Live Preview
           </p>
-          <div className="overflow-y-auto rounded-2xl border border-border/50 bg-slate-100/80 p-4 md:p-6 dark:bg-slate-900/40 lg:max-h-[calc(100vh-12rem)]">
+          <div className="overflow-y-auto rounded-2xl bg-slate-100/80 p-4 md:p-6 dark:bg-slate-900/40 lg:max-h-[calc(100vh-12rem)]">
             <InvoicePreview invoice={invoice} />
           </div>
         </aside>

@@ -1,0 +1,1247 @@
+[
+  {
+    "code": "AF",
+    "name": "Afghanistan",
+    "currencyCode": "AFN"
+  },
+  {
+    "code": "AX",
+    "name": "Åland Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AL",
+    "name": "Albania",
+    "currencyCode": "ALL"
+  },
+  {
+    "code": "DZ",
+    "name": "Algeria",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AS",
+    "name": "American Samoa",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AD",
+    "name": "Andorra",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "AO",
+    "name": "Angola",
+    "currencyCode": "AOA"
+  },
+  {
+    "code": "AI",
+    "name": "Anguilla",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AQ",
+    "name": "Antarctica",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AG",
+    "name": "Antigua & Barbuda",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AR",
+    "name": "Argentina",
+    "currencyCode": "ARS"
+  },
+  {
+    "code": "AM",
+    "name": "Armenia",
+    "currencyCode": "AMD"
+  },
+  {
+    "code": "AW",
+    "name": "Aruba",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "currencyCode": "AUD"
+  },
+  {
+    "code": "AT",
+    "name": "Austria",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "currencyCode": "AZN"
+  },
+  {
+    "code": "BS",
+    "name": "Bahamas",
+    "currencyCode": "BSD"
+  },
+  {
+    "code": "BH",
+    "name": "Bahrain",
+    "currencyCode": "BHD"
+  },
+  {
+    "code": "BD",
+    "name": "Bangladesh",
+    "currencyCode": "BDT"
+  },
+  {
+    "code": "BB",
+    "name": "Barbados",
+    "currencyCode": "BBD"
+  },
+  {
+    "code": "BY",
+    "name": "Belarus",
+    "currencyCode": "BYN"
+  },
+  {
+    "code": "BE",
+    "name": "Belgium",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "BZ",
+    "name": "Belize",
+    "currencyCode": "BZD"
+  },
+  {
+    "code": "BJ",
+    "name": "Benin",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "BM",
+    "name": "Bermuda",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BT",
+    "name": "Bhutan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BO",
+    "name": "Bolivia",
+    "currencyCode": "BOB"
+  },
+  {
+    "code": "BA",
+    "name": "Bosnia & Herzegovina",
+    "currencyCode": "BAM"
+  },
+  {
+    "code": "BW",
+    "name": "Botswana",
+    "currencyCode": "BWP"
+  },
+  {
+    "code": "BV",
+    "name": "Bouvet Island",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BR",
+    "name": "Brazil",
+    "currencyCode": "BRL"
+  },
+  {
+    "code": "IO",
+    "name": "British Indian Ocean Territory",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "VG",
+    "name": "British Virgin Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BN",
+    "name": "Brunei",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BG",
+    "name": "Bulgaria",
+    "currencyCode": "BGN"
+  },
+  {
+    "code": "BF",
+    "name": "Burkina Faso",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "BI",
+    "name": "Burundi",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "KH",
+    "name": "Cambodia",
+    "currencyCode": "KHR"
+  },
+  {
+    "code": "CM",
+    "name": "Cameroon",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "CA",
+    "name": "Canada",
+    "currencyCode": "CAD"
+  },
+  {
+    "code": "CV",
+    "name": "Cape Verde",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "BQ",
+    "name": "Caribbean Netherlands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "KY",
+    "name": "Cayman Islands",
+    "currencyCode": "KYD"
+  },
+  {
+    "code": "CF",
+    "name": "Central African Republic",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "TD",
+    "name": "Chad",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "CL",
+    "name": "Chile",
+    "currencyCode": "CLP"
+  },
+  {
+    "code": "CN",
+    "name": "China",
+    "currencyCode": "CNY"
+  },
+  {
+    "code": "CX",
+    "name": "Christmas Island",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CC",
+    "name": "Cocos (Keeling) Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CO",
+    "name": "Colombia",
+    "currencyCode": "COP"
+  },
+  {
+    "code": "KM",
+    "name": "Comoros",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CG",
+    "name": "Congo - Brazzaville",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "CD",
+    "name": "Congo - Kinshasa",
+    "currencyCode": "CDF"
+  },
+  {
+    "code": "CK",
+    "name": "Cook Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CR",
+    "name": "Costa Rica",
+    "currencyCode": "CRC"
+  },
+  {
+    "code": "CI",
+    "name": "Côte d’Ivoire",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "HR",
+    "name": "Croatia",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "CU",
+    "name": "Cuba",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CW",
+    "name": "Curaçao",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "CY",
+    "name": "Cyprus",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "CZ",
+    "name": "Czechia",
+    "currencyCode": "CZK"
+  },
+  {
+    "code": "DK",
+    "name": "Denmark",
+    "currencyCode": "DKK"
+  },
+  {
+    "code": "DJ",
+    "name": "Djibouti",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "DM",
+    "name": "Dominica",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "DO",
+    "name": "Dominican Republic",
+    "currencyCode": "DOP"
+  },
+  {
+    "code": "EC",
+    "name": "Ecuador",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "EG",
+    "name": "Egypt",
+    "currencyCode": "EGP"
+  },
+  {
+    "code": "SV",
+    "name": "El Salvador",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GQ",
+    "name": "Equatorial Guinea",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "ER",
+    "name": "Eritrea",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "EE",
+    "name": "Estonia",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "SZ",
+    "name": "Eswatini",
+    "currencyCode": "SZL"
+  },
+  {
+    "code": "ET",
+    "name": "Ethiopia",
+    "currencyCode": "ETB"
+  },
+  {
+    "code": "FK",
+    "name": "Falkland Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "FO",
+    "name": "Faroe Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "FJ",
+    "name": "Fiji",
+    "currencyCode": "FJD"
+  },
+  {
+    "code": "FI",
+    "name": "Finland",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "FR",
+    "name": "France",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "GF",
+    "name": "French Guiana",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "PF",
+    "name": "French Polynesia",
+    "currencyCode": "XPF"
+  },
+  {
+    "code": "TF",
+    "name": "French Southern Territories",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GA",
+    "name": "Gabon",
+    "currencyCode": "XAF"
+  },
+  {
+    "code": "GM",
+    "name": "Gambia",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GE",
+    "name": "Georgia",
+    "currencyCode": "GEL"
+  },
+  {
+    "code": "DE",
+    "name": "Germany",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "GH",
+    "name": "Ghana",
+    "currencyCode": "GHS"
+  },
+  {
+    "code": "GI",
+    "name": "Gibraltar",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GR",
+    "name": "Greece",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "GL",
+    "name": "Greenland",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GD",
+    "name": "Grenada",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GU",
+    "name": "Guam",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GT",
+    "name": "Guatemala",
+    "currencyCode": "GTQ"
+  },
+  {
+    "code": "GG",
+    "name": "Guernsey",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GN",
+    "name": "Guinea",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "GW",
+    "name": "Guinea-Bissau",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "GY",
+    "name": "Guyana",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "HT",
+    "name": "Haiti",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "HM",
+    "name": "Heard & McDonald Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "HN",
+    "name": "Honduras",
+    "currencyCode": "HNL"
+  },
+  {
+    "code": "HK",
+    "name": "Hong Kong SAR China",
+    "currencyCode": "HKD"
+  },
+  {
+    "code": "HU",
+    "name": "Hungary",
+    "currencyCode": "HUF"
+  },
+  {
+    "code": "IS",
+    "name": "Iceland",
+    "currencyCode": "ISK"
+  },
+  {
+    "code": "IN",
+    "name": "India",
+    "currencyCode": "INR"
+  },
+  {
+    "code": "ID",
+    "name": "Indonesia",
+    "currencyCode": "IDR"
+  },
+  {
+    "code": "IR",
+    "name": "Iran",
+    "currencyCode": "IRR"
+  },
+  {
+    "code": "IQ",
+    "name": "Iraq",
+    "currencyCode": "IQD"
+  },
+  {
+    "code": "IE",
+    "name": "Ireland",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "IM",
+    "name": "Isle of Man",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "IL",
+    "name": "Israel",
+    "currencyCode": "ILS"
+  },
+  {
+    "code": "IT",
+    "name": "Italy",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "JM",
+    "name": "Jamaica",
+    "currencyCode": "JMD"
+  },
+  {
+    "code": "JP",
+    "name": "Japan",
+    "currencyCode": "JPY"
+  },
+  {
+    "code": "JE",
+    "name": "Jersey",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "JO",
+    "name": "Jordan",
+    "currencyCode": "JOD"
+  },
+  {
+    "code": "KZ",
+    "name": "Kazakhstan",
+    "currencyCode": "KZT"
+  },
+  {
+    "code": "KE",
+    "name": "Kenya",
+    "currencyCode": "KES"
+  },
+  {
+    "code": "KI",
+    "name": "Kiribati",
+    "currencyCode": "AUD"
+  },
+  {
+    "code": "KW",
+    "name": "Kuwait",
+    "currencyCode": "KWD"
+  },
+  {
+    "code": "KG",
+    "name": "Kyrgyzstan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "LA",
+    "name": "Laos",
+    "currencyCode": "LAK"
+  },
+  {
+    "code": "LV",
+    "name": "Latvia",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "LB",
+    "name": "Lebanon",
+    "currencyCode": "LBP"
+  },
+  {
+    "code": "LS",
+    "name": "Lesotho",
+    "currencyCode": "LSL"
+  },
+  {
+    "code": "LR",
+    "name": "Liberia",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "LY",
+    "name": "Libya",
+    "currencyCode": "LYD"
+  },
+  {
+    "code": "LI",
+    "name": "Liechtenstein",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "LT",
+    "name": "Lithuania",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "LU",
+    "name": "Luxembourg",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "MO",
+    "name": "Macao SAR China",
+    "currencyCode": "MOP"
+  },
+  {
+    "code": "MG",
+    "name": "Madagascar",
+    "currencyCode": "MGA"
+  },
+  {
+    "code": "MW",
+    "name": "Malawi",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MY",
+    "name": "Malaysia",
+    "currencyCode": "MYR"
+  },
+  {
+    "code": "MV",
+    "name": "Maldives",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "ML",
+    "name": "Mali",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "MT",
+    "name": "Malta",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "MH",
+    "name": "Marshall Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MQ",
+    "name": "Martinique",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MR",
+    "name": "Mauritania",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MU",
+    "name": "Mauritius",
+    "currencyCode": "MUR"
+  },
+  {
+    "code": "YT",
+    "name": "Mayotte",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MX",
+    "name": "Mexico",
+    "currencyCode": "MXN"
+  },
+  {
+    "code": "FM",
+    "name": "Micronesia",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MD",
+    "name": "Moldova",
+    "currencyCode": "MDL"
+  },
+  {
+    "code": "MC",
+    "name": "Monaco",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "MN",
+    "name": "Mongolia",
+    "currencyCode": "MNT"
+  },
+  {
+    "code": "ME",
+    "name": "Montenegro",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "MS",
+    "name": "Montserrat",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MA",
+    "name": "Morocco",
+    "currencyCode": "MAD"
+  },
+  {
+    "code": "MZ",
+    "name": "Mozambique",
+    "currencyCode": "MZN"
+  },
+  {
+    "code": "MM",
+    "name": "Myanmar (Burma)",
+    "currencyCode": "MMK"
+  },
+  {
+    "code": "NA",
+    "name": "Namibia",
+    "currencyCode": "NAD"
+  },
+  {
+    "code": "NR",
+    "name": "Nauru",
+    "currencyCode": "AUD"
+  },
+  {
+    "code": "NP",
+    "name": "Nepal",
+    "currencyCode": "NPR"
+  },
+  {
+    "code": "NL",
+    "name": "Netherlands",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "NC",
+    "name": "New Caledonia",
+    "currencyCode": "XPF"
+  },
+  {
+    "code": "NZ",
+    "name": "New Zealand",
+    "currencyCode": "NZD"
+  },
+  {
+    "code": "NI",
+    "name": "Nicaragua",
+    "currencyCode": "NIO"
+  },
+  {
+    "code": "NE",
+    "name": "Niger",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "NG",
+    "name": "Nigeria",
+    "currencyCode": "NGN"
+  },
+  {
+    "code": "NU",
+    "name": "Niue",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "NF",
+    "name": "Norfolk Island",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "KP",
+    "name": "North Korea",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MK",
+    "name": "North Macedonia",
+    "currencyCode": "MKD"
+  },
+  {
+    "code": "MP",
+    "name": "Northern Mariana Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "NO",
+    "name": "Norway",
+    "currencyCode": "NOK"
+  },
+  {
+    "code": "OM",
+    "name": "Oman",
+    "currencyCode": "OMR"
+  },
+  {
+    "code": "PK",
+    "name": "Pakistan",
+    "currencyCode": "PKR"
+  },
+  {
+    "code": "PW",
+    "name": "Palau",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "PS",
+    "name": "Palestinian Territories",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "PA",
+    "name": "Panama",
+    "currencyCode": "PAB"
+  },
+  {
+    "code": "PG",
+    "name": "Papua New Guinea",
+    "currencyCode": "PGK"
+  },
+  {
+    "code": "PY",
+    "name": "Paraguay",
+    "currencyCode": "PYG"
+  },
+  {
+    "code": "PE",
+    "name": "Peru",
+    "currencyCode": "PEN"
+  },
+  {
+    "code": "PH",
+    "name": "Philippines",
+    "currencyCode": "PHP"
+  },
+  {
+    "code": "PN",
+    "name": "Pitcairn Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "PL",
+    "name": "Poland",
+    "currencyCode": "PLN"
+  },
+  {
+    "code": "PT",
+    "name": "Portugal",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "QA",
+    "name": "Qatar",
+    "currencyCode": "QAR"
+  },
+  {
+    "code": "RE",
+    "name": "Réunion",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "RO",
+    "name": "Romania",
+    "currencyCode": "RON"
+  },
+  {
+    "code": "RU",
+    "name": "Russia",
+    "currencyCode": "RUB"
+  },
+  {
+    "code": "RW",
+    "name": "Rwanda",
+    "currencyCode": "RWF"
+  },
+  {
+    "code": "WS",
+    "name": "Samoa",
+    "currencyCode": "WST"
+  },
+  {
+    "code": "SM",
+    "name": "San Marino",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "ST",
+    "name": "São Tomé & Príncipe",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SA",
+    "name": "Saudi Arabia",
+    "currencyCode": "SAR"
+  },
+  {
+    "code": "SN",
+    "name": "Senegal",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "RS",
+    "name": "Serbia",
+    "currencyCode": "RSD"
+  },
+  {
+    "code": "SC",
+    "name": "Seychelles",
+    "currencyCode": "SCR"
+  },
+  {
+    "code": "SL",
+    "name": "Sierra Leone",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SG",
+    "name": "Singapore",
+    "currencyCode": "SGD"
+  },
+  {
+    "code": "SX",
+    "name": "Sint Maarten",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SK",
+    "name": "Slovakia",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "SI",
+    "name": "Slovenia",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "SB",
+    "name": "Solomon Islands",
+    "currencyCode": "SBD"
+  },
+  {
+    "code": "SO",
+    "name": "Somalia",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "ZA",
+    "name": "South Africa",
+    "currencyCode": "ZAR"
+  },
+  {
+    "code": "GS",
+    "name": "South Georgia & South Sandwich Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "KR",
+    "name": "South Korea",
+    "currencyCode": "KRW"
+  },
+  {
+    "code": "SS",
+    "name": "South Sudan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "ES",
+    "name": "Spain",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "LK",
+    "name": "Sri Lanka",
+    "currencyCode": "LKR"
+  },
+  {
+    "code": "BL",
+    "name": "St. Barthélemy",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SH",
+    "name": "St. Helena",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "KN",
+    "name": "St. Kitts & Nevis",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "LC",
+    "name": "St. Lucia",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "MF",
+    "name": "St. Martin",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "PM",
+    "name": "St. Pierre & Miquelon",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "VC",
+    "name": "St. Vincent & Grenadines",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SD",
+    "name": "Sudan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SR",
+    "name": "Suriname",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SJ",
+    "name": "Svalbard & Jan Mayen",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "currencyCode": "SEK"
+  },
+  {
+    "code": "CH",
+    "name": "Switzerland",
+    "currencyCode": "CHF"
+  },
+  {
+    "code": "SY",
+    "name": "Syria",
+    "currencyCode": "SYP"
+  },
+  {
+    "code": "TW",
+    "name": "Taiwan",
+    "currencyCode": "TWD"
+  },
+  {
+    "code": "TJ",
+    "name": "Tajikistan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "TZ",
+    "name": "Tanzania",
+    "currencyCode": "TZS"
+  },
+  {
+    "code": "TH",
+    "name": "Thailand",
+    "currencyCode": "THB"
+  },
+  {
+    "code": "TL",
+    "name": "Timor-Leste",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "TG",
+    "name": "Togo",
+    "currencyCode": "XOF"
+  },
+  {
+    "code": "TK",
+    "name": "Tokelau",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "TO",
+    "name": "Tonga",
+    "currencyCode": "TOP"
+  },
+  {
+    "code": "TT",
+    "name": "Trinidad & Tobago",
+    "currencyCode": "TTD"
+  },
+  {
+    "code": "TN",
+    "name": "Tunisia",
+    "currencyCode": "TND"
+  },
+  {
+    "code": "TR",
+    "name": "Türkiye",
+    "currencyCode": "TRY"
+  },
+  {
+    "code": "TM",
+    "name": "Turkmenistan",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "TC",
+    "name": "Turks & Caicos Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "TV",
+    "name": "Tuvalu",
+    "currencyCode": "AUD"
+  },
+  {
+    "code": "UM",
+    "name": "U.S. Outlying Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "VI",
+    "name": "U.S. Virgin Islands",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "UG",
+    "name": "Uganda",
+    "currencyCode": "UGX"
+  },
+  {
+    "code": "UA",
+    "name": "Ukraine",
+    "currencyCode": "UAH"
+  },
+  {
+    "code": "AE",
+    "name": "United Arab Emirates",
+    "currencyCode": "AED"
+  },
+  {
+    "code": "GB",
+    "name": "United Kingdom",
+    "currencyCode": "GBP"
+  },
+  {
+    "code": "US",
+    "name": "United States",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "UY",
+    "name": "Uruguay",
+    "currencyCode": "UYU"
+  },
+  {
+    "code": "UZ",
+    "name": "Uzbekistan",
+    "currencyCode": "UZS"
+  },
+  {
+    "code": "VU",
+    "name": "Vanuatu",
+    "currencyCode": "VUV"
+  },
+  {
+    "code": "VA",
+    "name": "Vatican City",
+    "currencyCode": "EUR"
+  },
+  {
+    "code": "VE",
+    "name": "Venezuela",
+    "currencyCode": "VES"
+  },
+  {
+    "code": "VN",
+    "name": "Vietnam",
+    "currencyCode": "VND"
+  },
+  {
+    "code": "WF",
+    "name": "Wallis & Futuna",
+    "currencyCode": "XPF"
+  },
+  {
+    "code": "EH",
+    "name": "Western Sahara",
+    "currencyCode": "USD"
+  },
+  {
+    "code": "YE",
+    "name": "Yemen",
+    "currencyCode": "YER"
+  },
+  {
+    "code": "ZM",
+    "name": "Zambia",
+    "currencyCode": "ZMW"
+  },
+  {
+    "code": "ZW",
+    "name": "Zimbabwe",
+    "currencyCode": "USD"
+  }
+]

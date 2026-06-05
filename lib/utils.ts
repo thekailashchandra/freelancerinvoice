@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Plain amount for invoice tables (e.g. 630.00) */
+export function formatInvoiceAmount(amount: number): string {
+  return amount.toFixed(2);
+}
+
 export function formatCurrency(amount: number, currency = "USD"): string {
   try {
     return new Intl.NumberFormat(undefined, {
@@ -17,13 +22,16 @@ export function formatCurrency(amount: number, currency = "USD"): string {
   }
 }
 
+/** Globally readable date — e.g. 5 Jun 2026 (day month year, unambiguous). */
 export function formatDate(dateString: string): string {
   if (!dateString) return "—";
-  return new Intl.DateTimeFormat("en-IN", {
+  const date = new Date(`${dateString}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
-  }).format(new Date(dateString));
+  }).format(date);
 }
 
 export function generateId(): string {
