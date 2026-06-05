@@ -141,7 +141,22 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" className="gap-2" onClick={() => printInvoice()}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={async () => {
+              try {
+                await printInvoice();
+              } catch (err) {
+                const message =
+                  err instanceof Error
+                    ? err.message
+                    : "Could not open print dialog.";
+                toast.error("Print failed", { description: message });
+              }
+            }}
+          >
             <Printer className="h-4 w-4" />
             Print
           </Button>
