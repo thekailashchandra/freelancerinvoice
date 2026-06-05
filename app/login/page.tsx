@@ -1,10 +1,26 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { getCanonicalUrl } from "@/data/seo";
+import { siteConfig } from "@/data/site";
+import {
+  getGoogleClientId,
+  getSupabasePublishableEnv,
+  isSupabaseConfigured,
+} from "@/lib/supabase/env";
 import { LoginForm } from "./login-form";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+  description: `Sign in to ${siteConfig.name} to access your freelancer invoices, PDF exports, and billing history.`,
+  alternates: { canonical: getCanonicalUrl("/login") },
+  robots: { index: true, follow: true },
+};
 
 export default function LoginPage() {
   const configured = isSupabaseConfigured();
+  const supabaseConfig = configured ? getSupabasePublishableEnv() : null;
+  const googleClientId = getGoogleClientId() ?? null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -16,7 +32,11 @@ export default function LoginPage() {
           </div>
         }
       >
-        <LoginForm configured={configured} />
+        <LoginForm
+          configured={configured}
+          supabaseConfig={supabaseConfig}
+          googleClientId={googleClientId}
+        />
       </Suspense>
     </div>
   );

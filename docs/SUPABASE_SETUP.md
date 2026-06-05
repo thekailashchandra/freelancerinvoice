@@ -34,11 +34,24 @@ This creates:
 - `handle_new_user()` trigger (auto-creates a profile on signup)
 - `invoice-assets` storage bucket and folder policies
 
-## 4. Enable email auth & URL configuration
+## 4. Enable auth providers & URL configuration
 
 1. **Authentication → Providers → Email** — enable Email.
 2. For local dev, disable **Confirm email** if you want instant sign-in after signup.
-3. **Authentication → URL Configuration** (required for localhost):
+3. **Authentication → Providers → Google** — enable Google:
+   - In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create **OAuth client ID** → **Web application**:
+     - **Authorized JavaScript origins:** `http://localhost:3000`, `https://www.invoiceforfreelance.com`
+     - **Authorized redirect URIs:** `https://<project-ref>.supabase.co/auth/v1/callback` (from Supabase Google provider page)
+   - **APIs & Services → OAuth consent screen** (this controls the name users see):
+     - **App name:** `Invoice for Freelance`
+     - **User support email:** your email
+     - **App logo:** upload your brand logo (optional)
+     - **Application home page:** `https://www.invoiceforfreelance.com`
+     - **Authorized domains:** `invoiceforfreelance.com`
+   - Paste **Client ID** + **Client Secret** into Supabase → Google provider → Save.
+   - Add the same Client ID to `.env.local`:
+     - `NEXT_PUBLIC_GOOGLE_CLIENT_ID=<your-client-id>.apps.googleusercontent.com`
+4. **Authentication → URL Configuration** (required for localhost):
    - **Site URL:** `http://localhost:3000`
    - **Redirect URLs** (add all):
      - `http://localhost:3000/**`
@@ -52,7 +65,7 @@ This creates:
 
    You do **not** need `NEXT_PUBLIC_SITE_URL` for local dev (the app uses `http://localhost:3000` automatically).
 
-Auth runs via **server actions** (not browser `fetch`), which avoids extensions blocking Supabase requests.
+Email/password auth runs via **server actions**. Google sign-in uses **Google Identity Services** + Supabase `signInWithIdToken`, so the consent screen shows your app name instead of `*.supabase.co`.
 
 ### Production (`https://www.invoiceforfreelance.com`)
 

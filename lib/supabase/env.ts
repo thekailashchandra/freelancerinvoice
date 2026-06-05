@@ -10,6 +10,7 @@
 const PUBLISHABLE_URL_KEY = "NEXT_PUBLIC_SUPABASE_URL";
 const PUBLISHABLE_KEY_KEY = "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY";
 const SECRET_KEY_KEY = "SUPABASE_SECRET_KEY";
+const GOOGLE_CLIENT_ID_KEY = "NEXT_PUBLIC_GOOGLE_CLIENT_ID";
 
 const PLACEHOLDER_HOSTS = new Set([
   "example.supabase.co",
@@ -55,6 +56,15 @@ export function isSupabaseConfigured(): boolean {
 
 export function isSupabaseServerConfigured(): boolean {
   return isSupabaseConfigured() && Boolean(readEnv(SECRET_KEY_KEY));
+}
+
+/** Same Client ID as Supabase → Authentication → Google (public, safe in browser). */
+export function getGoogleClientId(): string | undefined {
+  return readEnv(GOOGLE_CLIENT_ID_KEY);
+}
+
+export function isGoogleAuthConfigured(): boolean {
+  return Boolean(getGoogleClientId());
 }
 
 /** Publishable key — safe for browser and cookie-based SSR (RLS applies). */

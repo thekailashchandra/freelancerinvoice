@@ -6,9 +6,12 @@ import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { signUpFormAction, type AuthFormState } from "@/lib/actions/auth";
+import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { SiteLogo } from "@/components/site-logo";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
@@ -33,9 +36,16 @@ type SignupFormProps = {
   /** From server — avoids client env mismatch during hydration */
   configured: boolean;
   canSignUp: boolean;
+  supabaseConfig: SupabaseBrowserConfig | null;
+  googleClientId: string | null;
 };
 
-export function SignupForm({ configured, canSignUp }: SignupFormProps) {
+export function SignupForm({
+  configured,
+  canSignUp,
+  supabaseConfig,
+  googleClientId,
+}: SignupFormProps) {
   const [state, formAction] = useActionState<AuthFormState, FormData>(
     signUpFormAction,
     null
@@ -72,6 +82,18 @@ export function SignupForm({ configured, canSignUp }: SignupFormProps) {
             {state.error}
           </p>
         )}
+        <GoogleSignInButton
+          disabled={!configured}
+          redirectTo="/onboarding"
+          supabaseConfig={supabaseConfig}
+          googleClientId={googleClientId}
+        />
+        <div className="relative my-6">
+          <Separator />
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+            or sign up with email
+          </span>
+        </div>
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>

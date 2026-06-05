@@ -7,9 +7,12 @@ import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { signInFormAction, type AuthFormState } from "@/lib/actions/auth";
+import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { SiteLogo } from "@/components/site-logo";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
@@ -32,9 +35,15 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 type LoginFormProps = {
   configured: boolean;
+  supabaseConfig: SupabaseBrowserConfig | null;
+  googleClientId: string | null;
 };
 
-export function LoginForm({ configured }: LoginFormProps) {
+export function LoginForm({
+  configured,
+  supabaseConfig,
+  googleClientId,
+}: LoginFormProps) {
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get("redirect") ?? "/dashboard";
   const authError = searchParams.get("error");
@@ -77,6 +86,18 @@ export function LoginForm({ configured }: LoginFormProps) {
             {state.error}
           </p>
         )}
+        <GoogleSignInButton
+          disabled={!configured}
+          redirectTo={redirectParam}
+          supabaseConfig={supabaseConfig}
+          googleClientId={googleClientId}
+        />
+        <div className="relative my-6">
+          <Separator />
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+            or continue with email
+          </span>
+        </div>
         <form action={formAction} className="space-y-4">
           <input type="hidden" name="redirect" value={redirectParam} />
           <div className="space-y-2">
