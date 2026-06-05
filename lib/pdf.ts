@@ -185,7 +185,7 @@ async function captureLivePreviewToCanvas(
   const preview = document.getElementById(previewId);
   if (!preview) return null;
 
-  const { width, spec } = getPreviewExportConfig(preview);
+  const { width } = getPreviewExportConfig(preview);
 
   const iframe = createOffScreenIframe(width, "PDF export");
 
@@ -386,7 +386,7 @@ export async function printInvoice(options?: {
   preview.scrollIntoView({ block: "nearest" });
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  const { width, spec } = getPreviewExportConfig(preview);
+  const { width } = getPreviewExportConfig(preview);
   const iframe = createOffScreenIframe(width, "Print invoice");
 
   try {

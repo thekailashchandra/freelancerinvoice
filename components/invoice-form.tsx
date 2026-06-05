@@ -95,7 +95,7 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
 
   const updateCompany = (
     field: keyof CompanySettings,
-    value: string | null
+    value: string | number | null
   ) => {
     onChange({
       ...invoice,
