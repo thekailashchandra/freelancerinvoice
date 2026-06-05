@@ -58,9 +58,18 @@ export function isSupabaseServerConfigured(): boolean {
   return isSupabaseConfigured() && Boolean(readEnv(SECRET_KEY_KEY));
 }
 
+const PLACEHOLDER_GOOGLE_CLIENT_IDS = new Set([
+  "your-client-id.apps.googleusercontent.com",
+  "your-google-client-id.apps.googleusercontent.com",
+]);
+
 /** Same Client ID as Supabase → Authentication → Google (public, safe in browser). */
 export function getGoogleClientId(): string | undefined {
-  return readEnv(GOOGLE_CLIENT_ID_KEY);
+  const clientId = readEnv(GOOGLE_CLIENT_ID_KEY);
+  if (!clientId || PLACEHOLDER_GOOGLE_CLIENT_IDS.has(clientId)) {
+    return undefined;
+  }
+  return clientId;
 }
 
 export function isGoogleAuthConfigured(): boolean {
