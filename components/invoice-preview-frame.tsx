@@ -24,7 +24,7 @@ export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [contentHeight, setContentHeight] = useState(spec.heightPx);
+  const [contentHeight, setContentHeight] = useState<number>(spec.heightPx);
 
   const updateScale = useCallback(() => {
     const viewport = viewportRef.current;
