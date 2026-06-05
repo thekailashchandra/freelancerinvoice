@@ -30,6 +30,7 @@ export interface ProfileRow {
   default_routing_number: string;
   default_iban: string;
   default_sort_code: string;
+  logo_height?: number;
   created_at: string;
   updated_at: string;
 }
@@ -76,6 +77,7 @@ export interface InvoiceRow {
   routing_number: string;
   iban: string;
   sort_code: string;
+  page_size?: string;
   created_at: string;
   updated_at: string;
 }

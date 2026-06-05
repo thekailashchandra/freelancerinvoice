@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       ? ".next"
       : (process.env.NEXT_DIST_DIR ?? ".next-dev"),
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react", "framer-motion", "date-fns"],
+  },
   images: {
     remotePatterns: [
       {

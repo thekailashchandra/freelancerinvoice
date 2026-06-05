@@ -39,7 +39,7 @@ export async function updateProfileAction(
 
   if (!user) throw new Error("Not authenticated");
 
-  const row: Record<string, string | null> = {};
+  const row: Record<string, string | number | null> = {};
 
   if (settings.companyName !== undefined) {
     row.company_name = settings.companyName || null;
@@ -52,6 +52,12 @@ export async function updateProfileAction(
   if (settings.countryCode !== undefined) row.country_code = settings.countryCode;
   if (settings.currencyCode !== undefined) row.currency_code = settings.currencyCode;
   if (settings.taxLabel !== undefined) row.tax_label = settings.taxLabel;
+  if (settings.logoHeight !== undefined) {
+    row.logo_height = Math.min(
+      200,
+      Math.max(32, Math.round(settings.logoHeight))
+    );
+  }
 
   if (settings.defaultPayment !== undefined) {
     const country = settings.countryCode ?? "OTHER";

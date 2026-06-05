@@ -1,8 +1,21 @@
 import { Suspense } from "react";
 import { CreateInvoiceClient } from "./create-invoice-client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchInvoiceByIdAction } from "@/lib/actions/invoices";
+import { fetchProfileAction } from "@/lib/actions/profile";
 
-export default function CreateInvoicePage() {
+type PageProps = {
+  searchParams: Promise<{ id?: string }>;
+};
+
+export default async function CreateInvoicePage({ searchParams }: PageProps) {
+  const { id: editId } = await searchParams;
+
+  const [initialSettings, initialInvoice] = await Promise.all([
+    fetchProfileAction(),
+    editId ? fetchInvoiceByIdAction(editId) : Promise.resolve(null),
+  ]);
+
   return (
     <Suspense
       fallback={
@@ -12,7 +25,11 @@ export default function CreateInvoicePage() {
         </div>
       }
     >
-      <CreateInvoiceClient />
+      <CreateInvoiceClient
+        editId={editId ?? null}
+        initialSettings={initialSettings}
+        initialInvoice={initialInvoice}
+      />
     </Suspense>
   );
 }

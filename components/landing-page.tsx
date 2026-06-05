@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
+import { PrivacyConsentLink } from "@/components/privacy-consent-link";
 import { SiteLogo } from "@/components/site-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -378,6 +379,10 @@ export function LandingPage() {
             >
               Sitemap
             </a>
+            <Link href="/privacy" className="hover:text-foreground hover:underline">
+              Privacy
+            </Link>
+            <PrivacyConsentLink className="hover:text-foreground" />
           </nav>
         </div>
       </footer>

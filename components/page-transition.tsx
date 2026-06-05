@@ -5,9 +5,19 @@ import { motion } from "framer-motion";
 interface PageTransitionProps {
   children: React.ReactNode;
   className?: string;
+  /** Skip framer-motion for faster app pages (e.g. create invoice) */
+  instant?: boolean;
 }
 
-export function PageTransition({ children, className }: PageTransitionProps) {
+export function PageTransition({
+  children,
+  className,
+  instant = false,
+}: PageTransitionProps) {
+  if (instant) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}

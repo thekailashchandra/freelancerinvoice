@@ -1,9 +1,15 @@
 "use client";
 
-import { Inter } from "next/font/google";
+import { memo, useMemo } from "react";
 import type { Invoice } from "@/types/invoice";
 import { calculateTotals } from "@/lib/calculations";
-import { invoiceDesign } from "@/lib/invoice-design";
+import {
+  getInvoicePageSpec,
+  getLogoDimensions,
+  invoiceDesign,
+  resolveInvoicePageSize,
+  resolveLogoHeight,
+} from "@/lib/invoice-design";
 import { InvoiceMoney } from "@/components/invoice-money";
 import { UpiQrCode } from "@/components/upi-qr-code";
 import {
@@ -12,12 +18,6 @@ import {
 } from "@/lib/invoice-payment-display";
 import { buildInvoiceUpiLink } from "@/lib/upi";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 const d = invoiceDesign;
 
@@ -55,18 +55,24 @@ function MetaRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function InvoicePreview({
+export const InvoicePreview = memo(function InvoicePreview({
   invoice,
   previewId = "invoice-preview",
 }: InvoicePreviewProps) {
-  const totals = calculateTotals(
-    invoice.services,
-    invoice.taxDiscount,
-    invoice.taxLabel
+  const totals = useMemo(
+    () =>
+      calculateTotals(invoice.services, invoice.taxDiscount, invoice.taxLabel),
+    [invoice.services, invoice.taxDiscount, invoice.taxLabel]
   );
   const currency = invoice.currencyCode;
-  const paymentLines = getInvoicePaymentInfo(invoice.payment);
-  const upiLink = buildInvoiceUpiLink(invoice, totals.total);
+  const paymentLines = useMemo(
+    () => getInvoicePaymentInfo(invoice.payment),
+    [invoice.payment]
+  );
+  const upiLink = useMemo(
+    () => buildInvoiceUpiLink(invoice, totals.total),
+    [invoice, totals.total]
+  );
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
   const taxPct =
@@ -78,18 +84,26 @@ export function InvoicePreview({
   const paymentTerms =
     invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
-  const clientLines = [
-    invoice.client.address,
-    invoice.client.email,
-    invoice.client.phone,
-  ].filter(Boolean) as string[];
+  const clientLines = useMemo(
+    () =>
+      [
+        invoice.client.address,
+        invoice.client.email,
+        invoice.client.phone,
+      ].filter(Boolean) as string[],
+    [invoice.client.address, invoice.client.email, invoice.client.phone]
+  );
 
   const tableCols = ["#", "Item & Description", "Qty", "Rate", "Tax", "Amount"];
+  const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
+  const logo = getLogoDimensions(resolveLogoHeight(invoice.company.logoHeight));
 
   return (
     <div
       id={previewId}
-      className={`invoice-print-area mx-auto w-full ${inter.className}`}
+      className="invoice-print-area font-sans"
+      data-page-size={pageSpec.pdfFormat}
+      data-logo-height={String(logo.height)}
       style={{
         fontFamily: d.font,
         backgroundColor: d.colors.bg,
@@ -97,9 +111,11 @@ export function InvoicePreview({
         border: "none",
         borderRadius: 0,
         boxShadow: "none",
-        padding: `${d.page.paddingPx}px`,
-        width: "100%",
-        maxWidth: d.page.widthPx,
+        padding: `${pageSpec.paddingPx}px`,
+        width: `${pageSpec.widthPx}px`,
+        maxWidth: `${pageSpec.widthPx}px`,
+        minHeight: `${pageSpec.heightPx}px`,
+        boxSizing: "border-box",
         fontVariantNumeric: "tabular-nums",
       }}
     >
@@ -129,8 +145,8 @@ export function InvoicePreview({
                 alt=""
                 style={{
                   display: "block",
-                  height: d.logo.boxSize,
-                  maxWidth: d.logo.maxWidth,
+                  height: logo.height,
+                  maxWidth: logo.maxWidth,
                   width: "auto",
                   objectFit: "contain",
                 }}
@@ -138,8 +154,8 @@ export function InvoicePreview({
             ) : (
               <div
                 style={{
-                  width: d.logo.boxSize,
-                  height: d.logo.boxSize,
+                  width: logo.initialSize,
+                  height: logo.initialSize,
                   borderRadius: "50%",
                   backgroundColor: d.colors.accent,
                   color: "#fff",
@@ -789,4 +805,4 @@ export function InvoicePreview({
       )}
     </div>
   );
-}
+});

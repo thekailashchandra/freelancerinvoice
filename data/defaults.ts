@@ -69,6 +69,7 @@ export function createDefaultInvoice(company: CompanySettings = defaultCompanySe
     payment: { ...company.defaultPayment },
     notes: "Thanks for your business.",
     termsAndConditions: "",
+    pageSize: "a4",
     company,
   };
 }

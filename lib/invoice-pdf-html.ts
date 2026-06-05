@@ -1,6 +1,12 @@
 import { calculateTotals } from "@/lib/calculations";
 
-import { invoiceDesign } from "@/lib/invoice-design";
+import {
+  getInvoicePageSpec,
+  getLogoDimensions,
+  invoiceDesign,
+  resolveInvoicePageSize,
+  resolveLogoHeight,
+} from "@/lib/invoice-design";
 
 import { invoiceMoneyHtml } from "@/lib/currency-display";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
@@ -13,8 +19,6 @@ import {
 import type { Invoice } from "@/types/invoice";
 
 const d = invoiceDesign;
-
-const W = d.page.contentWidthPx;
 
 const F = d.pdfFont;
 
@@ -53,6 +57,9 @@ function metaRow(label: string, value: string): string {
 }
 
 export function buildInvoicePdfHtml(invoice: Invoice): string {
+  const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
+  const W = pageSpec.contentWidthPx;
+  const logo = getLogoDimensions(resolveLogoHeight(invoice.company.logoHeight));
 
   const totals = calculateTotals(
     invoice.services,
@@ -92,10 +99,10 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
   ].filter(Boolean) as string[];
 
   const logoImg = invoice.company.logo
-    ? `<img src="${invoice.company.logo}" alt="" style="display:block;height:${d.logo.boxSize}px;max-width:${d.logo.maxWidth}px;width:auto;object-fit:contain;border:0" />`
+    ? `<img src="${invoice.company.logo}" alt="" style="display:block;height:${logo.height}px;max-width:${logo.maxWidth}px;width:auto;object-fit:contain;border:0" />`
     : "";
 
-  const initialBlock = `<div style="width:${d.logo.boxSize}px;height:${d.logo.boxSize}px;border-radius:50%;background:${d.colors.accent};color:#fff;font-family:${F};font-size:30px;font-weight:bold;text-align:center;line-height:${d.logo.boxSize}px">${escapeHtml((invoice.company.companyName || "Y").charAt(0).toUpperCase())}</div>`;
+  const initialBlock = `<div style="width:${logo.initialSize}px;height:${logo.initialSize}px;border-radius:50%;background:${d.colors.accent};color:#fff;font-family:${F};font-size:30px;font-weight:bold;text-align:center;line-height:${logo.initialSize}px">${escapeHtml((invoice.company.companyName || "Y").charAt(0).toUpperCase())}</div>`;
 
   const companyNameBlock = `<div style="font-family:${F};font-size:17px;font-weight:bold;color:${d.colors.text}">${escapeHtml(invoice.company.companyName || "Your business")}</div>`;
 
@@ -238,7 +245,7 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
 
   html,body{margin:0;padding:0;background:#fff}
 
-  body{width:${d.page.widthPx}px;padding:${d.page.paddingPx}px;font-family:${F}}
+  body{width:${pageSpec.widthPx}px;padding:${pageSpec.paddingPx}px;font-family:${F}}
 
   table{border-collapse:collapse} img{border:0}
 

@@ -1,12 +1,35 @@
 "use client";
 
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-import { invoiceDesign } from "@/lib/invoice-design";
+import {
+  getInvoicePageSpec,
+  invoiceDesign,
+  resolveInvoicePageSize,
+  type InvoicePageSize,
+} from "@/lib/invoice-design";
 import { buildInvoicePdfHtml } from "@/lib/invoice-pdf-html";
 import type { Invoice } from "@/types/invoice";
 
 const PREVIEW_ID = "invoice-preview";
+
+type PdfLibs = {
+  html2canvas: typeof import("html2canvas").default;
+  jsPDF: typeof import("jspdf").jsPDF;
+};
+
+let pdfLibsPromise: Promise<PdfLibs> | null = null;
+
+function loadPdfLibs(): Promise<PdfLibs> {
+  if (!pdfLibsPromise) {
+    pdfLibsPromise = Promise.all([
+      import("html2canvas"),
+      import("jspdf"),
+    ]).then(([html2canvasMod, jspdfMod]) => ({
+      html2canvas: html2canvasMod.default,
+      jsPDF: jspdfMod.jsPDF,
+    }));
+  }
+  return pdfLibsPromise;
+}
 
 const INVOICE_FRAME_BASE_CSS = `
   html, body { margin: 0; padding: 0; background: #ffffff; }
@@ -23,8 +46,9 @@ const INVOICE_FRAME_BASE_CSS = `
   }
 `;
 
-const INVOICE_PRINT_CSS = `
-  @page { margin: 12mm; size: auto; }
+function buildInvoicePrintCss(printSize: string): string {
+  return `
+  @page { margin: 12mm; size: ${printSize}; }
   *, *::before, *::after {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -37,8 +61,18 @@ const INVOICE_PRINT_CSS = `
     border-radius: 0 !important;
     background-color: #ffffff !important;
     color: #111827 !important;
+    box-sizing: border-box !important;
   }
 `;
+}
+
+function getPreviewExportConfig(preview: HTMLElement) {
+  const pageSize = resolveInvoicePageSize(
+    preview.dataset.pageSize as InvoicePageSize | undefined
+  );
+  const spec = getInvoicePageSpec(pageSize);
+  return { pageSize, spec, width: spec.widthPx };
+}
 
 function sanitizeFilename(name: string): string {
   return name.replace(/[<>:"/\\|?*]/g, "-").trim() || "invoice";
@@ -72,8 +106,12 @@ async function waitForFonts(doc: Document): Promise<void> {
   await new Promise((r) => setTimeout(r, 150));
 }
 
-function buildInvoiceFrameHtml(width: number, includePrintCss = false): string {
-  const extraCss = includePrintCss ? INVOICE_PRINT_CSS : "";
+function buildInvoiceFrameHtml(
+  width: number,
+  includePrintCss = false,
+  printSize = "A4 portrait"
+): string {
+  const extraCss = includePrintCss ? buildInvoicePrintCss(printSize) : "";
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,7 +157,9 @@ function createInvoiceClone(
   clone.style.fontFamily = invoiceDesign.font;
   clone.style.width = `${width}px`;
   clone.style.maxWidth = `${width}px`;
+  clone.style.minWidth = `${width}px`;
   clone.style.margin = "0";
+  clone.style.boxSizing = "border-box";
   clone.style.border = "none";
   clone.style.boxShadow = "none";
   clone.style.borderRadius = "0";
@@ -145,8 +185,7 @@ async function captureLivePreviewToCanvas(
   const preview = document.getElementById(previewId);
   if (!preview) return null;
 
-  const width = preview.offsetWidth;
-  if (width < 1) return null;
+  const { width, spec } = getPreviewExportConfig(preview);
 
   const iframe = createOffScreenIframe(width, "PDF export");
 
@@ -175,6 +214,7 @@ async function captureLivePreviewToCanvas(
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   try {
+    const { html2canvas } = await loadPdfLibs();
     return await html2canvas(clone, {
       scale: 2,
       useCORS: true,
@@ -199,7 +239,8 @@ async function captureInvoiceHtmlToCanvas(
   invoice: Invoice
 ): Promise<HTMLCanvasElement> {
   const html = buildInvoicePdfHtml(invoice);
-  const pageWidth = invoiceDesign.page.widthPx;
+  const spec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
+  const pageWidth = spec.widthPx;
 
   const iframe = document.createElement("iframe");
   iframe.setAttribute("title", "PDF export");
@@ -236,6 +277,7 @@ async function captureInvoiceHtmlToCanvas(
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   try {
+    const { html2canvas } = await loadPdfLibs();
     return await html2canvas(root, {
       scale: 2,
       useCORS: true,
@@ -244,7 +286,7 @@ async function captureInvoiceHtmlToCanvas(
       logging: false,
       scrollX: 0,
       scrollY: 0,
-      width: invoiceDesign.page.contentWidthPx,
+      width: spec.contentWidthPx,
       height: root.scrollHeight,
       windowWidth: pageWidth,
       windowHeight: contentHeight,
@@ -255,16 +297,19 @@ async function captureInvoiceHtmlToCanvas(
   }
 }
 
-/** Fit entire invoice on one A4 page */
-function buildPdfFromCanvas(
+/** Fit invoice to selected paper size (width-first, one page) */
+async function buildPdfFromCanvas(
   canvas: HTMLCanvasElement,
-  filename: string
-): void {
+  filename: string,
+  pageSize?: InvoicePageSize
+): Promise<void> {
+  const { jsPDF } = await loadPdfLibs();
   const dataUrl = canvas.toDataURL("image/png");
+  const spec = getInvoicePageSpec(resolveInvoicePageSize(pageSize));
   const pdf = new jsPDF({
     orientation: "portrait",
     unit: "mm",
-    format: "a4",
+    format: spec.pdfFormat,
   });
 
   const pageW = pdf.internal.pageSize.getWidth();
@@ -313,7 +358,14 @@ export async function downloadInvoicePdf(
     throw new Error("Could not render invoice. Try refreshing the page.");
   }
 
-  buildPdfFromCanvas(canvas, filename);
+  const pageSize =
+    (previewEl &&
+      resolveInvoicePageSize(
+        previewEl.dataset.pageSize as InvoicePageSize | undefined
+      )) ||
+    resolveInvoicePageSize(invoice.pageSize);
+
+  await buildPdfFromCanvas(canvas, filename, pageSize);
 }
 
 /**
@@ -334,7 +386,7 @@ export async function printInvoice(options?: {
   preview.scrollIntoView({ block: "nearest" });
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  const width = preview.offsetWidth || invoiceDesign.page.widthPx;
+  const { width, spec } = getPreviewExportConfig(preview);
   const iframe = createOffScreenIframe(width, "Print invoice");
 
   try {
@@ -345,7 +397,7 @@ export async function printInvoice(options?: {
     }
 
     doc.open();
-    doc.write(buildInvoiceFrameHtml(width, true));
+    doc.write(buildInvoiceFrameHtml(width, true, spec.printSize));
     doc.close();
 
     await waitForIframeReady(iframe, doc);

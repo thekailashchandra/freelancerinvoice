@@ -2,10 +2,12 @@ import type { ProfileRow, InvoiceRow, InvoiceItemRow, InvoiceWithItems } from "@
 import type {
   CompanySettings,
   Invoice,
+  InvoicePageSize,
   InvoiceStatus,
   PaymentDetails,
   ServiceItem,
 } from "@/types/invoice";
+import { resolveInvoicePageSize } from "@/lib/invoice-design";
 import { sanitizePaymentForCountry } from "@/lib/country";
 import { generateId } from "@/lib/utils";
 
@@ -30,6 +32,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     companyPhone: profile.phone ?? "",
     companyAddress: profile.address ?? "",
     logo: profile.logo_url,
+    logoHeight: profile.logo_height ?? 80,
     signature: profile.signature_url,
     countryCode: profile.country_code ?? "OTHER",
     currencyCode: profile.currency_code,
@@ -105,6 +108,9 @@ export function dbInvoiceToApp(
     },
     notes: row.notes,
     termsAndConditions: row.terms_and_conditions ?? "",
+    pageSize: resolveInvoicePageSize(
+      (row.page_size as InvoicePageSize | undefined) ?? "a4"
+    ),
     company: {
       ...company,
       gstin: row.seller_gstin ?? "",
@@ -160,6 +166,7 @@ export function appInvoiceToDbPayload(
       routing_number: payment.routingNumber,
       iban: payment.iban,
       sort_code: payment.sortCode,
+      page_size: resolveInvoicePageSize(invoice.pageSize),
     },
     items: invoice.services.map((s, index) => ({
       service_name: s.name,

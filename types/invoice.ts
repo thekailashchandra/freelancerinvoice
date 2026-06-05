@@ -15,6 +15,8 @@ export interface ServiceItem {
 
 export type GstSupplyType = "intra" | "inter";
 
+export type InvoicePageSize = "a4" | "letter";
+
 export interface ClientDetails {
   name: string;
   email: string;
@@ -62,6 +64,8 @@ export interface CompanySettings {
   companyPhone: string;
   companyAddress: string;
   logo: string | null;
+  /** Logo height in px on invoice (32–200) */
+  logoHeight?: number;
   signature: string | null;
   /** ISO country code — drives currency/tax/payment field defaults */
   countryCode: string;
@@ -86,6 +90,8 @@ export interface Invoice {
   payment: PaymentDetails;
   notes: string;
   termsAndConditions?: string;
+  /** Paper size for preview, print, and PDF */
+  pageSize?: InvoicePageSize;
   company: CompanySettings;
 }
 

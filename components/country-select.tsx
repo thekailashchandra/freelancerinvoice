@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { COUNTRY_OPTIONS, getCountryLabel } from "@/lib/country";
+import { limitCountryOptions } from "@/lib/select-limits";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,14 +27,10 @@ export function CountrySelect({
   const [search, setSearch] = useState("");
   const displayLabel = getCountryLabel(value);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return COUNTRY_OPTIONS;
-    return COUNTRY_OPTIONS.filter(
-      (c) =>
-        c.label.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
-    );
-  }, [search]);
+  const { items: filtered, truncated } = useMemo(
+    () => limitCountryOptions(COUNTRY_OPTIONS, search, value),
+    [search, value]
+  );
 
   return (
     <Select
@@ -60,6 +57,11 @@ export function CountrySelect({
             className="h-8"
           />
         </div>
+        {truncated && !search.trim() && (
+          <p className="px-3 py-2 text-center text-xs text-muted-foreground">
+            Common countries — search for more
+          </p>
+        )}
         {filtered.length === 0 ? (
           <p className="px-3 py-6 text-center text-sm text-muted-foreground">
             No countries found

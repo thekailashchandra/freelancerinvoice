@@ -11,6 +11,8 @@ import { uploadInvoiceAssetAction } from "@/lib/actions/profile-assets";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import { CurrencySelect } from "@/components/currency-select";
 import { sanitizePaymentForCountry } from "@/lib/country";
+import { invoicePageSpecs, resolveLogoHeight } from "@/lib/invoice-design";
+import type { InvoicePageSize } from "@/types/invoice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -236,6 +238,48 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
               e.target.value = "";
             }}
           />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="logoHeight">Logo size</Label>
+              <span className="text-xs text-muted-foreground">
+                {resolveLogoHeight(invoice.company.logoHeight)}px
+              </span>
+            </div>
+            <input
+              id="logoHeight"
+              type="range"
+              min={32}
+              max={200}
+              step={4}
+              value={resolveLogoHeight(invoice.company.logoHeight)}
+              onChange={(e) =>
+                updateCompany("logoHeight", Number(e.target.value))
+              }
+              className="h-2 w-full cursor-pointer accent-primary"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Paper size</Label>
+            <Select
+              value={invoice.pageSize ?? "a4"}
+              onValueChange={(v) =>
+                update({ pageSize: v as InvoicePageSize })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="a4">{invoicePageSpecs.a4.label}</SelectItem>
+                <SelectItem value="letter">
+                  {invoicePageSpecs.letter.label}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* From / To */}

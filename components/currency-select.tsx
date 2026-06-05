@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CURRENCY_OPTIONS } from "@/lib/currency";
 import { getCurrencyFlag, getCurrencyLabel } from "@/lib/currency-display";
+import { limitCurrencyOptions } from "@/lib/select-limits";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,16 +31,10 @@ export function CurrencySelect({
   const flag = getCurrencyFlag(value);
   const label = getCurrencyLabel(value);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return CURRENCY_OPTIONS;
-    return CURRENCY_OPTIONS.filter(
-      (c) =>
-        c.code.toLowerCase().includes(q) ||
-        c.name.toLowerCase().includes(q) ||
-        c.symbol.toLowerCase().includes(q)
-    );
-  }, [search]);
+  const { items: filtered, truncated } = useMemo(
+    () => limitCurrencyOptions(CURRENCY_OPTIONS, search, value),
+    [search, value]
+  );
 
   return (
     <Select
@@ -71,6 +66,11 @@ export function CurrencySelect({
             className="h-8"
           />
         </div>
+        {truncated && !search.trim() && (
+          <p className="px-3 py-2 text-center text-xs text-muted-foreground">
+            Popular currencies — search for more
+          </p>
+        )}
         {filtered.length === 0 ? (
           <p className="px-3 py-6 text-center text-sm text-muted-foreground">
             No currencies found

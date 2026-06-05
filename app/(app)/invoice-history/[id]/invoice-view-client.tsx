@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { InvoicePreview } from "@/components/invoice-preview";
+import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { PageTransition } from "@/components/page-transition";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,6 @@ import {
   updateInvoiceStatusAction,
 } from "@/lib/actions/invoices";
 import { deriveInvoiceStatus } from "@/lib/calculations";
-import { downloadInvoicePdf, printInvoice } from "@/lib/pdf";
 import type { Invoice } from "@/types/invoice";
 
 type InvoiceViewClientProps = {
@@ -57,7 +57,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl space-y-4">
+      <div className="mx-auto max-w-4xl space-y-4">
         <Skeleton className="h-10 w-64" />
         <Skeleton className="h-[700px] w-full rounded-2xl" />
       </div>
@@ -88,6 +88,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const handleDownloadPdf = async () => {
     setExporting(true);
     try {
+      const { downloadInvoicePdf } = await import("@/lib/pdf");
       await downloadInvoicePdf(invoice, `${invoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
       });
@@ -147,6 +148,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             className="gap-2"
             onClick={async () => {
               try {
+                const { printInvoice } = await import("@/lib/pdf");
                 await printInvoice();
               } catch (err) {
                 const message =
@@ -201,7 +203,11 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         </div>
       </div>
 
-      <InvoicePreview invoice={invoice} previewId="invoice-preview" />
+      <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
+        <InvoicePreviewFrame pageSize={invoice.pageSize}>
+          <InvoicePreview invoice={invoice} previewId="invoice-preview" />
+        </InvoicePreviewFrame>
+      </div>
     </PageTransition>
   );
 }
