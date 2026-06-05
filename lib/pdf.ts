@@ -386,7 +386,7 @@ export async function printInvoice(options?: {
   preview.scrollIntoView({ block: "nearest" });
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  const { width } = getPreviewExportConfig(preview);
+  const { width, spec } = getPreviewExportConfig(preview);
   const iframe = createOffScreenIframe(width, "Print invoice");
 
   try {
