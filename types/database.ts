@@ -32,6 +32,7 @@ export interface ProfileRow {
   default_iban: string;
   default_sort_code: string;
   logo_height?: number;
+  hide_invoice_branding?: boolean;
   created_at: string;
   updated_at: string;
 }

@@ -44,6 +44,9 @@ const INVOICE_FRAME_BASE_CSS = `
   .invoice-balance-due {
     background-color: #f3f4f6 !important;
   }
+  .invoice-screen-only {
+    display: none !important;
+  }
 `;
 
 function buildInvoicePrintCss(printSize: string): string {
@@ -171,6 +174,8 @@ function createInvoiceClone(
       el.crossOrigin = "anonymous";
     }
   });
+
+  clone.querySelectorAll(".invoice-screen-only").forEach((el) => el.remove());
 
   return clone;
 }

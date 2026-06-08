@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { siteConfig } from "@/data/site";
-import { SupportPayPalLink } from "@/components/support-paypal-link";
+import { SupportTipLink } from "@/components/support-tip-link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -38,12 +38,12 @@ export function SupportPlatformDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <SupportPayPalLink
+          <SupportTipLink
             showIcon={false}
             className={cn(buttonVariants(), "flex-1 no-underline hover:no-underline")}
           >
-            Contribute via PayPal
-          </SupportPayPalLink>
+            Tip on Ko-fi
+          </SupportTipLink>
           <Button variant="outline" asChild className="flex-1">
             <Link href="/pricing">View pricing</Link>
           </Button>

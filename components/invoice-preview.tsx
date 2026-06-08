@@ -17,13 +17,19 @@ import {
   hasInvoicePaymentInfo,
 } from "@/lib/invoice-payment-display";
 import { buildInvoiceUpiLink } from "@/lib/upi";
+import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
+import { InvoicePoweredBy } from "@/components/invoice-powered-by";
 
 const d = invoiceDesign;
 
 interface InvoicePreviewProps {
   invoice: Invoice;
   previewId?: string;
+  /** Override profile branding preference (e.g. always show on marketing demos) */
+  showBranding?: boolean;
+  /** Screen-only: prompt to remove branding via Ko-fi tip */
+  onRemoveBranding?: () => void;
 }
 
 function MetaRow({ label, value }: { label: string; value: string }) {
@@ -58,7 +64,12 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 export const InvoicePreview = memo(function InvoicePreview({
   invoice,
   previewId = "invoice-preview",
+  showBranding,
+  onRemoveBranding,
 }: InvoicePreviewProps) {
+  const showPoweredBy =
+    showBranding ??
+    shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
   const totals = useMemo(
     () =>
       calculateTotals(invoice.services, invoice.taxDiscount, invoice.taxLabel),
@@ -117,8 +128,11 @@ export const InvoicePreview = memo(function InvoicePreview({
         minHeight: `${pageSpec.heightPx}px`,
         boxSizing: "border-box",
         fontVariantNumeric: "tabular-nums",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
+      <div style={{ flex: 1, minHeight: 0 }}>
       {/* Header: company left, invoice meta right */}
       <div
         style={{
@@ -802,6 +816,11 @@ export const InvoicePreview = memo(function InvoicePreview({
             }}
           />
         </div>
+      )}
+      </div>
+
+      {showPoweredBy && (
+        <InvoicePoweredBy pinned onRemoveBranding={onRemoveBranding} />
       )}
     </div>
   );

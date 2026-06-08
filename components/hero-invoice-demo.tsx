@@ -85,6 +85,7 @@ export function HeroInvoiceDemo() {
               <InvoicePreview
                 invoice={demoInvoice}
                 previewId="hero-invoice-demo"
+                showBranding
               />
             </InvoicePreviewFrame>
           </div>

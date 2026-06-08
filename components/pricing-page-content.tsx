@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Heart } from "lucide-react";
 import { siteConfig } from "@/data/site";
-import { SupportPayPalLink } from "@/components/support-paypal-link";
+import { SupportTipLink } from "@/components/support-tip-link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -72,18 +72,18 @@ export function PricingPageContent() {
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground leading-relaxed">
           {siteConfig.name} is built and maintained as a free tool for
           independent contractors. If it helps your freelance business, you can
-          support ongoing development with a voluntary contribution through
-          PayPal. Any amount is appreciated.
+          support ongoing development with a voluntary tip on Ko-fi. Any amount
+          is appreciated.
         </p>
-        <SupportPayPalLink
+        <SupportTipLink
           showIcon={false}
           className={cn(
             buttonVariants({ size: "lg" }),
             "mt-6 no-underline hover:no-underline"
           )}
         >
-          Support via PayPal
-        </SupportPayPalLink>
+          Tip on Ko-fi
+        </SupportTipLink>
         <p className="mt-4 text-xs text-muted-foreground">
           Contributions are optional and do not unlock extra features.
         </p>

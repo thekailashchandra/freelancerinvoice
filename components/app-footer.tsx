@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SupportPayPalLink } from "@/components/support-paypal-link";
+import { SupportTipLink } from "@/components/support-tip-link";
 import { siteConfig } from "@/data/site";
 
 export function AppFooter() {
@@ -10,7 +10,7 @@ export function AppFooter() {
         <Link href="/pricing" className="hover:text-foreground hover:underline">
           Pricing
         </Link>
-        <SupportPayPalLink className="text-primary hover:text-primary" />
+        <SupportTipLink className="text-primary hover:text-primary" />
       </div>
     </footer>
   );

@@ -75,6 +75,8 @@ export interface CompanySettings {
   gstin?: string;
   /** Default payment details copied onto new invoices */
   defaultPayment: PaymentDetails;
+  /** When true, omit the platform "Powered by" footer on invoices */
+  hideInvoiceBranding?: boolean;
 }
 
 export interface Invoice {

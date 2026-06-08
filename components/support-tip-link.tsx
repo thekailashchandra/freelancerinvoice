@@ -3,18 +3,18 @@ import { Heart } from "lucide-react";
 import { siteConfig } from "@/data/site";
 import { cn } from "@/lib/utils";
 
-type SupportPayPalLinkProps = React.ComponentPropsWithoutRef<"a"> & {
+type SupportTipLinkProps = React.ComponentPropsWithoutRef<"a"> & {
   showIcon?: boolean;
 };
 
-export const SupportPayPalLink = React.forwardRef<
+export const SupportTipLink = React.forwardRef<
   HTMLAnchorElement,
-  SupportPayPalLinkProps
+  SupportTipLinkProps
 >(({ className, showIcon = true, children, ...props }, ref) => {
   return (
     <a
       ref={ref}
-      href={siteConfig.supportPayPalUrl}
+      href={siteConfig.supportTipUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
@@ -24,8 +24,8 @@ export const SupportPayPalLink = React.forwardRef<
       {...props}
     >
       {showIcon && <Heart className="h-4 w-4" aria-hidden />}
-      {children ?? "Support via PayPal"}
+      {children ?? "Tip on Ko-fi"}
     </a>
   );
 });
-SupportPayPalLink.displayName = "SupportPayPalLink";
+SupportTipLink.displayName = "SupportTipLink";

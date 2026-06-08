@@ -38,6 +38,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     currencyCode: profile.currency_code,
     taxLabel: profile.tax_label,
     defaultPayment: profileRowToPayment(profile),
+    hideInvoiceBranding: profile.hide_invoice_branding ?? false,
   };
 }
 

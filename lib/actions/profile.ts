@@ -39,7 +39,7 @@ export async function updateProfileAction(
 
   if (!user) throw new Error("Not authenticated");
 
-  const row: Record<string, string | number | null> = {};
+  const row: Record<string, string | number | boolean | null> = {};
 
   if (settings.companyName !== undefined) {
     row.company_name = settings.companyName || null;
@@ -57,6 +57,9 @@ export async function updateProfileAction(
       200,
       Math.max(32, Math.round(settings.logoHeight))
     );
+  }
+  if (settings.hideInvoiceBranding !== undefined) {
+    row.hide_invoice_branding = settings.hideInvoiceBranding;
   }
 
   if (settings.defaultPayment !== undefined) {

@@ -5,13 +5,13 @@ import { siteConfig } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0. Optional PayPal support helps keep the platform running.`,
+  description: `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0. Optional Ko-fi tips help keep the platform running.`,
   alternates: {
     canonical: getCanonicalUrl("/pricing"),
   },
   openGraph: {
     title: `Pricing | ${siteConfig.name}`,
-    description: "Free invoice generator for freelancers. Optional support via PayPal.",
+    description: "Free invoice generator for freelancers. Optional tips via Ko-fi.",
     url: getCanonicalUrl("/pricing"),
     type: "website",
   },

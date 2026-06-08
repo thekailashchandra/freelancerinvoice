@@ -16,6 +16,10 @@ import {
   hasInvoicePaymentInfo,
 } from "@/lib/invoice-payment-display";
 
+import {
+  invoicePoweredByHtml,
+  shouldShowInvoiceBranding,
+} from "@/lib/invoice-branding";
 import type { Invoice } from "@/types/invoice";
 
 const d = invoiceDesign;
@@ -253,7 +257,9 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
 
 <body>
 
-<div id="invoice-root" style="width:${W}px;font-family:${F}">
+<div id="invoice-root" style="display:flex;flex-direction:column;min-height:${pageSpec.heightPx - pageSpec.paddingPx * 2}px;width:${W}px;font-family:${F}">
+
+<div style="flex:1;min-height:0">
 
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:36px">
 
@@ -362,6 +368,10 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
   ${termsBlock}
 
 </td></tr></table>
+
+</div>
+
+${shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding) ? invoicePoweredByHtml() : ""}
 
 </div></body></html>`;
 

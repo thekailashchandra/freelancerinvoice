@@ -17,7 +17,9 @@ import { toast } from "sonner";
 import { InvoicePreview } from "@/components/invoice-preview";
 import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { PageTransition } from "@/components/page-transition";
+import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
 import { SupportPlatformDialog } from "@/components/support-platform-dialog";
+import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -44,6 +46,15 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const [actionBusy, setActionBusy] = useState<
     "paid" | "void" | "delete" | null
   >(null);
+
+  const {
+    hideBranding,
+    dialogOpen: brandingDialogOpen,
+    setDialogOpen: setBrandingDialogOpen,
+    requestRemoval: requestBrandingRemoval,
+    confirmRemoval: confirmBrandingRemoval,
+    confirming: confirmingBrandingRemoval,
+  } = useInvoiceBrandingRemoval(invoice, setInvoice);
 
   useEffect(() => {
     let cancelled = false;
@@ -292,11 +303,23 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
       <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
         <InvoicePreviewFrame pageSize={invoice.pageSize}>
-          <InvoicePreview invoice={invoice} previewId="invoice-preview" />
+          <InvoicePreview
+            invoice={invoice}
+            previewId="invoice-preview"
+            onRemoveBranding={
+              hideBranding ? undefined : requestBrandingRemoval
+            }
+          />
         </InvoicePreviewFrame>
       </div>
 
       <SupportPlatformDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <RemoveBrandingDialog
+        open={brandingDialogOpen}
+        onOpenChange={setBrandingDialogOpen}
+        onConfirmContributed={confirmBrandingRemoval}
+        confirming={confirmingBrandingRemoval}
+      />
     </PageTransition>
   );
 }

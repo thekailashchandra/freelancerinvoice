@@ -6,7 +6,9 @@ import { Download, Loader2, Printer, Save } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceForm } from "@/components/invoice-form";
 import { PageTransition } from "@/components/page-transition";
+import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
 import { SupportPlatformDialog } from "@/components/support-platform-dialog";
+import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDefaultInvoice } from "@/data/defaults";
@@ -60,6 +62,15 @@ export function CreateInvoiceClient({
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+
+  const {
+    hideBranding,
+    dialogOpen: brandingDialogOpen,
+    setDialogOpen: setBrandingDialogOpen,
+    requestRemoval: requestBrandingRemoval,
+    confirmRemoval: confirmBrandingRemoval,
+    confirming: confirmingBrandingRemoval,
+  } = useInvoiceBrandingRemoval(invoice, setInvoice);
 
   const deferredInvoice = useDeferredValue(invoice);
   const previewPending = deferredInvoice !== invoice;
@@ -228,7 +239,12 @@ export function CreateInvoiceClient({
             className={`overflow-y-auto rounded-lg border border-border bg-muted/20 p-2 sm:p-3 xl:max-h-[calc(100vh-9.5rem)] transition-opacity duration-100 ${previewPending ? "opacity-80" : "opacity-100"}`}
           >
             <InvoicePreviewFrame pageSize={previewInvoice.pageSize}>
-              <InvoicePreview invoice={previewInvoice} />
+              <InvoicePreview
+                invoice={previewInvoice}
+                onRemoveBranding={
+                  hideBranding ? undefined : requestBrandingRemoval
+                }
+              />
             </InvoicePreviewFrame>
           </div>
         </aside>
@@ -267,6 +283,12 @@ export function CreateInvoiceClient({
       </div>
 
       <SupportPlatformDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <RemoveBrandingDialog
+        open={brandingDialogOpen}
+        onOpenChange={setBrandingDialogOpen}
+        onConfirmContributed={confirmBrandingRemoval}
+        confirming={confirmingBrandingRemoval}
+      />
     </PageTransition>
   );
 }

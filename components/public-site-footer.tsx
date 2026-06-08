@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
-import { SupportPayPalLink } from "@/components/support-paypal-link";
+import { SupportTipLink } from "@/components/support-tip-link";
 import { siteConfig } from "@/data/site";
 
 export function PublicSiteFooter() {
@@ -25,7 +25,7 @@ export function PublicSiteFooter() {
           <Link href="/pricing" className="hover:text-foreground hover:underline">
             Pricing
           </Link>
-          <SupportPayPalLink className="text-primary hover:text-primary" />
+          <SupportTipLink className="text-primary hover:text-primary" />
           <Link href="/signup" className="hover:text-foreground hover:underline">
             Sign up
           </Link>
