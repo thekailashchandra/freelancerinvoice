@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -14,6 +15,15 @@ export type AuthActionResult =
   | { ok: false; error: string };
 
 export type AuthFormState = { error: string } | null;
+
+async function markEnteringApp() {
+  const cookieStore = await cookies();
+  cookieStore.set("iff_entering", "1", {
+    maxAge: 20,
+    path: "/",
+    sameSite: "lax",
+  });
+}
 
 async function signUpWithCredentials(
   email: string,
@@ -90,6 +100,7 @@ export async function signUpFormAction(
       return { error: result.error };
     }
 
+    await markEnteringApp();
     redirect(result.redirect ?? "/onboarding");
   } catch (err) {
     if (isNextRedirect(err)) throw err;
@@ -166,6 +177,7 @@ export async function signInFormAction(
       result.redirect ||
       "/dashboard";
 
+    await markEnteringApp();
     redirect(next.startsWith("/") ? next : "/dashboard");
   } catch (err) {
     if (isNextRedirect(err)) throw err;

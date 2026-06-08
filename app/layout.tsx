@@ -99,13 +99,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster
-            richColors
-            position="top-right"
-            toastOptions={{
-              className: "glass rounded-xl",
-            }}
-          />
+          <Toaster richColors position="top-center" closeButton />
         </ThemeProvider>
       </body>
     </html>

@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { CalmLoader } from "@/components/calm-loader";
 import { createClient, type SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
 import { getGoogleClientId } from "@/lib/supabase/env";
@@ -71,6 +71,7 @@ export function GoogleSignInButton({
           }
         }
 
+        document.cookie = "iff_entering=1; path=/; max-age=20; samesite=lax";
         window.location.href = destination;
       } catch (err) {
         toast.error("Google sign-in failed", {
@@ -134,8 +135,8 @@ export function GoogleSignInButton({
       />
       <div className="relative w-full">
         {loading && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-background/80">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-background/90 calm-overlay-enter">
+            <CalmLoader message="Signing you in…" size="sm" />
           </div>
         )}
         <div

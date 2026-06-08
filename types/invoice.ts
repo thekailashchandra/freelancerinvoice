@@ -3,7 +3,8 @@ export type InvoiceStatus =
   | "paid"
   | "pending"
   | "sent"
-  | "overdue";
+  | "overdue"
+  | "void";
 
 export interface ServiceItem {
   id: string;

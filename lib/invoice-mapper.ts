@@ -42,6 +42,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
 }
 
 function mapDbStatusToUi(status: InvoiceRow["status"]): InvoiceStatus {
+  if (status === "void") return "void";
   if (status === "draft" || status === "sent") return "pending";
   if (status === "paid" || status === "pending" || status === "overdue") {
     return status;

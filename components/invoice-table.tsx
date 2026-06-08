@@ -1,26 +1,21 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  CheckCircle2,
-  Eye,
-  Loader2,
-  Pencil,
-  Trash2,
-} from "lucide-react";
 import type { Invoice, InvoiceStatus } from "@/types/invoice";
 import { getInvoiceTotals, deriveInvoiceStatus } from "@/lib/calculations";
 import { formatDate } from "@/lib/utils";
 import { formatMoney } from "@/lib/currency";
 import { StatusBadge } from "@/components/status-badge";
-import { Button } from "@/components/ui/button";
+import { InvoiceActionsMenu } from "@/components/invoice-actions-menu";
+
+type BusyAction = "paid" | "void" | "delete" | null;
 
 interface InvoiceTableProps {
   invoices: Invoice[];
-  onDelete: (id: string) => void;
-  onMarkPaid?: (id: string) => Promise<void>;
-  markingPaidId?: string | null;
+  onDelete: (id: string) => void | Promise<void>;
+  onMarkPaid?: (id: string) => void | Promise<void>;
+  onVoid?: (id: string) => void | Promise<void>;
+  busyInvoiceId?: string | null;
+  busyAction?: BusyAction;
   currencyCode?: string;
 }
 
@@ -28,144 +23,143 @@ export function InvoiceTable({
   invoices,
   onDelete,
   onMarkPaid,
-  markingPaidId = null,
+  onVoid,
+  busyInvoiceId = null,
+  busyAction = null,
   currencyCode = "USD",
 }: InvoiceTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/50">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border/50 bg-muted/30">
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Invoice
-              </th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Client
-              </th>
-              <th className="hidden px-4 py-3 text-left font-medium text-muted-foreground md:table-cell">
-                Date
-              </th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Amount
-              </th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                Status
-              </th>
-              <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {invoices.map((invoice, i) => {
-              const { total } = getInvoiceTotals(invoice);
-              const status = deriveInvoiceStatus(
-                invoice.status,
-                invoice.invoice.dueDate
-              );
-              const isPaid = status === "paid";
-              const canMarkPaid =
-                !isPaid && status !== "draft" && Boolean(onMarkPaid);
-              const isMarking = markingPaidId === invoice.id;
+    <>
+      {/* Mobile: card list */}
+      <div className="space-y-2 md:hidden">
+        {invoices.map((invoice) => {
+          const { total } = getInvoiceTotals(invoice);
+          const status = deriveInvoiceStatus(
+            invoice.status,
+            invoice.invoice.dueDate
+          );
+          const isBusy = busyInvoiceId === invoice.id;
 
-              return (
-                <motion.tr
-                  key={invoice.id}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className={
-                    isPaid
-                      ? "border-b border-border/30 bg-emerald-500/[0.03] transition-colors hover:bg-emerald-500/[0.06]"
-                      : "border-b border-border/30 transition-colors hover:bg-amber-500/[0.04]"
-                  }
-                >
-                  <td className="px-4 py-3 font-mono text-xs sm:text-sm">
+          return (
+            <div
+              key={invoice.id}
+              className="rounded-lg border border-border bg-card p-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">
+                    {invoice.client.name || "Unnamed client"}
+                  </p>
+                  <p className="font-mono text-xs text-muted-foreground">
                     {invoice.invoice.invoiceNumber}
-                  </td>
-                  <td className="px-4 py-3">
-                    <p className="font-medium">
-                      {invoice.client.name || "Unnamed client"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {invoice.client.company}
-                    </p>
-                  </td>
-                  <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">
-                    {formatDate(invoice.invoice.invoiceDate)}
-                  </td>
-                  <td className="px-4 py-3 font-medium">
+                  </p>
+                </div>
+                <StatusBadge status={status} />
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <div className="text-sm">
+                  <span className="font-medium">
                     {formatMoney(total, currencyCode)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={status} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-0.5">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        title="View invoice"
-                      >
-                        <Link href={`/invoice-history/${invoice.id}`}>
-                          <Eye className="h-4 w-4" />
-                          <span className="sr-only">View</span>
-                        </Link>
-                      </Button>
-
-                      {!isPaid && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          asChild
-                          title="Edit invoice"
-                        >
-                          <Link href={`/create-invoice?id=${invoice.id}`}>
-                            <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                          </Link>
-                        </Button>
-                      )}
-
-                      {canMarkPaid && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-emerald-600 hover:text-emerald-600"
-                          title="Mark as paid"
-                          disabled={isMarking}
-                          onClick={() => onMarkPaid?.(invoice.id)}
-                        >
-                          {isMarking ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <CheckCircle2 className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">Mark as paid</span>
-                        </Button>
-                      )}
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        title="Delete"
-                        onClick={() => onDelete(invoice.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
-                  </td>
-                </motion.tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  </span>
+                  <span className="mx-1.5 text-muted-foreground">·</span>
+                  <span className="text-muted-foreground">
+                    {formatDate(invoice.invoice.invoiceDate)}
+                  </span>
+                </div>
+                <InvoiceActionsMenu
+                  invoice={invoice}
+                  displayStatus={status}
+                  busyAction={isBusy ? busyAction : null}
+                  onMarkPaid={onMarkPaid}
+                  onVoid={onVoid}
+                  onDelete={onDelete}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+
+      {/* Desktop: table */}
+      <div className="hidden overflow-hidden rounded-lg border border-border md:block">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">
+                  Invoice
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">
+                  Client
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">
+                  Date
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">
+                  Amount
+                </th>
+                <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground">
+                  Status
+                </th>
+                <th className="px-4 py-2.5 text-right text-xs font-medium text-muted-foreground">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.map((invoice) => {
+                const { total } = getInvoiceTotals(invoice);
+                const status = deriveInvoiceStatus(
+                  invoice.status,
+                  invoice.invoice.dueDate
+                );
+                const isBusy = busyInvoiceId === invoice.id;
+
+                return (
+                  <tr
+                    key={invoice.id}
+                    className="border-b border-border/60 transition-colors last:border-0 hover:bg-muted/30"
+                  >
+                    <td className="px-4 py-2.5 font-mono text-xs">
+                      {invoice.invoice.invoiceNumber}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <p className="font-medium">
+                        {invoice.client.name || "Unnamed client"}
+                      </p>
+                      {invoice.client.company && (
+                        <p className="text-xs text-muted-foreground">
+                          {invoice.client.company}
+                        </p>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 text-muted-foreground">
+                      {formatDate(invoice.invoice.invoiceDate)}
+                    </td>
+                    <td className="px-4 py-2.5 font-medium">
+                      {formatMoney(total, currencyCode)}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <StatusBadge status={status} />
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <InvoiceActionsMenu
+                        invoice={invoice}
+                        displayStatus={status}
+                        busyAction={isBusy ? busyAction : null}
+                        onMarkPaid={onMarkPaid}
+                        onVoid={onVoid}
+                        onDelete={onDelete}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -174,6 +168,8 @@ export function matchesHistoryFilter(
   filter: InvoiceStatus | "all" | "unpaid"
 ): boolean {
   if (filter === "all") return true;
-  if (filter === "unpaid") return status !== "paid";
+  if (filter === "unpaid") {
+    return status !== "paid" && status !== "void";
+  }
   return status === filter;
 }

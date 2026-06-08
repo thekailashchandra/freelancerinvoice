@@ -3,13 +3,13 @@
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { signInFormAction, type AuthFormState } from "@/lib/actions/auth";
 import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { CalmLoader } from "@/components/calm-loader";
 import { SiteLogo } from "@/components/site-logo";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -23,12 +23,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
-  const { pending } = useFormStatus();
+function SubmitButton({
+  disabled,
+  pending,
+}: {
+  disabled: boolean;
+  pending: boolean;
+}) {
   return (
     <Button type="submit" className="w-full gap-2" disabled={disabled || pending}>
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      Sign in
+      {pending ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Signing in…
+        </>
+      ) : (
+        "Sign in"
+      )}
     </Button>
   );
 }
@@ -48,7 +59,7 @@ export function LoginForm({
   const redirectParam = searchParams.get("redirect") ?? "/dashboard";
   const authError = searchParams.get("error");
 
-  const [state, formAction] = useActionState<AuthFormState, FormData>(
+  const [state, formAction, isPending] = useActionState<AuthFormState, FormData>(
     signInFormAction,
     null
   );
@@ -60,7 +71,12 @@ export function LoginForm({
   }, [state]);
 
   return (
-    <Card className="w-full max-w-md border-border/50">
+    <Card className="relative w-full max-w-md border-border/50">
+      {isPending && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-background/90 calm-overlay-enter">
+          <CalmLoader message="Taking you to your dashboard…" />
+        </div>
+      )}
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 flex justify-center">
           <SiteLogo variant="full" href={null} />
@@ -120,7 +136,7 @@ export function LoginForm({
               required
             />
           </div>
-          <SubmitButton disabled={!configured} />
+          <SubmitButton disabled={!configured} pending={isPending} />
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           <Link href="/" className="text-primary hover:underline">

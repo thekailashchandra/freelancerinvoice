@@ -48,21 +48,15 @@ function taxPercent(invoice: Invoice): number {
 
 function DetailBox({
   title,
-  badge,
   children,
 }: {
   title: string;
-  badge: string;
+  badge?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-primary">{title}</h3>
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {badge}
-        </span>
-      </div>
+    <div className="rounded-lg border border-border bg-muted/20 p-4">
+      <h3 className="mb-3 text-sm font-medium">{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>
   );
@@ -164,8 +158,8 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-      <div className="space-y-6 p-5 md:p-8">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="space-y-5 p-4 sm:p-5">
         {/* Header row */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
           <div className="space-y-2">
@@ -191,7 +185,6 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="sent">Sent</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
                 <SelectItem value="overdue">Overdue</SelectItem>
               </SelectContent>
             </Select>

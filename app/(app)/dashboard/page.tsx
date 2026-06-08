@@ -1,14 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  FileText,
-  Receipt,
-  TrendingUp,
-  Wallet,
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowRight, FileText, Receipt, TrendingUp, Wallet } from "lucide-react";
+import { toast } from "sonner";
+import { NavLink } from "@/components/nav-link";
 import { AnalyticsCard } from "@/components/analytics-card";
 import { EmptyState } from "@/components/empty-state";
 import { InvoiceTable } from "@/components/invoice-table";
@@ -17,109 +12,167 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInvoices } from "@/hooks/use-invoices";
-import { useDashboardStats } from "@/hooks/use-dashboard-stats";
+import { useProfile } from "@/hooks/use-profile";
+import { updateInvoiceStatusAction } from "@/lib/actions/invoices";
+import { computeDashboardStats } from "@/lib/dashboard-stats";
 import { getCurrencySymbol } from "@/lib/currency";
 
 export default function DashboardPage() {
-  const { invoices, loading: invoicesLoading, remove } = useInvoices();
-  const { stats, loading: statsLoading } = useDashboardStats();
-  const loading = invoicesLoading || statsLoading;
+  const { invoices, loading, remove, refresh } = useInvoices();
+  const { settings } = useProfile();
+  const [busyInvoiceId, setBusyInvoiceId] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<"paid" | "void" | "delete" | null>(
+    null
+  );
+
+  const stats = useMemo(
+    () => computeDashboardStats(invoices, settings.currencyCode),
+    [invoices, settings.currencyCode]
+  );
+
   const recent = invoices.slice(0, 5);
   const symbol = getCurrencySymbol(stats.currencyCode);
 
+  const handleDelete = async (id: string) => {
+    setBusyInvoiceId(id);
+    setBusyAction("delete");
+    try {
+      await remove(id);
+      toast.success("Invoice deleted");
+    } catch (err) {
+      toast.error("Delete failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setBusyInvoiceId(null);
+      setBusyAction(null);
+    }
+  };
+
+  const handleMarkPaid = async (id: string) => {
+    setBusyInvoiceId(id);
+    setBusyAction("paid");
+    try {
+      await updateInvoiceStatusAction(id, "paid");
+      await refresh();
+      toast.success("Invoice marked as paid");
+    } catch (err) {
+      toast.error("Could not mark as paid", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setBusyInvoiceId(null);
+      setBusyAction(null);
+    }
+  };
+
+  const handleVoid = async (id: string) => {
+    setBusyInvoiceId(id);
+    setBusyAction("void");
+    try {
+      await updateInvoiceStatusAction(id, "void");
+      await refresh();
+      toast.success("Invoice voided");
+    } catch (err) {
+      toast.error("Could not void invoice", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setBusyInvoiceId(null);
+      setBusyAction(null);
+    }
+  };
+
   return (
-    <PageTransition className="mx-auto max-w-7xl space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <PageTransition className="mx-auto max-w-6xl space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <motion.h2
-            initial={{ opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-2xl font-bold tracking-tight md:text-3xl"
-          >
-            Welcome back to{" "}
-            <span className="gradient-text">Invoice for Freelance</span>
-          </motion.h2>
-          <p className="mt-1 text-muted-foreground">
-            Your invoice overview at a glance
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            Dashboard
+          </h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Overview of your invoices
           </p>
         </div>
-        <Button asChild size="lg" className="shrink-0">
-          <Link href="/create-invoice">
-            Create Invoice
+        <Button asChild className="w-full shrink-0 sm:w-auto">
+          <NavLink href="/create-invoice" showSpinner={false}>
+            New invoice
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </NavLink>
         </Button>
       </div>
 
       {loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl" />
+            <Skeleton key={i} className="h-24 rounded-xl" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <AnalyticsCard
             title="Total Invoices"
             value={stats.totalInvoices}
             icon={FileText}
             gradient="from-amber-500 to-orange-500"
-            delay={0}
           />
           <AnalyticsCard
-            title="Paid Invoices"
+            title="Paid"
             value={stats.paidInvoices}
             icon={Receipt}
             gradient="from-emerald-500 to-teal-500"
-            delay={0.05}
           />
           <AnalyticsCard
-            title="Pending Amount"
+            title="Pending"
             value={stats.pendingAmount}
             icon={Wallet}
             prefix={symbol}
             decimals={0}
             gradient="from-amber-500 to-orange-500"
-            delay={0.1}
           />
           <AnalyticsCard
-            title="Total Revenue"
+            title="Revenue"
             value={stats.totalRevenue}
             icon={TrendingUp}
             prefix={symbol}
             decimals={0}
             gradient="from-yellow-500 to-amber-500"
-            delay={0.15}
           />
         </div>
       )}
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Recent Invoices</CardTitle>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/invoice-history">View all</Link>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <CardTitle className="text-base font-semibold">Recent</CardTitle>
+          <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground">
+            <NavLink href="/invoice-history" showSpinner={false}>
+              View all
+            </NavLink>
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
+                <Skeleton key={i} className="h-12 w-full rounded-lg" />
               ))}
             </div>
           ) : recent.length === 0 ? (
             <EmptyState
               icon={FileText}
               title="No invoices yet"
-              description="Create your first professional invoice. Everything syncs to your cloud account."
-              actionLabel="Create Invoice"
+              description="Create your first invoice to get started."
+              actionLabel="Create invoice"
               actionHref="/create-invoice"
             />
           ) : (
             <InvoiceTable
               invoices={recent}
-              onDelete={remove}
+              onDelete={handleDelete}
+              onMarkPaid={handleMarkPaid}
+              onVoid={handleVoid}
+              busyInvoiceId={busyInvoiceId}
+              busyAction={busyAction}
               currencyCode={stats.currencyCode}
             />
           )}

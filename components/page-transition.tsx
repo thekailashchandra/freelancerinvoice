@@ -1,32 +1,10 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 interface PageTransitionProps {
   children: React.ReactNode;
   className?: string;
-  /** Skip framer-motion for faster app pages (e.g. create invoice) */
+  /** @deprecated All pages use instant render for speed */
   instant?: boolean;
 }
 
-export function PageTransition({
-  children,
-  className,
-  instant = false,
-}: PageTransitionProps) {
-  if (instant) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+export function PageTransition({ children, className }: PageTransitionProps) {
+  return <div className={className}>{children}</div>;
 }

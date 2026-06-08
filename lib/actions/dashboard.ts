@@ -1,7 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { DashboardStats } from "@/types/invoice";
+import { applyInvoiceToDashboardStats } from "@/lib/dashboard-stats";
+import type { DashboardStats, InvoiceStatus } from "@/types/invoice";
 
 function itemLineTotal(qty: number, price: number): number {
   return qty * Number(price);
@@ -25,7 +26,9 @@ export async function fetchDashboardStatsAction(): Promise<DashboardStats> {
 
   const { data: invoices, error } = await supabase
     .from("invoices")
-    .select("id, status, tax_percent, discount_amount, invoice_items(qty, price)")
+    .select(
+      "id, status, due_date, tax_percent, discount_amount, invoice_items(qty, price)"
+    )
     .eq("user_id", user.id);
 
   if (error || !invoices) {
@@ -44,15 +47,16 @@ export async function fetchDashboardStatsAction(): Promise<DashboardStats> {
     .eq("id", user.id)
     .single();
 
-  let paidInvoices = 0;
-  let pendingAmount = 0;
-  let totalRevenue = 0;
+  const acc = {
+    paidInvoices: 0,
+    pendingAmount: 0,
+    totalRevenue: 0,
+  };
 
   for (const inv of invoices) {
     const items = inv.invoice_items ?? [];
     const subtotal = items.reduce(
-      (sum, item) =>
-        sum + itemLineTotal(item.qty, Number(item.price)),
+      (sum, item) => sum + itemLineTotal(item.qty, Number(item.price)),
       0
     );
     const discount = Math.min(Number(inv.discount_amount), subtotal);
@@ -63,19 +67,19 @@ export async function fetchDashboardStatsAction(): Promise<DashboardStats> {
         : 0;
     const total = afterDiscount + tax;
 
-    if (inv.status === "paid") {
-      paidInvoices += 1;
-      totalRevenue += total;
-    } else {
-      pendingAmount += total;
-    }
+    applyInvoiceToDashboardStats(
+      acc,
+      total,
+      inv.status as InvoiceStatus,
+      inv.due_date ?? ""
+    );
   }
 
   return {
     totalInvoices: invoices.length,
-    paidInvoices,
-    pendingAmount,
-    totalRevenue,
+    paidInvoices: acc.paidInvoices,
+    pendingAmount: acc.pendingAmount,
+    totalRevenue: acc.totalRevenue,
     currencyCode: profile?.currency_code ?? "USD",
   };
 }

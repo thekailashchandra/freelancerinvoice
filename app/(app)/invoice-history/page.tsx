@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Search, History } from "lucide-react";
+import { NavLink } from "@/components/nav-link";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
 import {
@@ -13,13 +13,6 @@ import { PageTransition } from "@/components/page-transition";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useInvoices } from "@/hooks/use-invoices";
 import { useProfile } from "@/hooks/use-profile";
 import { updateInvoiceStatusAction } from "@/lib/actions/invoices";
@@ -29,12 +22,14 @@ import { cn } from "@/lib/utils";
 
 type StatusFilter = InvoiceStatus | "all" | "unpaid";
 
-const QUICK_FILTERS: { value: StatusFilter; label: string }[] = [
+const FILTERS: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "unpaid", label: "Unpaid" },
+  { value: "draft", label: "Draft" },
   { value: "pending", label: "Pending" },
   { value: "paid", label: "Paid" },
   { value: "overdue", label: "Overdue" },
+  { value: "void", label: "Void" },
 ];
 
 export default function InvoiceHistoryPage() {
@@ -42,7 +37,10 @@ export default function InvoiceHistoryPage() {
   const { settings } = useProfile();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
+  const [busyInvoiceId, setBusyInvoiceId] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<"paid" | "void" | "delete" | null>(
+    null
+  );
 
   const filtered = useMemo(() => {
     return invoices.filter((inv) => {
@@ -60,6 +58,8 @@ export default function InvoiceHistoryPage() {
   }, [invoices, search, statusFilter]);
 
   const handleDelete = async (id: string) => {
+    setBusyInvoiceId(id);
+    setBusyAction("delete");
     try {
       await remove(id);
       toast.success("Invoice deleted");
@@ -67,85 +67,94 @@ export default function InvoiceHistoryPage() {
       toast.error("Delete failed", {
         description: err instanceof Error ? err.message : "Unknown error",
       });
+    } finally {
+      setBusyInvoiceId(null);
+      setBusyAction(null);
     }
   };
 
   const handleMarkPaid = async (id: string) => {
-    setMarkingPaidId(id);
+    setBusyInvoiceId(id);
+    setBusyAction("paid");
     try {
       await updateInvoiceStatusAction(id, "paid");
       await refresh();
       toast.success("Invoice marked as paid");
     } catch (err) {
-      toast.error("Could not update status", {
+      toast.error("Could not mark as paid", {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
-      setMarkingPaidId(null);
+      setBusyInvoiceId(null);
+      setBusyAction(null);
+    }
+  };
+
+  const handleVoid = async (id: string) => {
+    setBusyInvoiceId(id);
+    setBusyAction("void");
+    try {
+      await updateInvoiceStatusAction(id, "void");
+      await refresh();
+      toast.success("Invoice voided");
+    } catch (err) {
+      toast.error("Could not void invoice", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setBusyInvoiceId(null);
+      setBusyAction(null);
     }
   };
 
   return (
-    <PageTransition className="mx-auto max-w-7xl space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <PageTransition className="mx-auto max-w-6xl space-y-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Invoice History</h2>
-          <p className="text-muted-foreground">
-            View invoices read-only, edit unpaid ones, or mark them paid
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            Invoice history
+          </h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            {invoices.length} saved invoice{invoices.length === 1 ? "" : "s"}
           </p>
         </div>
-        <Button asChild className="gap-2 sm:self-auto">
-          <Link href="/create-invoice">
-            Create Invoice
+        <Button asChild className="w-full sm:w-auto">
+          <NavLink href="/create-invoice" showSpinner={false}>
+            New invoice
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </NavLink>
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search by client, company, or invoice #…"
-              className="pl-10"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <Select
-            value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as StatusFilter)}
-          >
-            <SelectTrigger className="w-full sm:w-44">
-              <SelectValue placeholder="Filter status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="unpaid">Unpaid (all)</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="sent">Sent</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
-              <SelectItem value="overdue">Overdue</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search client or invoice #"
+            className="pl-9"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {QUICK_FILTERS.map((f) => (
+        <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5">
+          {FILTERS.map((f) => (
             <Button
               key={f.value}
               type="button"
               size="sm"
               variant={statusFilter === f.value ? "default" : "outline"}
               className={cn(
+                "shrink-0 rounded-full",
                 f.value === "paid" &&
                   statusFilter === "paid" &&
                   "bg-emerald-600 hover:bg-emerald-600",
-                f.value === "pending" &&
-                  statusFilter === "pending" &&
-                  "bg-amber-600 hover:bg-amber-600"
+                f.value === "overdue" &&
+                  statusFilter === "overdue" &&
+                  "bg-destructive hover:bg-destructive",
+                f.value === "void" &&
+                  statusFilter === "void" &&
+                  "bg-zinc-600 hover:bg-zinc-600"
               )}
               onClick={() => setStatusFilter(f.value)}
             >
@@ -156,21 +165,21 @@ export default function InvoiceHistoryPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 w-full rounded-xl" />
+            <Skeleton key={i} className="h-14 w-full rounded-lg" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={History}
-          title={invoices.length === 0 ? "No saved invoices" : "No matches found"}
+          title={invoices.length === 0 ? "No saved invoices" : "No matches"}
           description={
             invoices.length === 0
-              ? "Invoices you save will appear here for quick access."
-              : "Try adjusting your search or filter."
+              ? "Invoices you save will appear here."
+              : "Try a different search or filter."
           }
-          actionLabel={invoices.length === 0 ? "Create Invoice" : undefined}
+          actionLabel={invoices.length === 0 ? "Create invoice" : undefined}
           actionHref={invoices.length === 0 ? "/create-invoice" : undefined}
         />
       ) : (
@@ -178,7 +187,9 @@ export default function InvoiceHistoryPage() {
           invoices={filtered}
           onDelete={handleDelete}
           onMarkPaid={handleMarkPaid}
-          markingPaidId={markingPaidId}
+          onVoid={handleVoid}
+          busyInvoiceId={busyInvoiceId}
+          busyAction={busyAction}
           currencyCode={settings.currencyCode}
         />
       )}

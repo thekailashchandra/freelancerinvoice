@@ -3,7 +3,8 @@ export type InvoiceStatusDb =
   | "pending"
   | "sent"
   | "paid"
-  | "overdue";
+  | "overdue"
+  | "void";
 
 export type Json =
   | string

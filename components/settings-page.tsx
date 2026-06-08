@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Building2, MessageSquarePlus, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/page-transition";
@@ -93,20 +92,17 @@ export default function SettingsPage() {
   }
 
   return (
-    <PageTransition className="mx-auto max-w-2xl space-y-6">
+    <PageTransition className="mx-auto max-w-2xl space-y-5">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground">
-          Your profile details for new invoices — works for individuals and
-          businesses
+        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          Settings
+        </h2>
+        <p className="mt-0.5 text-sm text-muted-foreground">
+          Default details for new invoices
         </p>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <Card>
+      <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Building2 className="h-4 w-4 text-primary" />
@@ -222,7 +218,6 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
-      </motion.div>
 
       <Card className="border-dashed">
         <CardContent className="p-6 text-sm text-muted-foreground">

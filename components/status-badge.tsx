@@ -8,6 +8,7 @@ const labels: Record<InvoiceStatus, string> = {
   pending: "Pending",
   sent: "Sent",
   overdue: "Overdue",
+  void: "Void",
 };
 
 interface StatusBadgeProps {

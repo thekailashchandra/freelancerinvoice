@@ -2,9 +2,9 @@
 
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
-import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { CalmLoader } from "@/components/calm-loader";
 import { signUpFormAction, type AuthFormState } from "@/lib/actions/auth";
 import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
@@ -22,12 +22,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-function SubmitButton({ disabled }: { disabled: boolean }) {
-  const { pending } = useFormStatus();
+function SubmitButton({
+  disabled,
+  pending,
+}: {
+  disabled: boolean;
+  pending: boolean;
+}) {
   return (
     <Button type="submit" className="w-full gap-2" disabled={disabled || pending}>
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      Create account
+      {pending ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Creating account…
+        </>
+      ) : (
+        "Create account"
+      )}
     </Button>
   );
 }
@@ -46,7 +57,7 @@ export function SignupForm({
   supabaseConfig,
   googleClientId,
 }: SignupFormProps) {
-  const [state, formAction] = useActionState<AuthFormState, FormData>(
+  const [state, formAction, isPending] = useActionState<AuthFormState, FormData>(
     signUpFormAction,
     null
   );
@@ -58,7 +69,12 @@ export function SignupForm({
   }, [state]);
 
   return (
-    <Card className="w-full max-w-md border-border/50">
+    <Card className="relative w-full max-w-md border-border/50">
+      {isPending && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-background/90 calm-overlay-enter">
+          <CalmLoader message="Setting up your account…" />
+        </div>
+      )}
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 flex justify-center">
           <SiteLogo variant="full" href={null} />
@@ -116,7 +132,7 @@ export function SignupForm({
               required
             />
           </div>
-          <SubmitButton disabled={!canSignUp} />
+          <SubmitButton disabled={!canSignUp} pending={isPending} />
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           <Link href="/" className="text-primary hover:underline">

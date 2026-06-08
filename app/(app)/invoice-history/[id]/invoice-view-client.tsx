@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  Ban,
   CheckCircle2,
   Download,
   Loader2,
   Pencil,
   Printer,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { InvoicePreview } from "@/components/invoice-preview";
@@ -18,12 +20,13 @@ import { PageTransition } from "@/components/page-transition";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { invoiceActionState } from "@/lib/invoice-actions";
 import {
+  deleteInvoiceAction,
   fetchInvoiceByIdAction,
   updateInvoiceStatusAction,
 } from "@/lib/actions/invoices";
 import { deriveInvoiceStatus } from "@/lib/calculations";
-import type { Invoice } from "@/types/invoice";
 
 type InvoiceViewClientProps = {
   invoiceId: string;
@@ -31,10 +34,14 @@ type InvoiceViewClientProps = {
 
 export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const router = useRouter();
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [invoice, setInvoice] = useState<Awaited<
+    ReturnType<typeof fetchInvoiceByIdAction>
+  > | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
-  const [markingPaid, setMarkingPaid] = useState(false);
+  const [actionBusy, setActionBusy] = useState<
+    "paid" | "void" | "delete" | null
+  >(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,8 +89,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     invoice.status,
     invoice.invoice.dueDate
   );
-  const isPaid = displayStatus === "paid";
-  const canMarkPaid = !isPaid && displayStatus !== "draft";
+  const { canEdit, canMarkPaid, canVoid, isLocked } =
+    invoiceActionState(displayStatus);
 
   const handleDownloadPdf = async () => {
     setExporting(true);
@@ -103,20 +110,71 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   };
 
   const handleMarkPaid = async () => {
-    setMarkingPaid(true);
+    setActionBusy("paid");
     try {
       await updateInvoiceStatusAction(invoice.id, "paid");
       setInvoice((prev) => (prev ? { ...prev, status: "paid" } : prev));
       toast.success("Invoice marked as paid");
       router.refresh();
     } catch (err) {
-      toast.error("Could not update status", {
+      toast.error("Could not mark as paid", {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
-      setMarkingPaid(false);
+      setActionBusy(null);
     }
   };
+
+  const handleVoid = async () => {
+    if (
+      !window.confirm(
+        `Void ${invoice.invoice.invoiceNumber}? It will be locked from editing.`
+      )
+    ) {
+      return;
+    }
+    setActionBusy("void");
+    try {
+      await updateInvoiceStatusAction(invoice.id, "void");
+      setInvoice((prev) => (prev ? { ...prev, status: "void" } : prev));
+      toast.success("Invoice voided");
+      router.refresh();
+    } catch (err) {
+      toast.error("Could not void invoice", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setActionBusy(null);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (
+      !window.confirm(
+        `Delete ${invoice.invoice.invoiceNumber}? This cannot be undone.`
+      )
+    ) {
+      return;
+    }
+    setActionBusy("delete");
+    try {
+      await deleteInvoiceAction(invoice.id);
+      toast.success("Invoice deleted");
+      router.push("/invoice-history");
+    } catch (err) {
+      toast.error("Delete failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setActionBusy(null);
+    }
+  };
+
+  const statusMessage = isLocked
+    ? displayStatus === "void"
+      ? "Voided invoice — view and download only."
+      : "Paid invoice — view and download only."
+    : "Read-only preview. Use Edit to change details.";
 
   return (
     <PageTransition className="mx-auto max-w-4xl space-y-6">
@@ -134,11 +192,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             </h2>
             <StatusBadge status={displayStatus} />
           </div>
-          <p className="text-sm text-muted-foreground">
-            {isPaid
-              ? "Paid invoice — view and download only."
-              : "Read-only preview. Use Edit to change line items or details."}
-          </p>
+          <p className="text-sm text-muted-foreground">{statusMessage}</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -176,11 +230,11 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             )}
             Download PDF
           </Button>
-          {!isPaid && (
+          {canEdit && (
             <Button size="sm" className="gap-2" asChild>
               <Link href={`/create-invoice?id=${invoice.id}`}>
                 <Pencil className="h-4 w-4" />
-                Edit invoice
+                Edit
               </Link>
             </Button>
           )}
@@ -190,9 +244,9 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
               variant="secondary"
               className="gap-2"
               onClick={handleMarkPaid}
-              disabled={markingPaid}
+              disabled={actionBusy !== null}
             >
-              {markingPaid ? (
+              {actionBusy === "paid" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <CheckCircle2 className="h-4 w-4" />
@@ -200,6 +254,36 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
               Mark as paid
             </Button>
           )}
+          {canVoid && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={handleVoid}
+              disabled={actionBusy !== null}
+            >
+              {actionBusy === "void" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Ban className="h-4 w-4" />
+              )}
+              Void
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-2 text-destructive hover:text-destructive"
+            onClick={handleDelete}
+            disabled={actionBusy !== null}
+          >
+            {actionBusy === "delete" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
+            Delete
+          </Button>
         </div>
       </div>
 

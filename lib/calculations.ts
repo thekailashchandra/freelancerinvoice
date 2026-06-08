@@ -97,7 +97,12 @@ export function deriveInvoiceStatus(
   status: Invoice["status"],
   dueDate: string
 ): Invoice["status"] {
-  if (status === "paid" || status === "draft" || status === "sent") {
+  if (
+    status === "paid" ||
+    status === "draft" ||
+    status === "sent" ||
+    status === "void"
+  ) {
     return status;
   }
   if (!dueDate) return status;

@@ -1,6 +1,6 @@
 import type { CompanySettings, DashboardStats, Invoice } from "@/types/invoice";
 import { emptyPaymentDetails } from "@/lib/country";
-import { getInvoiceTotals } from "./calculations";
+import { computeDashboardStats } from "@/lib/dashboard-stats";
 
 const INVOICES_KEY = "freelancer-invoices";
 const SETTINGS_KEY = "freelancer-settings";
@@ -69,25 +69,5 @@ export function saveCompanySettings(settings: CompanySettings): void {
 }
 
 export function getDashboardStats(invoices: Invoice[]): DashboardStats {
-  let paidInvoices = 0;
-  let pendingAmount = 0;
-  let totalRevenue = 0;
-
-  for (const invoice of invoices) {
-    const { total } = getInvoiceTotals(invoice);
-    if (invoice.status === "paid") {
-      paidInvoices += 1;
-      totalRevenue += total;
-    } else {
-      pendingAmount += total;
-    }
-  }
-
-  return {
-    totalInvoices: invoices.length,
-    paidInvoices,
-    pendingAmount,
-    totalRevenue,
-    currencyCode: "USD",
-  };
+  return computeDashboardStats(invoices, "USD");
 }
