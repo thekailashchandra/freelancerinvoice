@@ -6,6 +6,7 @@ import { Download, Loader2, Printer, Save } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceForm } from "@/components/invoice-form";
 import { PageTransition } from "@/components/page-transition";
+import { SupportPlatformDialog } from "@/components/support-platform-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDefaultInvoice } from "@/data/defaults";
@@ -58,6 +59,7 @@ export function CreateInvoiceClient({
   );
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   const deferredInvoice = useDeferredValue(invoice);
   const previewPending = deferredInvoice !== invoice;
@@ -104,6 +106,7 @@ export function CreateInvoiceClient({
         previewId: "invoice-preview",
       });
       toast.success("PDF downloaded successfully");
+      setSupportOpen(true);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to generate PDF";
@@ -262,6 +265,8 @@ export function CreateInvoiceClient({
           </Button>
         </div>
       </div>
+
+      <SupportPlatformDialog open={supportOpen} onOpenChange={setSupportOpen} />
     </PageTransition>
   );
 }

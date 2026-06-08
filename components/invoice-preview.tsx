@@ -475,7 +475,7 @@ export const InvoicePreview = memo(function InvoicePreview({
                     verticalAlign: "top",
                   }}
                 >
-                  {taxOn ? `${taxPct}%` : "—"}
+                  {taxOn ? `${taxPct}%` : "-"}
                 </td>
                 <td
                   style={{

@@ -1,5 +1,6 @@
 "use client";
 
+import { AppFooter } from "@/components/app-footer";
 import { Navbar } from "@/components/navbar";
 import { MobileNav } from "@/components/mobile-nav";
 import { Sidebar } from "@/components/sidebar";
@@ -39,6 +40,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         >
           {children}
         </main>
+        <AppFooter />
         <MobileNav />
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { guideArticles } from "@/data/guides";
 import { siteConfig } from "@/data/site";
 
 /** Primary and secondary keywords for organic search (Google, Gemini, Bing). */
@@ -19,12 +20,12 @@ export const seoKeywords = [
 ] as const;
 
 export const homeSeo = {
-  title: "Invoice for Freelancers — Free Professional Invoice Generator",
+  title: "Invoice for Freelancers | Free Professional Invoice Generator",
   description:
     "Create professional invoices for freelancers in minutes. Free invoice generator with PDF export, cloud storage, payment tracking, and invoice history. Built for freelance designers, developers, writers, and consultants.",
   ogTitle: "Invoice for Freelancers | Free Invoice Generator & PDF Export",
   ogDescription:
-    "The easiest way to invoice for freelance work. Create beautiful invoices, track payments, and download PDFs — no spreadsheets required.",
+    "The easiest way to invoice for freelance work. Create beautiful invoices, track payments, and download PDFs with no spreadsheets required.",
 } as const;
 
 export const faqItems = [
@@ -61,7 +62,7 @@ export const faqItems = [
   {
     question: "How does cloud sync help freelancers manage invoices?",
     answer:
-      "Cloud sync saves every invoice to your account so you can search history, filter by paid or overdue status, and access records from any device — no lost files or scattered spreadsheets.",
+      "Cloud sync saves every invoice to your account so you can search history, filter by paid or overdue status, and access records from any device, with no lost files or scattered spreadsheets.",
   },
   {
     question: "Is my freelance invoice data secure?",
@@ -72,8 +73,16 @@ export const faqItems = [
 
 export const publicRoutes = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
+  { path: "/guide", changeFrequency: "weekly" as const, priority: 0.9 },
+  { path: "/pricing", changeFrequency: "monthly" as const, priority: 0.8 },
+  ...guideArticles.map((article) => ({
+    path: `/guide/${article.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  })),
   { path: "/login", changeFrequency: "monthly" as const, priority: 0.5 },
   { path: "/signup", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
 ] as const;
 
 export function getCanonicalUrl(path = ""): string {

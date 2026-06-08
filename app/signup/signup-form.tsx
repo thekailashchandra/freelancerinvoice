@@ -84,7 +84,7 @@ export function SignupForm({
       </CardHeader>
       <CardContent>
         {!configured && (
-          <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">
+          <p className="mb-4 rounded-lg border border-primary/40 bg-primary/15 p-3 text-sm text-foreground">
             Copy <code className="text-xs">.env.example</code> to{" "}
             <code className="text-xs">.env.local</code> and set{" "}
             <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code>,{" "}

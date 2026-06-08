@@ -119,7 +119,7 @@ export function GoogleSignInButton({
 
   if (!resolvedClientId) {
     return (
-      <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">
+      <p className="rounded-lg border border-primary/40 bg-primary/15 p-3 text-sm text-foreground">
         Google sign-in is temporarily unavailable. Please use email sign-up, or
         contact support if this persists.
       </p>

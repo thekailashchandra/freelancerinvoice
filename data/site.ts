@@ -11,4 +11,6 @@ export const siteConfig = {
     light: "/brand/logo-light.png",
     dark: "/brand/logo-dark.png",
   },
+  supportPayPalUrl:
+    "https://paypal.me/skailash123?locale.x=en_GB&country.x=IN",
 } as const;

@@ -68,7 +68,7 @@ export function CurrencySelect({
         </div>
         {truncated && !search.trim() && (
           <p className="px-3 py-2 text-center text-xs text-muted-foreground">
-            Popular currencies — search for more
+            Popular currencies. Search for more
           </p>
         )}
         {filtered.length === 0 ? (

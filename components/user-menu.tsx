@@ -61,7 +61,7 @@ export function UserMenu() {
           className="h-9 w-9 rounded-full p-0 hover:opacity-90"
           aria-label="Account menu"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-primary to-amber-500 text-xs font-bold text-primary-foreground">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
             {loading ? "…" : initials}
           </span>
         </Button>

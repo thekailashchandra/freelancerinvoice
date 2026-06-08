@@ -55,7 +55,7 @@ export const metadata: Metadata = {
         url: siteConfig.logos.light,
         width: 1200,
         height: 630,
-        alt: `${siteConfig.name} — invoice generator for freelancers`,
+        alt: `${siteConfig.name}, invoice generator for freelancers`,
       },
     ],
   },
@@ -67,10 +67,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/brand/logo-dark.png", media: "(prefers-color-scheme: dark)" },
-      { url: "/brand/logo-light.png", media: "(prefers-color-scheme: light)" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon", type: "image/png", sizes: "32x32" },
     ],
-    apple: "/brand/logo-light.png",
+    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
   },
   other: {
     "ai-content-declaration": "human-authored",
@@ -94,7 +94,7 @@ export default function RootLayout({
         <GooglePrivacyScripts />
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

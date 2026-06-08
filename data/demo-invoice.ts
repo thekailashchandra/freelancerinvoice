@@ -1,0 +1,78 @@
+import type { Invoice } from "@/types/invoice";
+
+/** Static sample invoice for marketing / landing page demos. */
+export const demoInvoice: Invoice = {
+  id: "demo-invoice",
+  createdAt: "2026-06-01T00:00:00.000Z",
+  updatedAt: "2026-06-01T00:00:00.000Z",
+  status: "pending",
+  currencyCode: "USD",
+  taxLabel: "Sales Tax",
+  client: {
+    name: "Sarah Chen",
+    email: "sarah@acmedigital.com",
+    phone: "+1 (415) 555-0198",
+    company: "Acme Digital",
+    address: "580 Market St, San Francisco, CA 94104",
+  },
+  invoice: {
+    invoiceNumber: "INV-2048",
+    invoiceDate: "2026-06-01",
+    dueDate: "2026-06-15",
+    paymentTerms: "Net 14",
+    projectName: "Q2 Brand Refresh",
+    purchaseOrder: "PO-8821",
+  },
+  services: [
+    {
+      id: "demo-svc-1",
+      name: "Brand Identity Design",
+      description: "Logo, color system, and brand guidelines",
+      quantity: 1,
+      price: 2400,
+    },
+    {
+      id: "demo-svc-2",
+      name: "Website Development",
+      description: "Responsive marketing site with CMS",
+      quantity: 1,
+      price: 4800,
+    },
+  ],
+  taxDiscount: {
+    taxEnabled: false,
+    taxPercentage: 0,
+    discount: 200,
+  },
+  payment: {
+    bankName: "Chase Bank",
+    accountNumber: "•••• •••• 4821",
+    upiId: "",
+    routingNumber: "021000021",
+    iban: "",
+    sortCode: "",
+  },
+  notes: "Thank you for your business. Payment is due within 14 days.",
+  termsAndConditions: "",
+  pageSize: "a4",
+  company: {
+    companyName: "Pixel & Code Studio",
+    companyEmail: "hello@pixelcode.studio",
+    companyPhone: "+1 (628) 555-0142",
+    companyAddress: "742 Evergreen Terrace, Austin, TX 78701",
+    logo: null,
+    logoHeight: 48,
+    signature: null,
+    countryCode: "US",
+    currencyCode: "USD",
+    taxLabel: "Sales Tax",
+    defaultPayment: {
+      bankName: "Chase Bank",
+      accountNumber: "•••• •••• 4821",
+      upiId: "",
+      routingNumber: "021000021",
+      iban: "",
+      sortCode: "",
+    },
+  },
+};

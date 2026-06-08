@@ -114,13 +114,14 @@ export default function DashboardPage() {
             title="Total Invoices"
             value={stats.totalInvoices}
             icon={FileText}
-            gradient="from-amber-500 to-orange-500"
+            gradient="from-primary to-primary/80"
           />
           <AnalyticsCard
             title="Paid"
             value={stats.paidInvoices}
             icon={Receipt}
-            gradient="from-emerald-500 to-teal-500"
+            gradient="from-foreground to-foreground/80"
+            iconClassName="text-background"
           />
           <AnalyticsCard
             title="Pending"
@@ -128,7 +129,7 @@ export default function DashboardPage() {
             icon={Wallet}
             prefix={symbol}
             decimals={0}
-            gradient="from-amber-500 to-orange-500"
+            gradient="from-primary/90 to-primary/70"
           />
           <AnalyticsCard
             title="Revenue"
@@ -136,7 +137,7 @@ export default function DashboardPage() {
             icon={TrendingUp}
             prefix={symbol}
             decimals={0}
-            gradient="from-yellow-500 to-amber-500"
+            gradient="from-primary to-primary/75"
           />
         </div>
       )}

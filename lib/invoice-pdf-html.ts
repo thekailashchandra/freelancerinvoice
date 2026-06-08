@@ -164,7 +164,7 @@ export function buildInvoicePdfHtml(invoice: Invoice): string {
 
         ${cell(`width="88" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, invoiceMoneyHtml(item.price, currency))}
 
-        ${cell(`width="56" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, taxOn ? `${taxPct}%` : "—")}
+        ${cell(`width="56" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;color:${d.colors.textSecondary}"`, taxOn ? `${taxPct}%` : "-")}
 
         ${cell(`width="96" align="right" valign="top" style="padding:14px 12px;${border}font-family:${F};font-size:13px;font-weight:bold;color:${d.colors.text}"`, invoiceMoneyHtml(lineAmount, currency))}
 

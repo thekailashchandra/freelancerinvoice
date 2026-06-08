@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { InvoicePreview } from "@/components/invoice-preview";
 import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { PageTransition } from "@/components/page-transition";
+import { SupportPlatformDialog } from "@/components/support-platform-dialog";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,6 +40,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   > | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [actionBusy, setActionBusy] = useState<
     "paid" | "void" | "delete" | null
   >(null);
@@ -100,6 +102,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         previewId: "invoice-preview",
       });
       toast.success("PDF downloaded");
+      setSupportOpen(true);
     } catch (err) {
       toast.error("PDF export failed", {
         description: err instanceof Error ? err.message : "Unknown error",
@@ -172,8 +175,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
   const statusMessage = isLocked
     ? displayStatus === "void"
-      ? "Voided invoice — view and download only."
-      : "Paid invoice — view and download only."
+      ? "Voided invoice: view and download only."
+      : "Paid invoice: view and download only."
     : "Read-only preview. Use Edit to change details.";
 
   return (
@@ -292,6 +295,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
           <InvoicePreview invoice={invoice} previewId="invoice-preview" />
         </InvoicePreviewFrame>
       </div>
+
+      <SupportPlatformDialog open={supportOpen} onOpenChange={setSupportOpen} />
     </PageTransition>
   );
 }

@@ -38,7 +38,7 @@ export function WelcomeTransition() {
       aria-live="polite"
       aria-label="Welcome, setting up your workspace"
     >
-      <CalmLoader message="Welcome back — setting things up…" />
+      <CalmLoader message="Welcome back. Setting things up…" />
     </div>
   );
 }

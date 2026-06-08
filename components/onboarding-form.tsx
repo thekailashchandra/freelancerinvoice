@@ -148,7 +148,7 @@ export function OnboardingForm({
     setSkipping(true);
     try {
       await skipOnboardingAction();
-      toast.success("Skipped for now — you can finish setup in Settings anytime.");
+      toast.success("Skipped for now. You can finish setup in Settings anytime.");
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
@@ -180,7 +180,7 @@ export function OnboardingForm({
     },
     {
       title: "Payment & branding",
-      description: "Optional defaults for new invoices — you can change these later.",
+      description: "Optional defaults for new invoices. You can change these later.",
       icon: CreditCard,
     },
   ][step - 1];

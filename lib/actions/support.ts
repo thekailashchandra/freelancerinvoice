@@ -113,7 +113,7 @@ export async function submitSupportRequestAction(
       from: supportConfig.from,
       to: supportConfig.to,
       replyTo: contactEmail,
-      subject: `[Invoice for Freelance] ${type} — ${subject}`,
+      subject: `[Invoice for Freelance] ${type}: ${subject}`,
       text: textBody,
     });
 

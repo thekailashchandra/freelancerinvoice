@@ -59,7 +59,7 @@ export function CountrySelect({
         </div>
         {truncated && !search.trim() && (
           <p className="px-3 py-2 text-center text-xs text-muted-foreground">
-            Common countries — search for more
+            Common countries. Search for more
           </p>
         )}
         {filtered.length === 0 ? (

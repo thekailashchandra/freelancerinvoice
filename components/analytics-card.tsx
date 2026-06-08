@@ -12,6 +12,7 @@ interface AnalyticsCardProps {
   suffix?: string;
   decimals?: number;
   gradient: string;
+  iconClassName?: string;
 }
 
 function formatValue(
@@ -33,6 +34,7 @@ export function AnalyticsCard({
   suffix = "",
   decimals = 0,
   gradient,
+  iconClassName,
 }: AnalyticsCardProps) {
   return (
     <Card>
@@ -52,7 +54,12 @@ export function AnalyticsCard({
               gradient
             )}
           >
-            <Icon className="h-4 w-4 text-white sm:h-[18px] sm:w-[18px]" />
+            <Icon
+              className={cn(
+                "h-4 w-4 sm:h-[18px] sm:w-[18px]",
+                iconClassName ?? "text-primary-foreground"
+              )}
+            />
           </div>
         </div>
       </CardContent>

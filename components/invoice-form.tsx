@@ -215,7 +215,7 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
                   Upload logo
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  JPG, PNG, WebP — under 5MB
+                  JPG, PNG, WebP under 5MB
                 </span>
               </>
             )}
@@ -619,7 +619,7 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
                     }
                   />
                 ) : (
-                  <span className="font-semibold tabular-nums">—</span>
+                  <span className="font-semibold tabular-nums">-</span>
                 )}
               </div>
 

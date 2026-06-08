@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Cloud,
+  Clock,
   Download,
   FileText,
   Globe,
@@ -12,11 +13,12 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
+import { guideArticles } from "@/data/guides";
 import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
-import { PrivacyConsentLink } from "@/components/privacy-consent-link";
-import { SiteLogo } from "@/components/site-logo";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { HeroInvoiceDemo } from "@/components/hero-invoice-demo";
+import { PublicSiteFooter } from "@/components/public-site-footer";
+import { PublicSiteHeader } from "@/components/public-site-header";
 import { Button } from "@/components/ui/button";
 
 const features = [
@@ -30,7 +32,7 @@ const features = [
     icon: Cloud,
     title: "Cloud-backed invoice storage",
     description:
-      "Every invoice for freelancers is saved securely in the cloud — access your billing history from any device.",
+      "Every invoice for freelancers is saved securely in the cloud. Access your billing history from any device.",
   },
   {
     icon: History,
@@ -48,7 +50,7 @@ const features = [
     icon: Download,
     title: "PDF export",
     description:
-      "Download a client-ready PDF invoice for freelancers in seconds — no manual formatting in Word or Excel.",
+      "Download a client-ready PDF invoice for freelancers in seconds, with no manual formatting in Word or Excel.",
   },
   {
     icon: Globe,
@@ -91,7 +93,7 @@ const benefits = [
 const useCases = [
   {
     title: "Project-based freelance work",
-    body: "Bill clients for fixed-scope deliverables — websites, branding packages, copywriting projects, or consulting engagements — with clear line items and totals.",
+    body: "Bill clients for fixed-scope deliverables, from websites and branding packages to copywriting and consulting, with clear line items and totals.",
   },
   {
     title: "Hourly & retainer billing",
@@ -103,65 +105,64 @@ const useCases = [
   },
 ];
 
+const featuredGuides = guideArticles.slice(0, 3);
+
 export function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
         <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-amber-500/20 blur-3xl" />
+        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-primary/25 blur-3xl" />
       </div>
 
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 md:px-8">
-        <SiteLogo variant="full" href="/" priority />
-        <nav className="flex items-center gap-2" aria-label="Main navigation">
-          <ThemeToggle />
-          <Button variant="ghost" asChild>
-            <Link href="/login">Sign in</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">
-              Get started free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </nav>
-      </header>
+      <PublicSiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 pb-24 md:px-8">
         {/* Hero */}
-        <section className="py-16 text-center md:py-24" aria-labelledby="hero-heading">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary">
-            <Sparkles className="h-4 w-4" aria-hidden />
-            Built for freelancers & agencies
+        <section
+          className="py-12 md:py-20 lg:py-24"
+          aria-labelledby="hero-heading"
+        >
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="text-center lg:text-left">
+              <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary lg:mx-0">
+                <Sparkles className="h-4 w-4" aria-hidden />
+                Built for freelancers & agencies
+              </div>
+              <h1
+                id="hero-heading"
+                className="mx-auto max-w-4xl text-4xl font-bold tracking-tight md:text-5xl lg:mx-0 lg:max-w-none lg:text-6xl"
+              >
+                Free{" "}
+                <span className="gradient-text">Invoice for Freelancers</span>
+                : Professional Billing in Minutes
+              </h1>
+              <p className="seo-hero-summary mx-auto mt-6 max-w-3xl text-lg text-muted-foreground lg:mx-0 lg:max-w-none">
+                {siteConfig.name} is the fastest way to create an invoice for
+                freelance work. Generate beautiful PDF invoices, track payments,
+                and manage your entire freelance billing workflow in one
+                cloud-backed platform with no spreadsheets or messy templates.
+              </p>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
+                <Button size="lg" asChild className="gap-2 px-8">
+                  <Link href="/signup">
+                    Create your first freelancer invoice
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/login">Sign in</Link>
+                </Button>
+              </div>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Free to start · PDF export · Cloud invoice history
+              </p>
+            </div>
+
+            <div className="relative px-2 sm:px-0">
+              <HeroInvoiceDemo />
+            </div>
           </div>
-          <h1
-            id="hero-heading"
-            className="mx-auto max-w-4xl text-4xl font-bold tracking-tight md:text-6xl"
-          >
-            Free{" "}
-            <span className="gradient-text">Invoice for Freelancers</span>{" "}
-            — Professional Billing in Minutes
-          </h1>
-          <p className="seo-hero-summary mx-auto mt-6 max-w-3xl text-lg text-muted-foreground">
-            {siteConfig.name} is the fastest way to create an invoice for freelance
-            work. Generate beautiful PDF invoices, track payments, and manage your
-            entire freelance billing workflow in one cloud-backed platform — no
-            spreadsheets, no messy templates.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" asChild className="gap-2 px-8">
-              <Link href="/signup">
-                Create your first freelancer invoice
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/login">Sign in</Link>
-            </Button>
-          </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Free to start · PDF export · Cloud invoice history
-          </p>
         </section>
 
         {/* Features */}
@@ -233,7 +234,7 @@ export function LandingPage() {
             How to create an invoice for freelance work
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
-            Three steps from signup to a client-ready PDF — most freelancers finish
+            Three steps from signup to a client-ready PDF. Most freelancers finish
             their first invoice in under five minutes.
           </p>
           <ol className="grid gap-6 md:grid-cols-3">
@@ -306,6 +307,54 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* Guide */}
+        <section className="py-12" aria-labelledby="guide-heading">
+          <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h2 id="guide-heading" className="text-3xl font-bold">
+                Freelancer billing guides
+              </h2>
+              <p className="mt-3 max-w-2xl text-muted-foreground">
+                In-depth articles on international invoicing, freelance taxes,
+                payment terms, and invoice best practices.
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/guide">
+                View all guides
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {featuredGuides.map((article) => (
+              <article
+                key={article.slug}
+                className="glass rounded-2xl border border-border/50 p-6 transition-shadow hover:shadow-lg hover:shadow-primary/5"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-primary">
+                  {article.category}
+                </p>
+                <h3 className="mt-2 font-semibold leading-snug">
+                  <Link
+                    href={`/guide/${article.slug}`}
+                    className="hover:text-primary"
+                  >
+                    {article.title}
+                  </Link>
+                </h3>
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground leading-relaxed">
+                  {article.description}
+                </p>
+                <p className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" aria-hidden />
+                  {article.readingTimeMinutes} min read
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="py-12" aria-labelledby="faq-heading">
           <h2 id="faq-heading" className="mb-3 text-center text-3xl font-bold">
@@ -348,7 +397,7 @@ export function LandingPage() {
             </p>
             <Button size="lg" className="mt-8 gap-2 px-8" asChild>
               <Link href="/signup">
-                Get started — it&apos;s free
+                Get started, it&apos;s free
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -356,36 +405,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-border/50 py-10">
-        <div className="mx-auto max-w-6xl px-4 text-center text-sm text-muted-foreground md:px-8">
-          <p>
-            © {new Date().getFullYear()}{" "}
-            <a href={siteConfig.url} className="text-foreground hover:underline">
-              {siteConfig.name}
-            </a>
-            {" · "}
-            Free invoice generator for freelancers
-          </p>
-          <nav className="mt-4 flex flex-wrap items-center justify-center gap-4" aria-label="Footer">
-            <Link href="/signup" className="hover:text-foreground hover:underline">
-              Sign up
-            </Link>
-            <Link href="/login" className="hover:text-foreground hover:underline">
-              Sign in
-            </Link>
-            <a
-              href={`${siteConfig.url}/sitemap.xml`}
-              className="hover:text-foreground hover:underline"
-            >
-              Sitemap
-            </a>
-            <Link href="/privacy" className="hover:text-foreground hover:underline">
-              Privacy
-            </Link>
-            <PrivacyConsentLink className="hover:text-foreground" />
-          </nav>
-        </div>
-      </footer>
+      <PublicSiteFooter />
     </div>
   );
 }
