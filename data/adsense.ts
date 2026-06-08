@@ -13,6 +13,6 @@ export function getFundingChoicesPubId(): string {
 
 export const adsenseConfig = {
   clientId: getAdsenseClientId(),
-  fundingChoicesUrl: `https://fundingchoicesmessages.google.com/i/pub-${getFundingChoicesPubId()}?ers=1`,
+  fundingChoicesUrl: `https://fundingchoicesmessages.google.com/i/${getFundingChoicesPubId()}?ers=1`,
   adsScriptUrl: `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${getAdsenseClientId()}`,
 } as const;

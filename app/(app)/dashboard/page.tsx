@@ -63,7 +63,7 @@ export default function DashboardPage() {
             title="Total Invoices"
             value={stats.totalInvoices}
             icon={FileText}
-            gradient="from-blue-500 to-cyan-500"
+            gradient="from-amber-500 to-orange-500"
             delay={0}
           />
           <AnalyticsCard
@@ -88,7 +88,7 @@ export default function DashboardPage() {
             icon={TrendingUp}
             prefix={symbol}
             decimals={0}
-            gradient="from-violet-500 to-purple-600"
+            gradient="from-yellow-500 to-amber-500"
             delay={0.15}
           />
         </div>

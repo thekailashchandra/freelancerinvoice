@@ -88,7 +88,7 @@ export function Sidebar({
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active"
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary to-violet-600 shadow-lg shadow-primary/25"
+                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary to-amber-500 shadow-lg shadow-primary/25"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -103,7 +103,7 @@ export function Sidebar({
 
       {!collapsed && (
         <div className="mt-auto space-y-3">
-          <div className="rounded-xl border border-border/50 bg-gradient-to-br from-primary/10 to-violet-500/10 p-3 lg:p-4">
+          <div className="rounded-xl border border-border/50 bg-gradient-to-br from-primary/10 to-amber-500/10 p-3 lg:p-4">
             <p className="text-xs font-medium text-muted-foreground">Pro tip</p>
             <p className="mt-1 text-sm">
               Invoices sync to your secure cloud account at invoiceforfreelance.com.
