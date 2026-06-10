@@ -17,6 +17,23 @@ export const legallyRequiredFreelanceInvoiceInformation: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-11",
   readingTimeMinutes: 9,
+  coreBlock: {
+    id: "required-fields-by-region",
+    heading: "Legally required invoice fields by region",
+    table: {
+      caption: "Mandatory freelance invoice fields in the US, UK, EU, and India",
+      headers: ["Field", "US", "UK", "EU", "India"],
+      rows: [
+        ["Seller identity", "Required", "Required", "Required", "Required (GSTIN if registered)"],
+        ["Buyer identity", "Required", "Required", "Required", "Required"],
+        ["Invoice number", "Required", "Required", "Required", "Required (sequential)"],
+        ["Invoice & due dates", "Required", "Required", "Required", "Required"],
+        ["Line items & total", "Required", "Required", "Required", "Required"],
+        ["Tax ID / VAT", "EIN on W-9", "VAT number if registered", "VAT number if registered", "GSTIN + HSN/SAC"],
+        ["Tax breakdown", "If sales tax applies", "VAT amount", "VAT rate & amount", "CGST/SGST or IGST"],
+      ],
+    },
+  },
   sections: [
     {
       id: "universal",

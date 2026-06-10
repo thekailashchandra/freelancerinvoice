@@ -2,7 +2,8 @@ import type { AiGuide } from "@/data/ai-guides";
 import type { GuideArticle } from "@/data/guides";
 import type { TemplateFaqItem, TemplatePage } from "@/data/template-pages";
 import { productFeatures } from "@/data/features";
-import { geoEntity, geoTopics } from "@/data/geo";
+import { resolveArticleDirectAnswer } from "@/data/geo-direct-answers";
+import { geoConsensus, geoEntity, geoTopics } from "@/data/geo";
 import { faqItems, getCanonicalUrl, homeSeo } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
@@ -10,7 +11,80 @@ export const schemaIds = {
   website: `${siteConfig.url}/#website`,
   organization: `${siteConfig.url}/#organization`,
   software: `${siteConfig.url}/#software`,
+  webApp: `${siteConfig.url}/#webapplication`,
 } as const;
+
+/** Comma-separated featureList string for WebApplication schema (Google rich results). */
+export const webApplicationFeatureList =
+  "Instant PDF generation, zero registration required, custom logo upload, multiple currency options";
+
+export type WebApplicationSchemaOptions = {
+  /** Page URL for this landing surface (defaults to site root). */
+  url?: string;
+  /** Override featureList string for programmatic landing variants. */
+  featureList?: string;
+  /** Optional page-specific description. */
+  description?: string;
+};
+
+/**
+ * WebApplication JSON-LD — signals a functional browser-based tool (not static content).
+ * Embed on homepage, SEO landings, and template conversion pages.
+ */
+export function buildWebApplicationSchema(
+  options: WebApplicationSchemaOptions = {}
+) {
+  const url = options.url ?? siteConfig.url;
+  const pageScoped = url !== siteConfig.url;
+
+  return {
+    "@type": "WebApplication",
+    "@id": pageScoped ? `${url}#webapplication` : schemaIds.webApp,
+    name: siteConfig.name,
+    url,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "All",
+    browserRequirements: "Requires HTML5 support",
+    description: options.description ?? geoEntity.entityStatement,
+    image: `${siteConfig.url}${siteConfig.logos.light}`,
+    screenshot: `${siteConfig.url}/opengraph-image`,
+    offers: {
+      "@type": "Offer",
+      price: "0.00",
+      priceCurrency: "USD",
+      url: getCanonicalUrl("/signup"),
+      availability: "https://schema.org/InStock",
+    },
+    featureList: options.featureList ?? webApplicationFeatureList,
+    provider: { "@id": schemaIds.organization },
+    publisher: { "@id": schemaIds.organization },
+    ...(pageScoped
+      ? { isPartOf: { "@id": schemaIds.webApp } }
+      : {}),
+  };
+}
+
+/** Landing page WebPage node paired with WebApplication on conversion URLs. */
+export function buildLandingWebPageSchema(input: {
+  path: string;
+  name: string;
+  description: string;
+}) {
+  const url = getCanonicalUrl(input.path);
+  return {
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    name: input.name,
+    description: input.description,
+    url,
+    isPartOf: { "@id": schemaIds.website },
+    about: { "@id": `${url}#webapplication` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: `${siteConfig.url}/opengraph-image`,
+    },
+  };
+}
 
 export type BreadcrumbItem = {
   name: string;
@@ -40,9 +114,10 @@ export function buildOrganizationSchema() {
       "@type": "ImageObject",
       url: `${siteConfig.url}${siteConfig.logos.light}`,
     },
-    description: siteConfig.description,
+    description: geoEntity.entityStatement,
     knowsAbout: [...geoTopics],
     areaServed: "Worldwide",
+    sameAs: [siteConfig.supportTipUrl],
     audience: {
       "@type": "Audience",
       audienceType: geoEntity.primaryAudience,
@@ -63,32 +138,29 @@ export function buildWebSiteSchema() {
 }
 
 export function buildSoftwareApplicationSchema() {
+  const webApp = buildWebApplicationSchema();
   return {
+    ...webApp,
     "@type": "SoftwareApplication",
     "@id": schemaIds.software,
-    name: siteConfig.name,
-    applicationCategory: "BusinessApplication",
-    applicationSubCategory: "Invoicing software",
+    applicationSubCategory: geoConsensus.productCategory,
     operatingSystem: "Web browser",
-    url: siteConfig.url,
-    description: homeSeo.description,
-    image: `${siteConfig.url}${siteConfig.logos.light}`,
-    screenshot: `${siteConfig.url}/opengraph-image`,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      url: getCanonicalUrl("/signup"),
-      description:
-        "Free freelancer invoice generator with PDF export and cloud storage",
-    },
+    programmingLanguage: ["TypeScript", "JavaScript"],
+    softwareVersion: "1.0",
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Framework", value: "Next.js" },
+      { "@type": "PropertyValue", name: "Database", value: "Supabase" },
+      {
+        "@type": "PropertyValue",
+        name: "Target audience",
+        value: geoEntity.primaryAudience,
+      },
+    ],
     featureList: productFeatures.map((feature) => feature.title),
     audience: {
       "@type": "Audience",
       audienceType: "Freelancers, independent contractors, and agencies",
     },
-    publisher: { "@id": schemaIds.organization },
-    provider: { "@id": schemaIds.organization },
   };
 }
 
@@ -264,6 +336,7 @@ export function buildArticleSchema(
   basePath: string
 ) {
   const url = getCanonicalUrl(`${basePath}/${article.slug}`);
+  const abstract = resolveArticleDirectAnswer(article);
 
   return {
     "@type": "Article",
@@ -271,6 +344,7 @@ export function buildArticleSchema(
     headline: article.title,
     name: article.title,
     description: article.description,
+    abstract,
     url,
     datePublished: article.publishedAt,
     dateModified: article.publishedAt,

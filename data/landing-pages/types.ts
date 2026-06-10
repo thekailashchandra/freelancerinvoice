@@ -13,6 +13,8 @@ export type SeoLandingPage = {
   heroSummary: string;
   keywords: string[];
   category: string;
+  /** Geographic market targeting for localization strategy. */
+  market?: "IN" | "GLOBAL" | "BOTH";
   publishedAt: string;
   benefits: string[];
   features: LandingFeature[];

@@ -1,22 +1,28 @@
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
 import { getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
+const description = `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0.`;
+
 export function PricingSchema() {
   return (
-    <SchemaGraph
+    <WebApplicationSchema
+      url={getCanonicalUrl("/pricing")}
+      description={description}
       nodes={[
-        buildOrganizationSchema(),
         buildBreadcrumbListSchema(
           buildBreadcrumbItems([{ name: "Pricing", path: "/pricing" }])
         ),
-        buildSoftwareApplicationSchema(),
+        buildLandingWebPageSchema({
+          path: "/pricing",
+          name: `Pricing | ${siteConfig.name}`,
+          description,
+        }),
         {
           "@type": "Product",
           "@id": `${getCanonicalUrl("/pricing")}#product`,
@@ -29,7 +35,7 @@ export function PricingSchema() {
           },
           offers: {
             "@type": "Offer",
-            price: "0",
+            price: "0.00",
             priceCurrency: "USD",
             availability: "https://schema.org/InStock",
             url: getCanonicalUrl("/signup"),

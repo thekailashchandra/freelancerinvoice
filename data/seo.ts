@@ -126,6 +126,7 @@ export const publicRoutes = [
   { path: "/contact", changeFrequency: "monthly" as const, priority: 0.6 },
   { path: "/blog", changeFrequency: "weekly" as const, priority: 0.9 },
   { path: "/freelance-finances", changeFrequency: "weekly" as const, priority: 0.95 },
+  { path: "/india", changeFrequency: "weekly" as const, priority: 0.95 },
   ...pillarSlugs.map((slug) => ({
     path: `/blog/pillar/${slug}`,
     changeFrequency: "weekly" as const,
@@ -154,6 +155,7 @@ export const publicRoutes = [
   { path: "/refund-policy", changeFrequency: "yearly" as const, priority: 0.3 },
   { path: "/llms.txt", changeFrequency: "weekly" as const, priority: 0.4 },
   { path: "/llms-full.txt", changeFrequency: "weekly" as const, priority: 0.4 },
+  { path: "/consensus.txt", changeFrequency: "weekly" as const, priority: 0.45 },
   ...templatePages.map((page) => ({
     path: `/${page.slug}`,
     changeFrequency: "monthly" as const,

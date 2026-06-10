@@ -9,8 +9,14 @@ import {
   getPillarForArticle,
   getRelatedPillarArticles,
 } from "@/data/topical-pillars";
+import { GeoDirectAnswer } from "@/components/geo-direct-answer";
+import {
+  GuideArticleBody,
+  getGuideArticleTocItems,
+} from "@/components/guide-article-body";
 import { GuideContentUpgradeBlock } from "@/components/guide-content-upgrade";
 import { HubClusterSpokeNav } from "@/components/hub-cluster-spoke-nav";
+import { resolveArticleDirectAnswer } from "@/data/geo-direct-answers";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
@@ -103,6 +109,7 @@ export function GuideArticleContent({
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           {article.title}
         </h1>
+        <GeoDirectAnswer answer={resolveArticleDirectAnswer(article)} />
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
           {article.description}
         </p>
@@ -125,13 +132,13 @@ export function GuideArticleContent({
           In this guide
         </h2>
         <ol className="mt-3 space-y-2 text-sm">
-          {article.sections.map((section, index) => (
-            <li key={section.id}>
+          {getGuideArticleTocItems(article).map((item, index) => (
+            <li key={item.id}>
               <a
-                href={`#${section.id}`}
+                href={`#${item.id}`}
                 className="text-foreground hover:text-primary hover:underline"
               >
-                {index + 1}. {section.heading}
+                {index + 1}. {item.label}
               </a>
             </li>
           ))}
@@ -142,35 +149,7 @@ export function GuideArticleContent({
         <GuideContentUpgradeBlock upgrade={article.contentUpgrade} />
       )}
 
-      <div className="mt-10 space-y-10">
-        {article.sections.map((section) => (
-          <section key={section.id} id={section.id} className="scroll-mt-24">
-            <h2 className="text-xl font-semibold tracking-tight md:text-2xl">
-              {section.heading}
-            </h2>
-            {section.paragraphs?.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 40)}
-                className="mt-4 text-muted-foreground leading-relaxed"
-              >
-                {paragraph}
-              </p>
-            ))}
-            {section.list && (
-              <ul className="mt-4 list-disc space-y-2 pl-5 text-muted-foreground leading-relaxed">
-                {section.list.map((item) => (
-                  <li key={item.slice(0, 48)}>{item}</li>
-                ))}
-              </ul>
-            )}
-            {section.note && (
-              <p className="mt-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground leading-relaxed">
-                {section.note}
-              </p>
-            )}
-          </section>
-        ))}
-      </div>
+      <GuideArticleBody article={article} />
 
       <div className="mt-12 rounded-2xl border border-primary/20 bg-primary/5 px-6 py-8 text-center">
         <h2 className="text-xl font-semibold">Put this into practice</h2>

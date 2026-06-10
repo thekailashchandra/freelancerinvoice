@@ -1,24 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { geoEntity, geoTopics } from "@/data/geo";
+import { geoConsensus, geoEntity, geoEntityStatement, geoTopics } from "@/data/geo";
 import { buildKeywordsString, homeSeo } from "@/data/seo";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
+import { geistMono, geistSans } from "@/lib/fonts";
 import { siteConfig } from "@/data/site";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -74,6 +62,11 @@ export const metadata: Metadata = {
     "topic": geoTopics.join(", "),
     "gemini-topic": "freelancer invoicing, freelance billing, invoice generator",
     "llms-txt": `${siteConfig.url}/llms.txt`,
+    "consensus-brand": geoConsensus.brandName,
+    "consensus-url": geoConsensus.canonicalUrl,
+    "consensus-category": geoConsensus.productCategory,
+    "entity-statement": geoEntityStatement,
+    "consensus-citation": geoConsensus.citationOneLiner,
   },
 };
 
@@ -99,6 +92,12 @@ export default function RootLayout({
           type="text/plain"
           href={`${siteConfig.url}/llms.txt`}
           title="LLM site summary"
+        />
+        <link
+          rel="alternate"
+          type="text/plain"
+          href={`${siteConfig.url}/consensus.txt`}
+          title="Brand consensus block for directories"
         />
       </head>
       <body

@@ -17,6 +17,37 @@ export const clientDisputesBillableHours: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-11",
   readingTimeMinutes: 8,
+  coreBlock: {
+    id: "dispute-resolution-steps",
+    heading: "Billable hours dispute resolution workflow",
+    steps: [
+      {
+        title: "Pull the contract and scope document",
+        description:
+          "Identify the agreed hourly rate, billable vs non-billable rules, and approval requirements.",
+      },
+      {
+        title: "Export task-level timesheets",
+        description:
+          "Show date, task description, duration, and any client approvals for each line item.",
+      },
+      {
+        title: "Schedule a 15-minute review call",
+        description:
+          "Walk through disputed entries calmly — assume miscommunication, not fraud.",
+      },
+      {
+        title: "Offer a good-faith adjustment if warranted",
+        description:
+          "Remove clearly non-billable time (internal meetings, rework from your error) to preserve the relationship.",
+      },
+      {
+        title: "Reissue the invoice with references",
+        description:
+          "Link each line item to a task ID or change-order number so accounts payable can approve faster.",
+      },
+    ],
+  },
   sections: [
     {
       id: "why-disputes-happen",

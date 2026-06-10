@@ -17,6 +17,22 @@ export const net30VsNet60PaymentTerms: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-11",
   readingTimeMinutes: 7,
+  coreBlock: {
+    id: "payment-terms-comparison",
+    heading: "Net 30 vs Net 60: comparison at a glance",
+    table: {
+      caption: "Net 30 vs Net 60 payment terms for freelancers",
+      headers: ["Criterion", "Net 30", "Net 60"],
+      rows: [
+        ["Days until due", "30 days from invoice date", "60 days from invoice date"],
+        ["Cash flow impact", "Moderate — one month wait", "High — two month wait"],
+        ["Typical client type", "Mid-size companies, agencies", "Large enterprises, government"],
+        ["Freelancer risk", "Manageable with deposit", "High without milestone billing"],
+        ["Recommended for creators", "Maximum without deposit", "Avoid unless deposit + milestones"],
+        ["Rate adjustment", "Standard rate", "Charge 5–10% more if accepted"],
+      ],
+    },
+  },
   sections: [
     {
       id: "definitions",

@@ -17,6 +17,37 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-11",
   readingTimeMinutes: 8,
+  coreBlock: {
+    id: "overdue-email-sequence",
+    heading: "Overdue invoice email escalation sequence",
+    steps: [
+      {
+        title: "Day −3: Friendly pre-due reminder",
+        description:
+          "Confirm the invoice arrived and remind the client of the upcoming due date. Attach the PDF.",
+      },
+      {
+        title: "Day 0: Due-date notice",
+        description:
+          "State that payment is due today. Ask if anything is blocking accounts payable.",
+      },
+      {
+        title: "Day 7: First overdue follow-up",
+        description:
+          "Reference invoice number, amount, and original due date. Request a payment ETA.",
+      },
+      {
+        title: "Day 14: Firm follow-up",
+        description:
+          "Note the invoice is two weeks overdue. Mention late-fee policy if your contract includes one.",
+      },
+      {
+        title: "Day 21–30: Final notice",
+        description:
+          "Set a hard deadline, pause new work, and CC the project sponsor or finance lead.",
+      },
+    ],
+  },
   sections: [
     {
       id: "principles",

@@ -30,6 +30,8 @@ import { toast } from "sonner";
 interface InvoiceFormProps {
   invoice: Invoice;
   onChange: (invoice: Invoice) => void;
+  /** Guest landing mode — logo uploads stay in-browser (no account). */
+  guestMode?: boolean;
 }
 
 function taxEnabled(invoice: Invoice): boolean {
@@ -62,7 +64,11 @@ function DetailBox({
   );
 }
 
-export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
+export function InvoiceForm({
+  invoice,
+  onChange,
+  guestMode = false,
+}: InvoiceFormProps) {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
@@ -142,6 +148,18 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
   const handleLogoUpload = async (file: File) => {
     setUploadingLogo(true);
     try {
+      if (guestMode) {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error("Could not read image file"));
+          reader.readAsDataURL(file);
+        });
+        updateCompany("logo", dataUrl);
+        toast.success("Logo added");
+        return;
+      }
+
       const formData = new FormData();
       formData.set("kind", "logo");
       formData.set("file", file);
@@ -152,6 +170,10 @@ export function InvoiceForm({ invoice, onChange }: InvoiceFormProps) {
       }
       updateCompany("logo", result.url);
       toast.success("Logo uploaded");
+    } catch (err) {
+      toast.error("Upload failed", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setUploadingLogo(false);
     }

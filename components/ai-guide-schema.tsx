@@ -1,30 +1,37 @@
 import type { AiGuide } from "@/data/ai-guides";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import {
   buildAiGuideArticleSchema,
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
   buildFaqPageSchemaFromItems,
   buildHowToSchema,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
+import { getCanonicalUrl } from "@/data/seo";
 
 type AiGuideSchemaProps = {
   guide: AiGuide;
 };
 
 export function AiGuideSchema({ guide }: AiGuideSchemaProps) {
+  const url = getCanonicalUrl(`/${guide.slug}`);
+
   return (
-    <SchemaGraph
+    <WebApplicationSchema
+      url={url}
+      description={guide.description}
       nodes={[
-        buildOrganizationSchema(),
         buildBreadcrumbListSchema(
           buildBreadcrumbItems([
             { name: guide.category, path: `/${guide.slug}` },
           ])
         ),
-        buildSoftwareApplicationSchema(),
+        buildLandingWebPageSchema({
+          path: `/${guide.slug}`,
+          name: guide.title,
+          description: guide.description,
+        }),
         buildAiGuideArticleSchema(guide),
         buildHowToSchema(guide),
         buildFaqPageSchemaFromItems(guide.faqItems),

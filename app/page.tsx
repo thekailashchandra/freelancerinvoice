@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { LandingPage } from "@/components/landing-page";
+import {
+  GEO_COUNTRY_COOKIE,
+  GEO_MARKET_COOKIE,
+  resolveMarketContext,
+} from "@/lib/geo-market";
 import { StructuredData } from "@/components/structured-data";
 import {
   buildKeywordsString,
@@ -8,10 +13,10 @@ import {
   getCanonicalUrl,
   homeSeo,
 } from "@/data/seo";
-import { siteConfig } from "@/data/site";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
-import { ensureProfile } from "@/lib/supabase/ensure-profile";
+import { MARKETING_ISR_SECONDS } from "@/lib/cache-config";
+
+/** SSG + ISR — auth redirects run in middleware, not here. */
+export const revalidate = MARKETING_ISR_SECONDS;
 
 export const metadata: Metadata = {
   title: homeSeo.title,
@@ -28,25 +33,16 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  if (isSupabaseConfigured()) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const profile = await ensureProfile(supabase, user);
-      if (!profile?.company_name) {
-        redirect("/onboarding");
-      }
-      redirect("/dashboard");
-    }
-  }
+  const cookieStore = await cookies();
+  const marketContext = resolveMarketContext({
+    countryCode: cookieStore.get(GEO_COUNTRY_COOKIE)?.value ?? null,
+    market: cookieStore.get(GEO_MARKET_COOKIE)?.value ?? null,
+  });
 
   return (
     <>
-      <StructuredData includeFaq includeGeoAnswers />
-      <LandingPage />
+      <StructuredData includeGeoAnswers />
+      <LandingPage marketContext={marketContext} />
     </>
   );
 }

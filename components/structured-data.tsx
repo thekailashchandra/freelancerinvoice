@@ -1,7 +1,8 @@
 import { SchemaGraph } from "@/components/schema-graph";
 import {
   buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
+  buildWebApplicationSchema,
   buildWebSiteSchema,
   schemaIds,
 } from "@/data/structured-data";
@@ -22,20 +23,12 @@ export function StructuredData({
   includeGeoAnswers = false,
 }: StructuredDataProps) {
   const webPage = {
-    "@type": "WebPage",
-    "@id": `${siteConfig.url}/#webpage`,
-    name: homeSeo.title,
-    description: homeSeo.description,
-    url: siteConfig.url,
-    isPartOf: { "@id": schemaIds.website },
-    about: {
-      "@type": "Thing",
-      name: "Freelancer invoicing and billing",
-    },
-    primaryImageOfPage: {
-      "@type": "ImageObject",
-      url: `${siteConfig.url}/opengraph-image`,
-    },
+    ...buildLandingWebPageSchema({
+      path: "/",
+      name: homeSeo.title,
+      description: homeSeo.description,
+    }),
+    about: { "@id": schemaIds.webApp },
     speakable: {
       "@type": "SpeakableSpecification",
       cssSelector: [
@@ -44,6 +37,7 @@ export function StructuredData({
         ".geo-page-summary",
         ".geo-fact-answer",
         ".faq-answer",
+        ".geo-direct-answer-text",
       ],
     },
   };
@@ -51,7 +45,7 @@ export function StructuredData({
   const nodes = [
     buildWebSiteSchema(),
     buildOrganizationSchema(),
-    buildSoftwareApplicationSchema(),
+    buildWebApplicationSchema(),
     webPage,
     ...(includeFaq
       ? [

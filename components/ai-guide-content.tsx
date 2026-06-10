@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import type { AiGuide } from "@/data/ai-guides";
+import { GeoDirectAnswer } from "@/components/geo-direct-answer";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
@@ -29,8 +30,9 @@ export function AiGuideContent({ guide }: AiGuideContentProps) {
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           {guide.title}
         </h1>
+        <GeoDirectAnswer answer={guide.summary} />
         <p className="geo-page-summary mt-4 text-lg text-muted-foreground leading-relaxed">
-          {guide.summary}
+          {guide.description}
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <time dateTime={guide.publishedAt}>
@@ -43,38 +45,15 @@ export function AiGuideContent({ guide }: AiGuideContentProps) {
         </div>
       </header>
 
-      {/* Definitions */}
       <section
-        className="mt-10"
-        aria-labelledby="definitions-heading"
-      >
-        <h2 id="definitions-heading" className="text-2xl font-bold tracking-tight">
-          Definitions
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Key terms for Indian freelance invoicing — GST, SAC, UPI, export, TDS, and more.
-        </p>
-        <dl className="geo-key-facts mt-6 space-y-5 rounded-2xl border border-border/50 bg-card/50 p-6">
-          {guide.definitions.map((item) => (
-            <div key={item.term}>
-              <dt className="font-semibold text-foreground">{item.term}</dt>
-              <dd className="geo-fact-answer mt-1 text-sm text-muted-foreground leading-relaxed">
-                {item.definition}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      {/* Step-by-step */}
-      <section
-        className="mt-14"
+        id="core-steps"
+        className="ai-content-core mt-10 scroll-mt-24"
         aria-labelledby="steps-heading"
       >
         <h2 id="steps-heading" className="text-2xl font-bold tracking-tight">
           Step-by-step: create your invoice
         </h2>
-        <ol className="mt-6 space-y-6">
+        <ol className="ai-content-steps mt-6 space-y-6">
           {guide.steps.map((step) => (
             <li
               key={step.step}
@@ -93,13 +72,13 @@ export function AiGuideContent({ guide }: AiGuideContentProps) {
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
-                  {step.items && (
+                  {step.items ? (
                     <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                       {step.items.map((item) => (
                         <li key={item.slice(0, 40)}>{item}</li>
                       ))}
                     </ul>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </li>
@@ -107,102 +86,131 @@ export function AiGuideContent({ guide }: AiGuideContentProps) {
         </ol>
       </section>
 
-      {/* Tables */}
-      {guide.tables.map((table) => (
-        <section
-          key={table.id}
-          className="mt-14"
-          aria-labelledby={`table-${table.id}`}
+      <div className="mt-14">
+        <h2
+          id="contextual-architecture"
+          className="text-2xl font-bold tracking-tight"
         >
-          <h2
-            id={`table-${table.id}`}
-            className="text-2xl font-bold tracking-tight"
+          Contextual architecture
+        </h2>
+
+        <section
+          className="mt-8"
+          aria-labelledby="definitions-heading"
+        >
+          <h3 id="definitions-heading" className="text-xl font-semibold tracking-tight">
+            Definitions
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Key terms for Indian freelance invoicing — GST, SAC, UPI, export, TDS, and more.
+          </p>
+          <dl className="geo-key-facts mt-6 space-y-5 rounded-2xl border border-border/50 bg-card/50 p-6">
+            {guide.definitions.map((item) => (
+              <div key={item.term}>
+                <dt className="font-semibold text-foreground">{item.term}</dt>
+                <dd className="geo-fact-answer mt-1 text-sm text-muted-foreground leading-relaxed">
+                  {item.definition}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {guide.tables.map((table) => (
+          <section
+            key={table.id}
+            className="mt-10"
+            aria-labelledby={`table-${table.id}`}
           >
-            {table.caption}
-          </h2>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-border/50">
-            <table className="w-full min-w-[32rem] text-left text-sm">
-              <caption className="sr-only">{table.caption}</caption>
-              <thead className="border-b border-border/50 bg-muted/50">
-                <tr>
-                  {table.headers.map((header) => (
-                    <th key={header} className="px-4 py-3 font-semibold">
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {table.rows.map((row) => (
-                  <tr
-                    key={row.join("-").slice(0, 48)}
-                    className="border-b border-border/30 last:border-0"
-                  >
-                    {row.map((cell) => (
-                      <td
-                        key={cell.slice(0, 32)}
-                        className="px-4 py-3 text-muted-foreground align-top"
-                      >
-                        {cell}
-                      </td>
+            <h3
+              id={`table-${table.id}`}
+              className="text-xl font-semibold tracking-tight"
+            >
+              {table.caption}
+            </h3>
+            <div className="ai-content-table mt-4 overflow-x-auto rounded-xl border border-border/50">
+              <table className="w-full min-w-[32rem] text-left text-sm">
+                <caption className="sr-only">{table.caption}</caption>
+                <thead className="border-b border-border/50 bg-muted/50">
+                  <tr>
+                    {table.headers.map((header) => (
+                      <th key={header} className="px-4 py-3 font-semibold">
+                        {header}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ))}
+                </thead>
+                <tbody>
+                  {table.rows.map((row) => (
+                    <tr
+                      key={row.join("-").slice(0, 48)}
+                      className="border-b border-border/30 last:border-0"
+                    >
+                      {row.map((cell) => (
+                        <td
+                          key={cell.slice(0, 32)}
+                          className="px-4 py-3 text-muted-foreground align-top"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ))}
 
-      {/* Comparisons */}
-      {guide.comparisons.map((comparison) => (
-        <section
-          key={comparison.id}
-          className="mt-14"
-          aria-labelledby={`comparison-${comparison.id}`}
-        >
-          <h2
-            id={`comparison-${comparison.id}`}
-            className="text-2xl font-bold tracking-tight"
+        {guide.comparisons.map((comparison) => (
+          <section
+            key={comparison.id}
+            className="mt-10"
+            aria-labelledby={`comparison-${comparison.id}`}
           >
-            {comparison.caption}
-          </h2>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-border/50">
-            <table className="w-full min-w-[32rem] text-left text-sm">
-              <caption className="sr-only">{comparison.caption}</caption>
-              <thead className="border-b border-border/50 bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Aspect</th>
-                  <th className="px-4 py-3 font-semibold">
-                    {comparison.leftLabel}
-                  </th>
-                  <th className="px-4 py-3 font-semibold">
-                    {comparison.rightLabel}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparison.rows.map((row) => (
-                  <tr
-                    key={row.aspect}
-                    className="border-b border-border/30 last:border-0"
-                  >
-                    <th className="px-4 py-3 font-medium text-foreground">
-                      {row.aspect}
+            <h3
+              id={`comparison-${comparison.id}`}
+              className="text-xl font-semibold tracking-tight"
+            >
+              {comparison.caption}
+            </h3>
+            <div className="ai-content-table mt-4 overflow-x-auto rounded-xl border border-border/50">
+              <table className="w-full min-w-[32rem] text-left text-sm">
+                <caption className="sr-only">{comparison.caption}</caption>
+                <thead className="border-b border-border/50 bg-muted/50">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Aspect</th>
+                    <th className="px-4 py-3 font-semibold">
+                      {comparison.leftLabel}
                     </th>
-                    <td className="px-4 py-3 text-muted-foreground align-top">
-                      {row.left}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground align-top">
-                      {row.right}
-                    </td>
+                    <th className="px-4 py-3 font-semibold">
+                      {comparison.rightLabel}
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ))}
+                </thead>
+                <tbody>
+                  {comparison.rows.map((row) => (
+                    <tr
+                      key={row.aspect}
+                      className="border-b border-border/30 last:border-0"
+                    >
+                      <th className="px-4 py-3 font-medium text-foreground">
+                        {row.aspect}
+                      </th>
+                      <td className="px-4 py-3 text-muted-foreground align-top">
+                        {row.left}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground align-top">
+                        {row.right}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ))}
+      </div>
 
       {/* FAQ */}
       <section

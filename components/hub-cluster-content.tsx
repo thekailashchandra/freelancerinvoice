@@ -4,7 +4,10 @@ import type { HubCluster } from "@/data/hub-clusters";
 import { getGuideBySlug } from "@/data/guides";
 import { topicalAuthorityHub } from "@/data/topical-pillars";
 import { HubClusterSpokeNav } from "@/components/hub-cluster-spoke-nav";
+import { GeoDirectAnswer } from "@/components/geo-direct-answer";
+import { GuideArticleBody } from "@/components/guide-article-body";
 import { PageFaqSection } from "@/components/page-faq-section";
+import { getGeoDirectAnswer } from "@/data/geo-direct-answers";
 import { siteConfig } from "@/data/site";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,6 +42,9 @@ export function HubClusterContent({ cluster }: HubClusterContentProps) {
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           {cluster.title}
         </h1>
+        {getGeoDirectAnswer(cluster.hubArticleSlug) && (
+          <GeoDirectAnswer answer={getGeoDirectAnswer(cluster.hubArticleSlug)!} />
+        )}
         <p className="geo-page-summary mt-4 text-lg text-muted-foreground leading-relaxed">
           {cluster.description}
         </p>
@@ -59,37 +65,11 @@ export function HubClusterContent({ cluster }: HubClusterContentProps) {
         <HubClusterSpokeNav cluster={cluster} variant="hub" />
       </div>
 
-      {hubArticle && (
-        <div className="mt-12 space-y-10">
-          {hubArticle.sections.map((section) => (
-            <section key={section.id} id={section.id} className="scroll-mt-24">
-              <h2 className="text-xl font-semibold tracking-tight md:text-2xl">
-                {section.heading}
-              </h2>
-              {section.paragraphs?.map((paragraph) => (
-                <p
-                  key={paragraph.slice(0, 48)}
-                  className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line"
-                >
-                  {paragraph}
-                </p>
-              ))}
-              {section.list && (
-                <ul className="mt-4 list-disc space-y-2 pl-5 text-muted-foreground leading-relaxed">
-                  {section.list.map((item) => (
-                    <li key={item.slice(0, 48)}>{item}</li>
-                  ))}
-                </ul>
-              )}
-              {section.note && (
-                <p className="mt-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground leading-relaxed">
-                  {section.note}
-                </p>
-              )}
-            </section>
-          ))}
+      {hubArticle ? (
+        <div className="mt-12">
+          <GuideArticleBody article={hubArticle} />
         </div>
-      )}
+      ) : null}
 
       <section className="mt-14" aria-labelledby="spoke-deep-dives-heading">
         <h2 id="spoke-deep-dives-heading" className="text-xl font-bold">

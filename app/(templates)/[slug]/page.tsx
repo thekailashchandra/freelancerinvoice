@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { GEO_COUNTRY_COOKIE } from "@/lib/geo-market";
 import { AiGuideContent } from "@/components/ai-guide-content";
 import { AiGuideSchema } from "@/components/ai-guide-schema";
 import { SeoLandingPageContent } from "@/components/seo-landing-page-content";
@@ -104,10 +106,18 @@ export default async function MarketingSlugPage({
 
   if (isLandingPageSlug(slug)) {
     const page = getLandingPageBySlug(slug)!;
+    const cookieStore = await cookies();
+    const initialCountryCode =
+      page.market === "IN"
+        ? "IN"
+        : (cookieStore.get(GEO_COUNTRY_COOKIE)?.value ?? "US");
     return (
       <>
         <SeoLandingPageSchema page={page} />
-        <SeoLandingPageContent page={page} />
+        <SeoLandingPageContent
+          page={page}
+          initialCountryCode={initialCountryCode}
+        />
       </>
     );
   }

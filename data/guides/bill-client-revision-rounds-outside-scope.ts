@@ -17,6 +17,37 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-12",
   readingTimeMinutes: 9,
+  coreBlock: {
+    id: "revision-billing-workflow",
+    heading: "How to bill out-of-scope revision rounds",
+    steps: [
+      {
+        title: "Confirm the request exceeds included rounds",
+        description:
+          "Reference the contract clause that caps revision rounds per deliverable.",
+      },
+      {
+        title: "Quote the extra round before starting work",
+        description:
+          "Send hourly or flat-fee estimate with expected turnaround time.",
+      },
+      {
+        title: "Get written approval (email is sufficient)",
+        description:
+          "Save the approval — it becomes your change-order documentation.",
+      },
+      {
+        title: "Complete the revision round",
+        description:
+          "Track time if billing hourly; note deliverable version in your project log.",
+      },
+      {
+        title: "Invoice with a dedicated line item",
+        description:
+          'Label it "Additional revision round — [Project], Change Order #[N]" with the approved amount.',
+      },
+    ],
+  },
   contentUpgrade: {
     title: "Revision billing template pack",
     description:

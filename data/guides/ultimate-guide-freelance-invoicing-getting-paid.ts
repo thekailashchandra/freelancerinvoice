@@ -17,6 +17,37 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
   hubClusterId: "freelance-invoicing-getting-paid",
   publishedAt: "2026-06-11",
   readingTimeMinutes: 14,
+  coreBlock: {
+    id: "invoicing-workflow",
+    heading: "Freelance invoicing workflow: core steps",
+    steps: [
+      {
+        title: "Define scope and payment terms in the contract",
+        description:
+          "Set rate, deposit, Net terms, revision limits, and late-fee policy before work starts.",
+      },
+      {
+        title: "Deliver work and invoice within 24–48 hours",
+        description:
+          "Send a professional PDF with unique invoice number, line items, and bold due date.",
+      },
+      {
+        title: "Send a pre-due reminder",
+        description:
+          "Email three days before the due date with the invoice attached.",
+      },
+      {
+        title: "Run the overdue follow-up sequence",
+        description:
+          "Escalate politely at day 7, 14, and 21 if payment has not arrived.",
+      },
+      {
+        title: "Record payment and reconcile",
+        description:
+          "Mark the invoice paid, store receipts, and file tax documents at year-end.",
+      },
+    ],
+  },
   sections: [
     {
       id: "why-invoicing-matters",

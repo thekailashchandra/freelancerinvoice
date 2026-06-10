@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Heart, Target, Users } from "lucide-react";
+import { GeoEntityBlock } from "@/components/geo-entity-block";
 import { GeoKeyFacts } from "@/components/geo-key-facts";
 import { PageFaqSection } from "@/components/page-faq-section";
 import { geoEntity } from "@/data/geo";
@@ -43,6 +44,10 @@ export function AboutPageContent() {
           billing organized in the cloud.
         </p>
       </header>
+
+      <div className="mt-10">
+        <GeoEntityBlock />
+      </div>
 
       <div className="mt-10">
         <GeoKeyFacts

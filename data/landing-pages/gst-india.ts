@@ -16,6 +16,7 @@ export const gstInvoiceGeneratorIndia: SeoLandingPage = {
     "SAC code invoice India",
   ],
   category: "India",
+  market: "IN",
   publishedAt: "2026-06-10",
   benefits: [
     "GSTIN and SAC fields on every invoice",

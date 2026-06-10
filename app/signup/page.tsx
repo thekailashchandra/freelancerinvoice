@@ -8,13 +8,12 @@ import {
   isSupabaseServerConfigured,
 } from "@/lib/supabase/env";
 import { PageFaqSection } from "@/components/page-faq-section";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import { getPageFaqs } from "@/data/page-faqs";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
@@ -47,13 +46,18 @@ export default async function SignupPage() {
 
   return (
     <>
-      <SchemaGraph
+      <WebApplicationSchema
+        url={getCanonicalUrl("/signup")}
+        description={description}
         nodes={[
-          buildOrganizationSchema(),
           buildBreadcrumbListSchema(
             buildBreadcrumbItems([{ name: "Signup", path: "/signup" }])
           ),
-          buildSoftwareApplicationSchema(),
+          buildLandingWebPageSchema({
+            path: "/signup",
+            name: title,
+            description,
+          }),
         ]}
       />
       <div className="flex min-h-screen items-center justify-center bg-background p-4">

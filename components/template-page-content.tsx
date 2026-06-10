@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
+import { GeoDirectAnswer } from "@/components/geo-direct-answer";
 import type { TemplatePage } from "@/data/template-pages";
+import { getGeoDirectAnswer } from "@/data/geo-direct-answers";
 import {
   getRelatedTemplatePages,
   templatePages,
@@ -35,6 +37,9 @@ export function TemplatePageContent({ page }: TemplatePageContentProps) {
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           {page.title}
         </h1>
+        {getGeoDirectAnswer(page.slug) ? (
+          <GeoDirectAnswer answer={getGeoDirectAnswer(page.slug)!} />
+        ) : null}
         <p className="geo-page-summary mt-4 text-lg text-muted-foreground leading-relaxed">
           {page.description}
         </p>

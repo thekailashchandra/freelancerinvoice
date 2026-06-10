@@ -1,12 +1,11 @@
 import type { ComparisonPage } from "@/data/comparisons";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import { siteConfig } from "@/data/site";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
   buildFaqPageSchemaFromItems,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
 import { getCanonicalUrl } from "@/data/seo";
 
@@ -18,23 +17,28 @@ export function ComparisonPageSchema({ page }: ComparisonPageSchemaProps) {
   const url = getCanonicalUrl(`/vs/${page.slug}`);
 
   return (
-    <SchemaGraph
+    <WebApplicationSchema
+      url={url}
+      description={page.metaDescription}
       nodes={[
-        buildOrganizationSchema(),
         buildBreadcrumbListSchema(
           buildBreadcrumbItems([
             { name: "Comparisons", path: "/vs/freshbooks" },
             { name: page.h1, path: `/vs/${page.slug}` },
           ])
         ),
-        buildSoftwareApplicationSchema(),
+        buildLandingWebPageSchema({
+          path: `/vs/${page.slug}`,
+          name: page.title,
+          description: page.metaDescription,
+        }),
         {
           "@type": "Article",
           headline: page.title,
           description: page.metaDescription,
           url,
           about: [
-            { "@type": "SoftwareApplication", name: siteConfig.name },
+            { "@type": "WebApplication", name: siteConfig.name },
             { "@type": "SoftwareApplication", name: page.competitorName },
           ],
         },

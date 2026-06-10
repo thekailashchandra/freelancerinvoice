@@ -5,10 +5,14 @@ import { gstInvoiceGeneratorIndia } from "./gst-india";
 import { invoiceGeneratorForFreelancers } from "./freelancers";
 import { invoiceSoftwareForDesigners } from "./designers";
 import { invoiceTemplateForAgencies } from "./agencies";
+import { gstCompliantInvoiceTemplateIndependentContractorsIndia } from "./gst-contractors-india";
+import { globalFreelanceInvoicingCompliance } from "./global-compliance";
 
 export const landingPages: SeoLandingPage[] = [
   invoiceGeneratorForFreelancers,
   gstInvoiceGeneratorIndia,
+  gstCompliantInvoiceTemplateIndependentContractorsIndia,
+  globalFreelanceInvoicingCompliance,
   invoiceSoftwareForDesigners,
   invoiceTemplateForAgencies,
   freeDynamicInvoiceGeneratorDevelopersNoSignup,

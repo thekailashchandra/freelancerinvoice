@@ -3,16 +3,16 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageFaqSection } from "@/components/page-faq-section";
 import { PublicBreadcrumbSchema } from "@/components/public-breadcrumb-schema";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import { aiGuides } from "@/data/ai-guides";
 import { landingPages } from "@/data/landing-pages";
 import { templatePages } from "@/data/template-pages";
 import { buildPageMetadata } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import {
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
+import { getCanonicalUrl } from "@/data/seo";
 import { Button } from "@/components/ui/button";
 
 const title = "Invoice Templates & Generators for Freelancers";
@@ -54,15 +54,21 @@ export default function InvoiceTemplatesHubPage() {
       <PublicBreadcrumbSchema
         segments={[{ name: "Invoice Templates", path: "/invoice-templates" }]}
       />
-      <SchemaGraph
+      <WebApplicationSchema
+        url={getCanonicalUrl("/invoice-templates")}
+        description={description}
         nodes={[
-          buildOrganizationSchema(),
-          buildSoftwareApplicationSchema(),
+          buildLandingWebPageSchema({
+            path: "/invoice-templates",
+            name: title,
+            description,
+          }),
           {
             "@type": "CollectionPage",
             name: title,
             description,
-            url: "/invoice-templates",
+            url: getCanonicalUrl("/invoice-templates"),
+            about: { "@id": `${getCanonicalUrl("/invoice-templates")}#webapplication` },
           },
         ]}
       />

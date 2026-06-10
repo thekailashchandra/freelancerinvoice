@@ -97,6 +97,13 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
+    if (user && pathname === "/") {
+      const profile = await ensureProfile(supabase, user);
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = profile?.company_name ? "/dashboard" : "/onboarding";
+      return NextResponse.redirect(redirectUrl);
+    }
+
     return supabaseResponse;
   } catch (err) {
     console.error("middleware session update failed:", err);

@@ -3,6 +3,7 @@
 export const mainNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/india", label: "India" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/freelance-finances", label: "Guides" },
@@ -14,6 +15,8 @@ export const footerNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/invoice-templates", label: "Templates" },
+  { href: "/india", label: "India invoicing" },
+  { href: "/global-freelance-invoicing-compliance", label: "Global compliance" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/freelance-finances", label: "Freelance Finances" },

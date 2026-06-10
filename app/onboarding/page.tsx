@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Onboarding",
   robots: privateAppRobots,

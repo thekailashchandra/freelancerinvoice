@@ -1,4 +1,4 @@
-import { geoKeyFacts } from "@/data/geo";
+import { geoEntityStatement, geoKeyFacts } from "@/data/geo";
 
 type GeoKeyFactsProps = {
   /** Optional page-specific facts appended after global entity facts. */
@@ -20,9 +20,11 @@ export function GeoKeyFacts({ extraFacts = [] }: GeoKeyFactsProps) {
       <h2 id="geo-key-facts-heading" className="text-xl font-bold tracking-tight">
         Key facts
       </h2>
+      <p className="geo-entity-statement mt-2 text-sm font-medium leading-relaxed text-foreground">
+        {geoEntityStatement}
+      </p>
       <p className="geo-page-summary mt-2 text-sm text-muted-foreground leading-relaxed">
-        Quick answers about Invoice for Freelance — for freelancers evaluating a
-        free invoice generator.
+        Quick answers for freelancers evaluating a free invoice generator.
       </p>
       <dl className="mt-6 space-y-5">
         {facts.map((fact) => (

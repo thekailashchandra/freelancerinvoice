@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { FeaturesPageContent } from "@/components/features-page-content";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
 } from "@/data/structured-data";
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
@@ -23,13 +22,18 @@ export const metadata: Metadata = {
 export default function FeaturesPage() {
   return (
     <>
-      <SchemaGraph
+      <WebApplicationSchema
+        url={getCanonicalUrl("/features")}
+        description={description}
         nodes={[
-          buildOrganizationSchema(),
           buildBreadcrumbListSchema(
             buildBreadcrumbItems([{ name: "Features", path: "/features" }])
           ),
-          buildSoftwareApplicationSchema(),
+          buildLandingWebPageSchema({
+            path: "/features",
+            name: title,
+            description,
+          }),
         ]}
       />
       <FeaturesPageContent />

@@ -1,29 +1,36 @@
 import type { TemplatePage } from "@/data/template-pages";
-import { SchemaGraph } from "@/components/schema-graph";
+import { WebApplicationSchema } from "@/components/web-application-schema";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
   buildFaqPageSchemaFromItems,
-  buildOrganizationSchema,
-  buildSoftwareApplicationSchema,
+  buildLandingWebPageSchema,
   buildTemplateArticleSchema,
+  webApplicationFeatureList,
 } from "@/data/structured-data";
+import { getCanonicalUrl } from "@/data/seo";
 
 type TemplatePageSchemaProps = {
   page: TemplatePage;
 };
 
 export function TemplatePageSchema({ page }: TemplatePageSchemaProps) {
+  const path = `/${page.slug}`;
+
   return (
-    <SchemaGraph
+    <WebApplicationSchema
+      url={getCanonicalUrl(path)}
+      description={page.description}
+      featureList={`${webApplicationFeatureList}, ${page.category.toLowerCase()} invoice template`}
       nodes={[
-        buildOrganizationSchema(),
         buildBreadcrumbListSchema(
-          buildBreadcrumbItems([
-            { name: page.category, path: `/${page.slug}` },
-          ])
+          buildBreadcrumbItems([{ name: page.title, path }])
         ),
-        buildSoftwareApplicationSchema(),
+        buildLandingWebPageSchema({
+          path,
+          name: page.title,
+          description: page.description,
+        }),
         buildTemplateArticleSchema(page),
         buildFaqPageSchemaFromItems(page.faqItems),
       ]}

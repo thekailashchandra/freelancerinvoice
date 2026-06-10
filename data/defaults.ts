@@ -2,6 +2,7 @@ import type { CompanySettings, Invoice, ServiceItem } from "@/types/invoice";
 import { generateId, generateInvoiceNumber } from "@/lib/utils";
 import { defaultCompanySettings } from "@/lib/storage";
 import { emptyPaymentDetails, getCountryConfig } from "@/lib/country";
+import { getDefaultCompanySettingsForCountry } from "@/lib/geo-market";
 
 function newInvoiceId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -18,6 +19,11 @@ export function createEmptyService(): ServiceItem {
     quantity: 1,
     price: 0,
   };
+}
+
+/** Blank invoice prefilled for a detected or selected country. */
+export function createDefaultInvoiceForCountry(countryCode: string): Invoice {
+  return createDefaultInvoice(getDefaultCompanySettingsForCountry(countryCode));
 }
 
 export function createDefaultInvoice(company: CompanySettings = defaultCompanySettings): Invoice {

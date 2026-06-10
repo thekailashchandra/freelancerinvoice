@@ -17,6 +17,7 @@ export const freelanceContractorInvoiceFormatInrUsClients: SeoLandingPage = {
     "freelancer India US billing",
   ],
   category: "Geo programmatic",
+  market: "IN",
   publishedAt: "2026-06-12",
   benefits: [
     "INR and USD invoice formats in one tool",

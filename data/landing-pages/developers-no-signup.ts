@@ -22,7 +22,7 @@ export const freeDynamicInvoiceGeneratorDevelopersNoSignup: SeoLandingPage = {
     "Live dynamic preview — see changes as you type",
     "No signup wall to explore the invoice builder",
     "Line items for hours, sprints, milestones, and retainers",
-    "One-click PDF export after free signup",
+    "One-click PDF export — no signup required on the landing page",
     "Multi-currency for US and international clients",
   ],
   features: [
@@ -57,7 +57,7 @@ export const freeDynamicInvoiceGeneratorDevelopersNoSignup: SeoLandingPage = {
     {
       question: "Do I need to sign up to use the developer invoice generator?",
       answer:
-        "You can explore the invoice builder immediately. A free account is required to save invoices and download PDFs to your cloud history.",
+        "No signup is required to fill in the invoice form, preview live, and download a PDF from the page. Create a free account only when you want cloud history and payment tracking.",
     },
     {
       question: "Can developers invoice in USD and INR?",
