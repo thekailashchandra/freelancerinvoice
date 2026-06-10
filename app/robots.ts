@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { METADATA_ROUTE_ISR_SECONDS } from "@/lib/cache-config";
 import { hubClusterSlugs } from "@/data/hub-clusters";
 import { pillarSlugs } from "@/data/topical-pillars";
 import { comparisonSlugs } from "@/data/comparisons";
@@ -93,7 +92,7 @@ function buildRules() {
   return [...baseRules, ...aiRules];
 }
 
-export const revalidate = METADATA_ROUTE_ISR_SECONDS;
+export const revalidate = 86400;
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = siteConfig.url.replace(/\/$/, "");

@@ -8,7 +8,6 @@ import {
 } from "@/data/structured-data";
 import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems, homeSeo } from "@/data/seo";
-import { siteConfig } from "@/data/site";
 import { buildFaqPageSchemaFromItems } from "@/data/structured-data";
 
 type StructuredDataProps = {

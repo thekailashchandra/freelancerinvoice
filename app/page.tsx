@@ -7,10 +7,8 @@ import {
   getCanonicalUrl,
   homeSeo,
 } from "@/data/seo";
-import { MARKETING_ISR_SECONDS } from "@/lib/cache-config";
-
 /** SSG + ISR — auth redirects run in middleware, not here. */
-export const revalidate = MARKETING_ISR_SECONDS;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: homeSeo.title,

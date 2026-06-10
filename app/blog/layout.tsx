@@ -1,7 +1,5 @@
 import { PublicPageShell } from "@/components/public-page-shell";
-import { CONTENT_ISR_SECONDS } from "@/lib/cache-config";
-
-export const revalidate = CONTENT_ISR_SECONDS;
+export const revalidate = 86400;
 
 export default function BlogLayout({
   children,

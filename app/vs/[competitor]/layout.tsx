@@ -1,7 +1,5 @@
 import { PublicPageShell } from "@/components/public-page-shell";
-import { MARKETING_ISR_SECONDS } from "@/lib/cache-config";
-
-export const revalidate = MARKETING_ISR_SECONDS;
+export const revalidate = 86400;
 
 export default function ComparisonLayout({
   children,
