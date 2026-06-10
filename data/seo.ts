@@ -1,5 +1,51 @@
+import type { Metadata } from "next";
+import { pillarSlugs } from "@/data/topical-pillars";
+import { comparisonPages } from "@/data/comparisons";
 import { guideArticles } from "@/data/guides";
+import { aiGuides } from "@/data/ai-guides";
+import { landingPages } from "@/data/landing-pages";
+import { templatePages } from "@/data/template-pages";
 import { siteConfig } from "@/data/site";
+
+/** Shared robots directive for authenticated app routes. */
+export const privateAppRobots: Metadata["robots"] = {
+  index: false,
+  follow: false,
+  googleBot: { index: false, follow: false },
+};
+
+const guideLastModified = new Map<string, Date>(
+  guideArticles.flatMap((article) => {
+    const date = new Date(article.publishedAt);
+    return [
+      [`/guide/${article.slug}`, date],
+      [`/blog/${article.slug}`, date],
+    ];
+  })
+);
+
+const templateLastModified = new Map<string, Date>(
+  templatePages.map((page) => [`/${page.slug}`, new Date(page.publishedAt)])
+);
+
+const aiGuideLastModified = new Map<string, Date>(
+  aiGuides.map((guide) => [`/${guide.slug}`, new Date(guide.publishedAt)])
+);
+
+const landingLastModified = new Map<string, Date>(
+  landingPages.map((page) => [`/${page.slug}`, new Date(page.publishedAt)])
+);
+
+const comparisonLastModified = new Map<string, Date>(
+  comparisonPages.map((page) => [
+    `/vs/${page.slug}`,
+    new Date(page.publishedAt),
+  ])
+);
+
+const guideIndexLastModified = new Date(
+  Math.max(...guideArticles.map((a) => new Date(a.publishedAt).getTime()))
+);
 
 /** Primary and secondary keywords for organic search (Google, Gemini, Bing). */
 export const seoKeywords = [
@@ -73,16 +119,56 @@ export const faqItems = [
 
 export const publicRoutes = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
-  { path: "/guide", changeFrequency: "weekly" as const, priority: 0.9 },
+  { path: "/features", changeFrequency: "monthly" as const, priority: 0.9 },
   { path: "/pricing", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/contact", changeFrequency: "monthly" as const, priority: 0.6 },
+  { path: "/blog", changeFrequency: "weekly" as const, priority: 0.9 },
+  { path: "/freelance-finances", changeFrequency: "weekly" as const, priority: 0.95 },
+  ...pillarSlugs.map((slug) => ({
+    path: `/blog/pillar/${slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  })),
+  ...guideArticles.map((article) => ({
+    path: `/blog/${article.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  })),
+  { path: "/guide", changeFrequency: "weekly" as const, priority: 0.85 },
   ...guideArticles.map((article) => ({
     path: `/guide/${article.slug}`,
     changeFrequency: "monthly" as const,
-    priority: 0.85,
+    priority: 0.8,
   })),
   { path: "/login", changeFrequency: "monthly" as const, priority: 0.5 },
   { path: "/signup", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
+  { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
+  { path: "/refund-policy", changeFrequency: "yearly" as const, priority: 0.3 },
+  { path: "/llms.txt", changeFrequency: "weekly" as const, priority: 0.4 },
+  { path: "/llms-full.txt", changeFrequency: "weekly" as const, priority: 0.4 },
+  ...templatePages.map((page) => ({
+    path: `/${page.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.88,
+  })),
+  ...aiGuides.map((guide) => ({
+    path: `/${guide.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.92,
+  })),
+  { path: "/invoice-templates", changeFrequency: "weekly" as const, priority: 0.9 },
+  ...landingPages.map((page) => ({
+    path: `/${page.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.93,
+  })),
+  ...comparisonPages.map((page) => ({
+    path: `/vs/${page.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.82,
+  })),
 ] as const;
 
 export function getCanonicalUrl(path = ""): string {
@@ -93,4 +179,81 @@ export function getCanonicalUrl(path = ""): string {
 
 export function buildKeywordsString(): string {
   return seoKeywords.join(", ");
+}
+
+export function getRouteLastModified(path: string): Date {
+  if (path === "/guide" || path === "/blog") return guideIndexLastModified;
+  const guideDate = guideLastModified.get(path);
+  if (guideDate) return guideDate;
+  const templateDate = templateLastModified.get(path);
+  if (templateDate) return templateDate;
+  const aiGuideDate = aiGuideLastModified.get(path);
+  if (aiGuideDate) return aiGuideDate;
+  const landingDate = landingLastModified.get(path);
+  if (landingDate) return landingDate;
+  const comparisonDate = comparisonLastModified.get(path);
+  if (comparisonDate) return comparisonDate;
+  return new Date("2026-06-01");
+}
+
+type PageMetadataInput = {
+  title: string;
+  description: string;
+  path: string;
+  keywords?: string[];
+  type?: "website" | "article";
+  publishedTime?: string;
+};
+
+/** Canonical + OG + Twitter metadata for public marketing pages. */
+export function buildPageMetadata({
+  title,
+  description,
+  path,
+  keywords,
+  type = "website",
+  publishedTime,
+}: PageMetadataInput): Metadata {
+  return {
+    title,
+    description,
+    ...(keywords?.length ? { keywords: keywords.join(", ") } : {}),
+    alternates: { canonical: getCanonicalUrl(path) },
+    ...buildSocialMetadata({ title, description, path, type, publishedTime }),
+  };
+}
+
+type SocialMetadataInput = {
+  title: string;
+  description: string;
+  path: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+};
+
+/** Consistent Open Graph + Twitter metadata for public pages. */
+export function buildSocialMetadata({
+  title,
+  description,
+  path,
+  type = "website",
+  publishedTime,
+}: SocialMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
+  const url = getCanonicalUrl(path);
+  return {
+    openGraph: {
+      title,
+      description,
+      url,
+      type,
+      siteName: siteConfig.name,
+      locale: "en_US",
+      ...(publishedTime ? { publishedTime } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }

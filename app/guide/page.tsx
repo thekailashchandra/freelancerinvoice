@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { GuideIndexContent } from "@/components/guide-index-content";
-import { getCanonicalUrl } from "@/data/seo";
+import { GuideIndexSchema } from "@/components/guide-index-schema";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
+const title = "Freelancer Guide: Invoicing, Tax, and International Billing";
+const description =
+  "Free guides for freelancers on how to bill international clients, freelance tax requirements, payment terms, GST invoicing in India, and professional invoice checklists.";
+
 export const metadata: Metadata = {
-  title: "Freelancer Guide: Invoicing, Tax, and International Billing",
-  description:
-    "Free guides for freelancers on how to bill international clients, freelance tax requirements, payment terms, GST invoicing in India, and professional invoice checklists.",
+  title,
+  description,
   keywords: [
     "freelancer guide",
     "how to bill international clients",
@@ -17,15 +21,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: getCanonicalUrl("/guide"),
   },
-  openGraph: {
+  ...buildSocialMetadata({
     title: `Freelancer Guide | ${siteConfig.name}`,
     description:
       "Practical invoicing and tax guides for freelancers and independent contractors.",
-    url: getCanonicalUrl("/guide"),
-    type: "website",
-  },
+    path: "/guide",
+  }),
 };
 
 export default function GuideIndexPage() {
-  return <GuideIndexContent />;
+  return (
+    <>
+      <GuideIndexSchema />
+      <GuideIndexContent />
+    </>
+  );
 }

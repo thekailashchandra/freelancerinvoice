@@ -14,8 +14,10 @@ import {
   Zap,
 } from "lucide-react";
 import { guideArticles } from "@/data/guides";
+import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
+import { GeoKeyFacts } from "@/components/geo-key-facts";
 import { HeroInvoiceDemo } from "@/components/hero-invoice-demo";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
@@ -106,6 +108,7 @@ const useCases = [
 ];
 
 const featuredGuides = guideArticles.slice(0, 3);
+const allFaqItems = [...faqItems, ...geoAuthoritativeAnswers];
 
 export function LandingPage() {
   return (
@@ -151,11 +154,18 @@ export function LandingPage() {
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
+                  <Link href="/features">See features</Link>
+                </Button>
+                <Button size="lg" variant="ghost" asChild className="sm:ml-0">
                   <Link href="/login">Sign in</Link>
                 </Button>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                Free to start · PDF export · Cloud invoice history
+                Free to start ·{" "}
+                <Link href="/pricing" className="text-foreground hover:underline">
+                  See pricing
+                </Link>
+                {" · "}PDF export · Cloud invoice history
               </p>
             </div>
 
@@ -163,6 +173,11 @@ export function LandingPage() {
               <HeroInvoiceDemo />
             </div>
           </div>
+        </section>
+
+        {/* GEO key facts — quotable entity summary for AI search */}
+        <section className="py-12" aria-label="Product summary">
+          <GeoKeyFacts />
         </section>
 
         {/* Features */}
@@ -365,7 +380,7 @@ export function LandingPage() {
             PDF export, security, and getting paid faster.
           </p>
           <div className="mx-auto max-w-3xl space-y-4">
-            {faqItems.map((item) => (
+            {allFaqItems.map((item) => (
               <details
                 key={item.question}
                 className="group glass rounded-xl border border-border/50 p-5"
@@ -392,15 +407,23 @@ export function LandingPage() {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
               Join thousands of freelancers who bill professionally with{" "}
-              {siteConfig.name}. Free account, instant PDF export, cloud-backed
-              invoice history.
-            </p>
-            <Button size="lg" className="mt-8 gap-2 px-8" asChild>
-              <Link href="/signup">
-                Get started, it&apos;s free
-                <ArrowRight className="h-4 w-4" />
+              {siteConfig.name}.{" "}
+              <Link href="/pricing" className="text-foreground hover:underline">
+                Free forever
               </Link>
-            </Button>
+              , instant PDF export, cloud-backed invoice history.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button size="lg" className="gap-2 px-8" asChild>
+                <Link href="/signup">
+                  Get started, it&apos;s free
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/guide">Read freelancer guides</Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>

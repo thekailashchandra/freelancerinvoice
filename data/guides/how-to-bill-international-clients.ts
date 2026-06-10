@@ -12,7 +12,8 @@ export const howToBillInternationalClients: GuideArticle = {
     "bill overseas clients",
     "cross-border freelancer billing",
   ],
-  category: "International billing",
+  category: "Tax & Compliance",
+  pillar: "tax-compliance-currency",
   publishedAt: "2026-06-01",
   readingTimeMinutes: 9,
   sections: [

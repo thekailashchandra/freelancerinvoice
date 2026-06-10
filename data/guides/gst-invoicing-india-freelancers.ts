@@ -12,7 +12,8 @@ export const gstInvoicingIndiaFreelancers: GuideArticle = {
     "India freelance invoice GST",
     "IGST freelancer invoice",
   ],
-  category: "Tax & compliance",
+  category: "Tax & Compliance",
+  pillar: "tax-compliance-currency",
   publishedAt: "2026-05-20",
   readingTimeMinutes: 10,
   sections: [

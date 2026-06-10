@@ -1,0 +1,24 @@
+import type { Metadata } from "next";
+import { AboutPageContent } from "@/components/about-page-content";
+import { PublicBreadcrumbSchema } from "@/components/public-breadcrumb-schema";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
+import { siteConfig } from "@/data/site";
+
+const title = "About";
+const description = `Learn about ${siteConfig.name} — a free invoice generator built for freelancers, independent contractors, and small agencies.`;
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: getCanonicalUrl("/about") },
+  ...buildSocialMetadata({ title, description, path: "/about" }),
+};
+
+export default function AboutPage() {
+  return (
+    <>
+      <PublicBreadcrumbSchema segments={[{ name: "About", path: "/about" }]} />
+      <AboutPageContent />
+    </>
+  );
+}

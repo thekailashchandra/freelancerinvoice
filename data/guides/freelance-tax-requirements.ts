@@ -12,7 +12,8 @@ export const freelanceTaxRequirements: GuideArticle = {
     "self-employment tax freelancer",
     "freelance tax deductions",
   ],
-  category: "Tax & compliance",
+  category: "Tax & Compliance",
+  pillar: "tax-compliance-currency",
   publishedAt: "2026-06-02",
   readingTimeMinutes: 11,
   sections: [

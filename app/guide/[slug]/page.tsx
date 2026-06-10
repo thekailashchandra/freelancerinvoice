@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ArticleSchema } from "@/components/article-schema";
 import { GuideArticleContent } from "@/components/guide-article-content";
-import { GuideArticleSchema } from "@/components/guide-article-schema";
 import {
   getAllGuideSlugs,
   getGuideBySlug,
 } from "@/data/guides";
-import { getCanonicalUrl } from "@/data/seo";
-import { siteConfig } from "@/data/site";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 
 type GuidePageProps = {
   params: Promise<{ slug: string }>;
@@ -34,14 +33,13 @@ export async function generateMetadata({
     description: article.description,
     keywords: article.keywords,
     alternates: { canonical },
-    openGraph: {
+    ...buildSocialMetadata({
       title: article.title,
       description: article.description,
-      url: canonical,
+      path: `/guide/${article.slug}`,
       type: "article",
       publishedTime: article.publishedAt,
-      siteName: siteConfig.name,
-    },
+    }),
   };
 }
 
@@ -55,7 +53,7 @@ export default async function GuideArticlePage({ params }: GuidePageProps) {
 
   return (
     <>
-      <GuideArticleSchema article={article} />
+      <ArticleSchema article={article} basePath="/guide" breadcrumbLabel="Guide" />
       <GuideArticleContent article={article} />
     </>
   );

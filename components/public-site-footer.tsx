@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
 import { SupportTipLink } from "@/components/support-tip-link";
+import { footerNavLinks } from "@/data/public-navigation";
 import { siteConfig } from "@/data/site";
 
 export function PublicSiteFooter() {
@@ -16,31 +17,31 @@ export function PublicSiteFooter() {
           Free invoice generator for freelancers
         </p>
         <nav
-          className="mt-4 flex flex-wrap items-center justify-center gap-4"
+          className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
           aria-label="Footer"
         >
-          <Link href="/guide" className="hover:text-foreground hover:underline">
-            Guide
-          </Link>
-          <Link href="/pricing" className="hover:text-foreground hover:underline">
-            Pricing
-          </Link>
+          {footerNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-foreground hover:underline"
+            >
+              {link.label}
+            </Link>
+          ))}
           <SupportTipLink className="text-primary hover:text-primary" />
-          <Link href="/signup" className="hover:text-foreground hover:underline">
-            Sign up
-          </Link>
-          <Link href="/login" className="hover:text-foreground hover:underline">
-            Sign in
-          </Link>
           <a
             href={`${siteConfig.url}/sitemap.xml`}
             className="hover:text-foreground hover:underline"
           >
             Sitemap
           </a>
-          <Link href="/privacy" className="hover:text-foreground hover:underline">
-            Privacy
-          </Link>
+          <a
+            href={`${siteConfig.url}/llms.txt`}
+            className="hover:text-foreground hover:underline"
+          >
+            LLMs.txt
+          </a>
           <PrivacyConsentLink className="hover:text-foreground" />
         </nav>
       </div>

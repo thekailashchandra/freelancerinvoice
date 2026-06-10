@@ -12,7 +12,8 @@ export const paymentTermsForFreelancers: GuideArticle = {
     "freelancer deposit invoice",
     "late payment freelancer",
   ],
-  category: "Getting paid",
+  category: "Invoicing & Billing",
+  pillar: "invoicing-billing",
   publishedAt: "2026-05-25",
   readingTimeMinutes: 8,
   sections: [

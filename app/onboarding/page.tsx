@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { OnboardingForm } from "@/components/onboarding-form";
+import { privateAppRobots } from "@/data/seo";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+
+export const metadata: Metadata = {
+  title: "Onboarding",
+  robots: privateAppRobots,
+};
 
 export default async function OnboardingPage() {
   if (!isSupabaseConfigured()) {

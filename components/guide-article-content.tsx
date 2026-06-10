@@ -1,19 +1,28 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import type { GuideArticle } from "@/data/guides";
-import { guideArticles } from "@/data/guides";
+import {
+  getPillarForArticle,
+  getRelatedPillarArticles,
+} from "@/data/topical-pillars";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 
 type GuideArticleContentProps = {
   article: GuideArticle;
+  /** URL prefix for article links, e.g. "/guide" or "/blog". */
+  basePath?: string;
+  indexLabel?: string;
 };
 
-export function GuideArticleContent({ article }: GuideArticleContentProps) {
-  const related = guideArticles
-    .filter((item) => item.slug !== article.slug)
-    .slice(0, 3);
+export function GuideArticleContent({
+  article,
+  basePath = "/guide",
+  indexLabel = "Guide",
+}: GuideArticleContentProps) {
+  const pillar = getPillarForArticle(article.slug);
+  const related = getRelatedPillarArticles(article.slug);
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 md:px-8 md:py-16">
@@ -22,11 +31,27 @@ export function GuideArticleContent({ article }: GuideArticleContentProps) {
           Home
         </Link>
         <span className="mx-2">/</span>
-        <Link href="/guide" className="hover:text-foreground hover:underline">
-          Guide
+        <Link
+          href="/freelance-finances"
+          className="hover:text-foreground hover:underline"
+        >
+          Freelance Finances
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-foreground">{article.category}</span>
+        {pillar ? (
+          <>
+            <Link
+              href={`/blog/pillar/${pillar.slug}`}
+              className="hover:text-foreground hover:underline"
+            >
+              {pillar.shortTitle}
+            </Link>
+            <span className="mx-2">/</span>
+          </>
+        ) : null}
+        <Link href={basePath} className="hover:text-foreground hover:underline">
+          {indexLabel}
+        </Link>
       </nav>
 
       <header className="mt-6">
@@ -115,12 +140,14 @@ export function GuideArticleContent({ article }: GuideArticleContentProps) {
 
       {related.length > 0 && (
         <aside className="mt-12 border-t border-border/50 pt-10">
-          <h2 className="text-lg font-semibold">Related guides</h2>
+          <h2 className="text-lg font-semibold">
+            {pillar ? `More in ${pillar.shortTitle}` : "Related articles"}
+          </h2>
           <ul className="mt-4 space-y-3">
             {related.map((item) => (
               <li key={item.slug}>
                 <Link
-                  href={`/guide/${item.slug}`}
+                  href={`${basePath}/${item.slug}`}
                   className="text-sm text-muted-foreground hover:text-primary hover:underline"
                 >
                   {item.title}

@@ -7,15 +7,28 @@ import {
   isSupabaseConfigured,
   isSupabaseServerConfigured,
 } from "@/lib/supabase/env";
-import { getCanonicalUrl } from "@/data/seo";
+import { PageFaqSection } from "@/components/page-faq-section";
+import { SchemaGraph } from "@/components/schema-graph";
+import { getPageFaqs } from "@/data/page-faqs";
+import {
+  buildBreadcrumbItems,
+  buildBreadcrumbListSchema,
+  buildOrganizationSchema,
+  buildSoftwareApplicationSchema,
+} from "@/data/structured-data";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { SignupForm } from "./signup-form";
 
+const title = "Create Free Account";
+const description = `Create a free ${siteConfig.name} account and start generating professional invoices for freelancers with PDF export and cloud storage.`;
+
 export const metadata: Metadata = {
-  title: "Create Free Account",
-  description: `Create a free ${siteConfig.name} account and start generating professional invoices for freelancers with PDF export and cloud storage.`,
+  title,
+  description,
   alternates: { canonical: getCanonicalUrl("/signup") },
   robots: { index: true, follow: true },
+  ...buildSocialMetadata({ title, description, path: "/signup" }),
 };
 
 export default async function SignupPage() {
@@ -33,13 +46,30 @@ export default async function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <SignupForm
+    <>
+      <SchemaGraph
+        nodes={[
+          buildOrganizationSchema(),
+          buildBreadcrumbListSchema(
+            buildBreadcrumbItems([{ name: "Signup", path: "/signup" }])
+          ),
+          buildSoftwareApplicationSchema(),
+        ]}
+      />
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <SignupForm
         configured={configured}
         canSignUp={canSignUp}
         supabaseConfig={supabaseConfig}
         googleClientId={googleClientId}
-      />
-    </div>
+        />
+      </div>
+      <div className="mx-auto max-w-md px-4 pb-16">
+        <PageFaqSection
+          faqItems={getPageFaqs("/signup")}
+          heading="Signup FAQ"
+        />
+      </div>
+    </>
   );
 }

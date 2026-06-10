@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { geoEntity, geoTopics } from "@/data/geo";
 import { buildKeywordsString, homeSeo } from "@/data/seo";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
 import { siteConfig } from "@/data/site";
@@ -10,11 +11,13 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -50,20 +53,11 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: siteConfig.logos.light,
-        width: 1200,
-        height: 630,
-        alt: `${siteConfig.name}, invoice generator for freelancers`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: homeSeo.ogTitle,
     description: homeSeo.ogDescription,
-    images: [siteConfig.logos.light],
   },
   icons: {
     icon: [
@@ -74,8 +68,22 @@ export const metadata: Metadata = {
   },
   other: {
     "ai-content-declaration": "human-authored",
+    "ai-purpose": geoEntity.elevatorPitch,
+    "ai-audience": geoEntity.primaryAudience,
+    "abstract": geoEntity.oneLineSummary,
+    "topic": geoTopics.join(", "),
     "gemini-topic": "freelancer invoicing, freelance billing, invoice generator",
+    "llms-txt": `${siteConfig.url}/llms.txt`,
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({
@@ -86,7 +94,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <GooglePrivacyScripts />
+        <link
+          rel="alternate"
+          type="text/plain"
+          href={`${siteConfig.url}/llms.txt`}
+          title="LLM site summary"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

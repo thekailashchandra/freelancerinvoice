@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Heart } from "lucide-react";
+import { PageFaqSection } from "@/components/page-faq-section";
+import { getPageFaqs } from "@/data/page-faqs";
 import { siteConfig } from "@/data/site";
 import { SupportTipLink } from "@/components/support-tip-link";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -88,6 +90,8 @@ export function PricingPageContent() {
           Contributions are optional and do not unlock extra features.
         </p>
       </section>
+
+      <PageFaqSection faqItems={getPageFaqs("/pricing")} />
     </div>
   );
 }

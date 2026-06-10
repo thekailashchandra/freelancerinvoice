@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing-page";
 import { StructuredData } from "@/components/structured-data";
-import { buildKeywordsString, getCanonicalUrl, homeSeo } from "@/data/seo";
+import {
+  buildKeywordsString,
+  buildSocialMetadata,
+  getCanonicalUrl,
+  homeSeo,
+} from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -15,12 +20,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: getCanonicalUrl("/"),
   },
-  openGraph: {
+  ...buildSocialMetadata({
     title: homeSeo.ogTitle,
     description: homeSeo.ogDescription,
-    url: siteConfig.url,
-    type: "website",
-  },
+    path: "/",
+  }),
 };
 
 export default async function HomePage() {
@@ -41,7 +45,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <StructuredData includeFaq />
+      <StructuredData includeFaq includeGeoAnswers />
       <LandingPage />
     </>
   );

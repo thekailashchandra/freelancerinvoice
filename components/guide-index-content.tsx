@@ -16,7 +16,15 @@ export function GuideIndexContent() {
           Practical articles from {siteConfig.name} on international billing,
           freelance taxes, payment terms, GST invoicing, and professional
           invoice formatting. Written for independent contractors who want to
-          get paid faster and stay organized.
+          get paid faster and stay organized. Ready to bill?{" "}
+          <Link href="/signup" className="text-foreground hover:underline">
+            Create a free invoice
+          </Link>{" "}
+          or see{" "}
+          <Link href="/pricing" className="text-foreground hover:underline">
+            pricing
+          </Link>
+          .
         </p>
       </header>
 

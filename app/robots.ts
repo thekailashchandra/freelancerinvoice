@@ -1,36 +1,97 @@
 import type { MetadataRoute } from "next";
+import { pillarSlugs } from "@/data/topical-pillars";
+import { comparisonSlugs } from "@/data/comparisons";
+import { aiGuideSlugs } from "@/data/ai-guides";
+import { landingPageSlugs } from "@/data/landing-pages";
+import { templatePageSlugs } from "@/data/template-pages";
 import { siteConfig } from "@/data/site";
+
+const appDisallow = [
+  "/dashboard",
+  "/create-invoice",
+  "/invoice-history",
+  "/settings",
+  "/onboarding",
+  "/support",
+  "/create",
+  "/history",
+  "/api/",
+  "/auth/",
+] as const;
+
+const marketingSlugs = [
+  ...templatePageSlugs,
+  ...aiGuideSlugs,
+  ...landingPageSlugs,
+].map((slug) => `/${slug}`);
+
+const publicAllow = [
+  "/",
+  "/features",
+  "/pricing",
+  "/about",
+  "/contact",
+  "/blog",
+  "/guide",
+  "/login",
+  "/signup",
+  "/privacy",
+  "/terms",
+  "/refund-policy",
+  "/invoice-templates",
+  "/freelance-finances",
+  "/llms.txt",
+  "/llms-full.txt",
+  ...marketingSlugs,
+  ...comparisonSlugs.map((slug) => `/vs/${slug}`),
+  ...pillarSlugs.map((slug) => `/blog/pillar/${slug}`),
+] as const;
+
+/** AI / LLM crawlers — allow public marketing content, block app routes. */
+const aiCrawlers = [
+  "GPTBot",
+  "ChatGPT-User",
+  "OAI-SearchBot",
+  "Google-Extended",
+  "anthropic-ai",
+  "ClaudeBot",
+  "Claude-Web",
+  "PerplexityBot",
+  "Perplexity-User",
+  "Bytespider",
+  "cohere-ai",
+  "meta-externalagent",
+  "Amazonbot",
+] as const;
+
+function buildRules() {
+  const baseRules: MetadataRoute.Robots["rules"] = [
+    {
+      userAgent: "*",
+      allow: [...publicAllow],
+      disallow: [...appDisallow],
+    },
+    {
+      userAgent: "Googlebot",
+      allow: [...publicAllow],
+      disallow: [...appDisallow],
+    },
+  ];
+
+  const aiRules = aiCrawlers.map((userAgent) => ({
+    userAgent,
+    allow: [...publicAllow],
+    disallow: [...appDisallow],
+  }));
+
+  return [...baseRules, ...aiRules];
+}
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = siteConfig.url.replace(/\/$/, "");
 
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: ["/", "/login", "/signup"],
-        disallow: [
-          "/dashboard",
-          "/create-invoice",
-          "/invoice-history",
-          "/settings",
-          "/onboarding",
-          "/create",
-          "/history",
-          "/api/",
-          "/auth/",
-        ],
-      },
-      {
-        userAgent: "Googlebot",
-        allow: ["/", "/login", "/signup"],
-        disallow: ["/dashboard", "/api/", "/auth/"],
-      },
-      {
-        userAgent: "Google-Extended",
-        allow: ["/", "/login", "/signup"],
-      },
-    ],
+    rules: buildRules(),
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,
   };

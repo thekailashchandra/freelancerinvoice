@@ -1,121 +1,67 @@
+import { SchemaGraph } from "@/components/schema-graph";
+import {
+  buildOrganizationSchema,
+  buildSoftwareApplicationSchema,
+  buildWebSiteSchema,
+  schemaIds,
+} from "@/data/structured-data";
+import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems, homeSeo } from "@/data/seo";
 import { siteConfig } from "@/data/site";
+import { buildFaqPageSchemaFromItems } from "@/data/structured-data";
 
 type StructuredDataProps = {
   /** Include FAQ schema — use on pages that render the FAQ section. */
   includeFaq?: boolean;
+  /** Append GEO authoritative Q&A to FAQ schema (homepage). */
+  includeGeoAnswers?: boolean;
 };
 
-export function StructuredData({ includeFaq = false }: StructuredDataProps) {
-  const organization = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: siteConfig.name,
-    url: siteConfig.url,
-    logo: `${siteConfig.url}${siteConfig.logos.light}`,
-    description: siteConfig.description,
-    sameAs: [],
-  };
-
-  const webSite = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: siteConfig.name,
-    url: siteConfig.url,
-    description: homeSeo.description,
-    publisher: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    inLanguage: "en-US",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteConfig.url}/signup`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const softwareApp = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: siteConfig.name,
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Web",
-    url: siteConfig.url,
-    description: homeSeo.description,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      description: "Free freelancer invoice generator with PDF export and cloud storage",
-    },
-    featureList: [
-      "Professional freelancer invoice creation",
-      "Live invoice preview",
-      "PDF export",
-      "Cloud invoice history",
-      "Payment status tracking",
-      "Custom logo and branding",
-      "Multi-currency support",
-    ],
-    audience: {
-      "@type": "Audience",
-      audienceType: "Freelancers, independent contractors, and agencies",
-    },
-  };
-
+export function StructuredData({
+  includeFaq = false,
+  includeGeoAnswers = false,
+}: StructuredDataProps) {
   const webPage = {
-    "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${siteConfig.url}/#webpage`,
     name: homeSeo.title,
     description: homeSeo.description,
     url: siteConfig.url,
-    isPartOf: { "@id": `${siteConfig.url}/#website` },
+    isPartOf: { "@id": schemaIds.website },
     about: {
       "@type": "Thing",
       name: "Freelancer invoicing and billing",
     },
     primaryImageOfPage: {
       "@type": "ImageObject",
-      url: `${siteConfig.url}${siteConfig.logos.light}`,
+      url: `${siteConfig.url}/opengraph-image`,
     },
     speakable: {
       "@type": "SpeakableSpecification",
-      cssSelector: ["h1", ".seo-hero-summary", ".faq-answer"],
+      cssSelector: [
+        "h1",
+        ".seo-hero-summary",
+        ".geo-page-summary",
+        ".geo-fact-answer",
+        ".faq-answer",
+      ],
     },
   };
 
-  const faqPage = includeFaq
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqItems.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      }
-    : null;
-
-  const graph = [
-    { ...webSite, "@id": `${siteConfig.url}/#website` },
-    organization,
-    softwareApp,
+  const nodes = [
+    buildWebSiteSchema(),
+    buildOrganizationSchema(),
+    buildSoftwareApplicationSchema(),
     webPage,
-    ...(faqPage ? [faqPage] : []),
+    ...(includeFaq
+      ? [
+          buildFaqPageSchemaFromItems([
+            ...faqItems,
+            ...(includeGeoAnswers ? geoAuthoritativeAnswers : []),
+          ]),
+        ]
+      : []),
   ];
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@graph": graph }) }}
-    />
-  );
+  return <SchemaGraph nodes={nodes} />;
 }

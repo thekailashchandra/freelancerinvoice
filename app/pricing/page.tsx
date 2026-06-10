@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
 import { PricingPageContent } from "@/components/pricing-page-content";
-import { getCanonicalUrl } from "@/data/seo";
+import { PricingSchema } from "@/components/pricing-schema";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
+const title = "Pricing";
+const description = `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0. Optional Ko-fi tips help keep the platform running.`;
+
 export const metadata: Metadata = {
-  title: "Pricing",
-  description: `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0. Optional Ko-fi tips help keep the platform running.`,
+  title,
+  description,
   alternates: {
     canonical: getCanonicalUrl("/pricing"),
   },
-  openGraph: {
+  ...buildSocialMetadata({
     title: `Pricing | ${siteConfig.name}`,
     description: "Free invoice generator for freelancers. Optional tips via Ko-fi.",
-    url: getCanonicalUrl("/pricing"),
-    type: "website",
-  },
+    path: "/pricing",
+  }),
 };
 
 export default function PricingPage() {
-  return <PricingPageContent />;
+  return (
+    <>
+      <PricingSchema />
+      <PricingPageContent />
+    </>
+  );
 }

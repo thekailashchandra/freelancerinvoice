@@ -1,17 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageFaqSection } from "@/components/page-faq-section";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
+import { getPageFaqs } from "@/data/page-faqs";
+import { PublicBreadcrumbSchema } from "@/components/public-breadcrumb-schema";
+import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
+const title = "Privacy Policy";
+const description = `How ${siteConfig.name} collects, uses, and protects your data — including cookies, advertising consent, and your privacy rights.`;
+
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: `Privacy policy for ${siteConfig.name}.`,
-  alternates: { canonical: `${siteConfig.url}/privacy` },
+  title,
+  description,
+  alternates: { canonical: getCanonicalUrl("/privacy") },
+  ...buildSocialMetadata({ title, description, path: "/privacy" }),
 };
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
+    <>
+      <PublicBreadcrumbSchema
+        segments={[{ name: "Privacy Policy", path: "/privacy" }]}
+      />
+      <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
       <h1 className="text-3xl font-bold tracking-tight">Privacy Policy</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Last updated: {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
@@ -54,7 +66,11 @@ export default function PrivacyPage() {
           <p className="mt-2">
             Depending on your location, you may have rights to access, correct,
             delete, or restrict processing of your personal data. Contact us via
-            the support page for requests.
+            the{" "}
+            <Link href="/contact" className="text-primary hover:underline">
+              contact page
+            </Link>{" "}
+            for requests.
           </p>
         </section>
 
@@ -62,19 +78,16 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold">Contact</h2>
           <p className="mt-2">
             Questions about this policy? Visit{" "}
-            <Link href="/support" className="text-primary hover:underline">
-              Support
+            <Link href="/contact" className="text-primary hover:underline">
+              Contact
             </Link>
             .
           </p>
         </section>
       </div>
 
-      <p className="mt-10">
-        <Link href="/" className="text-sm text-muted-foreground hover:text-foreground hover:underline">
-          ← Back to home
-        </Link>
-      </p>
-    </div>
+      <PageFaqSection faqItems={getPageFaqs("/privacy")} />
+      </div>
+    </>
   );
 }

@@ -11,7 +11,8 @@ export const freelancerInvoiceChecklist: GuideArticle = {
     "freelance invoice requirements",
     "professional freelancer invoice",
   ],
-  category: "Invoicing basics",
+  category: "Invoicing & Billing",
+  pillar: "invoicing-billing",
   publishedAt: "2026-05-28",
   readingTimeMinutes: 7,
   sections: [
