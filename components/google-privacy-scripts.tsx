@@ -2,6 +2,7 @@
 
 import { useLayoutEffect } from "react";
 import { adsenseConfig } from "@/data/adsense";
+import { analyticsConfig } from "@/data/analytics";
 
 const consentDefaultScript = `
   window.dataLayer = window.dataLayer || [];
@@ -34,6 +35,11 @@ const fundingChoicesPresentScript = `
   })();
 `.trim();
 
+const gtagConfigScript = `
+  gtag('js', new Date());
+  gtag('config', '${analyticsConfig.measurementId}');
+`.trim();
+
 function injectInlineScript(
   id: string,
   code: string,
@@ -50,24 +56,32 @@ function injectExternalScript(
   id: string,
   src: string,
   parent: HTMLElement,
-  crossOrigin?: string
+  options?: { crossOrigin?: string; async?: boolean }
 ): void {
   if (document.getElementById(id)) return;
   const script = document.createElement("script");
   script.id = id;
   script.src = src;
-  if (crossOrigin) script.crossOrigin = crossOrigin;
+  if (options?.crossOrigin) script.crossOrigin = options.crossOrigin;
+  if (options?.async) script.async = true;
   parent.appendChild(script);
 }
 
 /**
- * Google Privacy & Messaging (Funding Choices CMP) + AdSense.
+ * Google Analytics, Privacy & Messaging (Funding Choices CMP), and AdSense.
  * Injected client-side only so React never hydrates <script> tags in <head>
  * (avoids mismatches from extensions or third-party script reordering).
  */
 export function GooglePrivacyScripts() {
   useLayoutEffect(() => {
     injectInlineScript("google-consent-default", consentDefaultScript, document.head);
+    injectExternalScript(
+      "google-gtag",
+      analyticsConfig.gtagScriptUrl,
+      document.head,
+      { async: true }
+    );
+    injectInlineScript("google-gtag-config", gtagConfigScript, document.head);
     injectExternalScript(
       "google-funding-choices",
       adsenseConfig.fundingChoicesUrl,
@@ -77,7 +91,7 @@ export function GooglePrivacyScripts() {
       "google-adsense",
       adsenseConfig.adsScriptUrl,
       document.head,
-      "anonymous"
+      { crossOrigin: "anonymous" }
     );
     injectInlineScript("google-fc-present", fundingChoicesPresentScript, document.body);
   }, []);
