@@ -4,7 +4,9 @@ import type { TemplateFaqItem, TemplatePage } from "@/data/template-pages";
 import { productFeatures } from "@/data/features";
 import { resolveArticleDirectAnswer } from "@/data/geo-direct-answers";
 import { geoConsensus, geoEntity, geoTopics } from "@/data/geo";
-import { faqItems, getCanonicalUrl, homeSeo } from "@/data/seo";
+import { homeSeo } from "@/data/home-seo";
+import { faqItems } from "@/data/seo";
+import { getCanonicalUrl } from "@/data/urls";
 import { siteConfig } from "@/data/site";
 
 export const schemaIds = {

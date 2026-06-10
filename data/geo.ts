@@ -8,8 +8,9 @@ import { comparisonPages } from "@/data/comparisons";
 import { guideArticles } from "@/data/guides";
 import { landingPages } from "@/data/landing-pages";
 import { templatePages } from "@/data/template-pages";
-import { getCanonicalUrl, homeSeo } from "@/data/seo";
+import { homeSeo } from "@/data/home-seo";
 import { siteConfig } from "@/data/site";
+import { getCanonicalUrl } from "@/data/urls";
 
 /** Canonical entity statement — use verbatim across directories and profiles (consensus). */
 export const geoEntityStatement =

@@ -1,12 +1,14 @@
-/**
- * Self-hosted variable fonts (Geist) — no runtime requests to fonts.googleapis.com.
- * Files ship from the `geist` package via next/font/local.
- */
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
+import { Geist, Geist_Mono } from "next/font/google";
 
-export const geistSans = GeistSans;
-export const geistMono = GeistMono;
+export const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+export const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 /** CSS font-family stack for invoice preview (matches root layout). */
 export const invoicePreviewFontFamily =

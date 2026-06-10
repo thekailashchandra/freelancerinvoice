@@ -6,7 +6,11 @@ import { guideArticles } from "@/data/guides";
 import { aiGuides } from "@/data/ai-guides";
 import { landingPages } from "@/data/landing-pages";
 import { templatePages } from "@/data/template-pages";
+import { homeSeo } from "@/data/home-seo";
 import { siteConfig } from "@/data/site";
+import { getCanonicalUrl } from "@/data/urls";
+
+export { homeSeo, getCanonicalUrl };
 
 /** Shared robots directive for authenticated app routes. */
 export const privateAppRobots: Metadata["robots"] = {
@@ -65,15 +69,6 @@ export const seoKeywords = [
   "freelance invoice maker",
   "PDF invoice for freelancers",
 ] as const;
-
-export const homeSeo = {
-  title: "Invoice for Freelancers | Free Professional Invoice Generator",
-  description:
-    "Create professional invoices for freelancers in minutes. Free invoice generator with PDF export, cloud storage, payment tracking, and invoice history. Built for freelance designers, developers, writers, and consultants.",
-  ogTitle: "Invoice for Freelancers | Free Invoice Generator & PDF Export",
-  ogDescription:
-    "The easiest way to invoice for freelance work. Create beautiful invoices, track payments, and download PDFs with no spreadsheets required.",
-} as const;
 
 export const faqItems = [
   {
@@ -178,12 +173,6 @@ export const publicRoutes = [
     priority: 0.82,
   })),
 ] as const;
-
-export function getCanonicalUrl(path = ""): string {
-  const base = siteConfig.url.replace(/\/$/, "");
-  if (!path || path === "/") return base;
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
-}
 
 export function buildKeywordsString(): string {
   return seoKeywords.join(", ");

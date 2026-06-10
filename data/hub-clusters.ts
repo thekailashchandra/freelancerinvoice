@@ -1,6 +1,6 @@
 import type { TemplateFaqItem } from "@/data/template-pages/types";
 import { getGuideBySlug } from "@/data/guides";
-import { getCanonicalUrl } from "@/data/seo";
+import { getCanonicalUrl } from "@/data/urls";
 
 export type HubSpoke = {
   slug: string;
