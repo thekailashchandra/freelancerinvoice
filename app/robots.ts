@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { hubClusterSlugs } from "@/data/hub-clusters";
 import { pillarSlugs } from "@/data/topical-pillars";
 import { comparisonSlugs } from "@/data/comparisons";
 import { aiGuideSlugs } from "@/data/ai-guides";
@@ -45,6 +46,7 @@ const publicAllow = [
   ...marketingSlugs,
   ...comparisonSlugs.map((slug) => `/vs/${slug}`),
   ...pillarSlugs.map((slug) => `/blog/pillar/${slug}`),
+  ...hubClusterSlugs.map((slug) => `/blog/hub/${slug}`),
 ] as const;
 
 /** AI / LLM crawlers — allow public marketing content, block app routes. */

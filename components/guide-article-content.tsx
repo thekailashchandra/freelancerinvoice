@@ -2,9 +2,15 @@ import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import type { GuideArticle } from "@/data/guides";
 import {
+  getHubClusterForArticle,
+  getHubClusterPath,
+} from "@/data/hub-clusters";
+import {
   getPillarForArticle,
   getRelatedPillarArticles,
 } from "@/data/topical-pillars";
+import { GuideContentUpgradeBlock } from "@/components/guide-content-upgrade";
+import { HubClusterSpokeNav } from "@/components/hub-cluster-spoke-nav";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
@@ -22,7 +28,24 @@ export function GuideArticleContent({
   indexLabel = "Guide",
 }: GuideArticleContentProps) {
   const pillar = getPillarForArticle(article.slug);
-  const related = getRelatedPillarArticles(article.slug);
+  const hubCluster = getHubClusterForArticle(article.slug);
+  const related = hubCluster
+    ? hubCluster.spokes
+        .filter((spoke) => spoke.articleSlug !== article.slug)
+        .map((spoke) => ({
+          slug: spoke.articleSlug,
+          title: spoke.title,
+        }))
+        .concat(
+          hubCluster.hubArticleSlug !== article.slug
+            ? [{ slug: hubCluster.hubArticleSlug, title: hubCluster.title }]
+            : []
+        )
+        .slice(0, 4)
+    : getRelatedPillarArticles(article.slug).map((a) => ({
+        slug: a.slug,
+        title: a.title,
+      }));
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 md:px-8 md:py-16">
@@ -49,12 +72,33 @@ export function GuideArticleContent({
             <span className="mx-2">/</span>
           </>
         ) : null}
+        {hubCluster ? (
+          <>
+            <Link
+              href={getHubClusterPath(hubCluster)}
+              className="hover:text-foreground hover:underline"
+            >
+              Hub guide
+            </Link>
+            <span className="mx-2">/</span>
+          </>
+        ) : null}
         <Link href={basePath} className="hover:text-foreground hover:underline">
           {indexLabel}
         </Link>
       </nav>
 
-      <header className="mt-6">
+      {hubCluster && (
+        <div className="mt-6">
+          <HubClusterSpokeNav
+            cluster={hubCluster}
+            activeArticleSlug={article.slug}
+            variant="spoke"
+          />
+        </div>
+      )}
+
+      <header className={hubCluster ? "mt-8" : "mt-6"}>
         <p className="text-sm font-medium text-primary">{article.category}</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           {article.title}
@@ -93,6 +137,10 @@ export function GuideArticleContent({
           ))}
         </ol>
       </nav>
+
+      {article.contentUpgrade && (
+        <GuideContentUpgradeBlock upgrade={article.contentUpgrade} />
+      )}
 
       <div className="mt-10 space-y-10">
         {article.sections.map((section) => (
@@ -141,7 +189,11 @@ export function GuideArticleContent({
       {related.length > 0 && (
         <aside className="mt-12 border-t border-border/50 pt-10">
           <h2 className="text-lg font-semibold">
-            {pillar ? `More in ${pillar.shortTitle}` : "Related articles"}
+            {hubCluster
+              ? "More in this hub cluster"
+              : pillar
+                ? `More in ${pillar.shortTitle}`
+                : "Related articles"}
           </h2>
           <ul className="mt-4 space-y-3">
             {related.map((item) => (

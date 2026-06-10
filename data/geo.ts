@@ -1,4 +1,5 @@
 import { aiGuides } from "@/data/ai-guides";
+import { hubClusters } from "@/data/hub-clusters";
 import {
   topicalAuthorityHub,
   topicalPillars,
@@ -149,6 +150,12 @@ export function buildLlmsTxt(short = true): string {
     `- [Contact](${getCanonicalUrl("/contact")}): Support and inquiries`,
     `- [Invoice templates hub](${getCanonicalUrl("/invoice-templates")}): All templates and generators`,
     "",
+    "## Long-tail keyword pages",
+    `- [Free dynamic invoice generator for developers (no signup)](${getCanonicalUrl("/free-dynamic-invoice-generator-for-developers-no-signup")})`,
+    `- [How to bill revision rounds outside scope](${getCanonicalUrl("/blog/how-to-bill-client-revision-rounds-outside-scope")})`,
+    `- [Printable graphic designer invoice with logo upload](${getCanonicalUrl("/printable-graphic-designer-invoice-layout-logo-upload")})`,
+    `- [Freelance contractor invoice format INR for US clients](${getCanonicalUrl("/freelance-contractor-invoice-format-inr-us-clients")})`,
+    "",
     "## SEO landing pages (high-intent keywords)",
     ...landingPages.map(
       (page) =>
@@ -168,6 +175,15 @@ export function buildLlmsTxt(short = true): string {
     ),
     "",
     `Hub: [${topicalAuthorityHub.title}](${getCanonicalUrl("/freelance-finances")})`,
+    "",
+    "## Hub-and-spoke blog clusters",
+    ...hubClusters.flatMap((cluster) => [
+      `- [${cluster.title}](${getCanonicalUrl(`/blog/hub/${cluster.slug}`)}): ${cluster.description}`,
+      ...cluster.spokes.map(
+        (spoke) =>
+          `  - [${spoke.title}](${getCanonicalUrl(`/blog/${spoke.articleSlug}`)})`
+      ),
+    ]),
     "",
     "## AI-friendly guides (tables, steps, FAQs)",
     ...aiGuides.map(

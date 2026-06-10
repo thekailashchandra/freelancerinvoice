@@ -1,4 +1,6 @@
 import type { SeoLandingPage } from "./types";
+import { freeDynamicInvoiceGeneratorDevelopersNoSignup } from "./developers-no-signup";
+import { freelanceContractorInvoiceFormatInrUsClients } from "./inr-us-clients";
 import { gstInvoiceGeneratorIndia } from "./gst-india";
 import { invoiceGeneratorForFreelancers } from "./freelancers";
 import { invoiceSoftwareForDesigners } from "./designers";
@@ -9,6 +11,8 @@ export const landingPages: SeoLandingPage[] = [
   gstInvoiceGeneratorIndia,
   invoiceSoftwareForDesigners,
   invoiceTemplateForAgencies,
+  freeDynamicInvoiceGeneratorDevelopersNoSignup,
+  freelanceContractorInvoiceFormatInrUsClients,
 ];
 
 const landingPageMap = new Map(landingPages.map((page) => [page.slug, page]));

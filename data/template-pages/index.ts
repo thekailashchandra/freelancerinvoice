@@ -7,9 +7,11 @@ import { invoiceTemplateForMarketers } from "./marketers";
 import { invoiceTemplateForPhotographers } from "./photographers";
 import { invoiceTemplateForVideoEditors } from "./video-editors";
 import { invoiceTemplateIndia } from "./india";
+import { printableGraphicDesignerInvoiceLayout } from "./printable-designer-invoice";
 import { usdInvoiceTemplate } from "./usd";
 
 export const templatePages: TemplatePage[] = [
+  printableGraphicDesignerInvoiceLayout,
   invoiceTemplateForDesigners,
   invoiceTemplateForPhotographers,
   invoiceTemplateForMarketers,

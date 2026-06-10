@@ -208,10 +208,19 @@ export function getPillarArticleSlugs(pillar: TopicalPillar): string[] {
 /** Additional articles mapped to pillars beyond the two flagship subtopics. */
 const pillarLegacyArticles: Record<string, string[]> = {
   "invoicing-billing": [
+    "ultimate-guide-freelance-invoicing-getting-paid",
+    "overdue-invoice-email-templates",
+    "net-30-vs-net-60-payment-terms",
+    "legally-required-freelance-invoice-information",
+    "client-disputes-billable-hours",
     "freelancer-invoice-checklist",
     "payment-terms-for-freelancers",
   ],
-  "client-management": [],
+  "client-management": [
+    "how-to-bill-client-revision-rounds-outside-scope",
+    "scope-creep-mitigation-freelancers",
+    "freelance-contracts-essentials",
+  ],
   "tax-compliance-currency": [
     "freelance-tax-requirements",
     "gst-invoicing-india-freelancers",

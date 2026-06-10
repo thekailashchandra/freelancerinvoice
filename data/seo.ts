@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { hubClusterSlugs } from "@/data/hub-clusters";
 import { pillarSlugs } from "@/data/topical-pillars";
 import { comparisonPages } from "@/data/comparisons";
 import { guideArticles } from "@/data/guides";
@@ -129,6 +130,11 @@ export const publicRoutes = [
     path: `/blog/pillar/${slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.9,
+  })),
+  ...hubClusterSlugs.map((slug) => ({
+    path: `/blog/hub/${slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.94,
   })),
   ...guideArticles.map((article) => ({
     path: `/blog/${article.slug}`,
