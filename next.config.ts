@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   compress: true,
   experimental: {
     /** Tree-shake icon imports — inline SVG per usage, smaller bundles. */
-    optimizePackageImports: ["lucide-react", "framer-motion", "date-fns"],
+    optimizePackageImports: ["lucide-react", "framer-motion"],
   },
   images: {
     remotePatterns: [

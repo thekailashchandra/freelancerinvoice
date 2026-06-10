@@ -1,5 +1,8 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useMarketContext } from "@/hooks/use-market-context";
 import { CrossBorderComparisonTable } from "@/components/cross-border-comparison-table";
 import { GeoDirectAnswer } from "@/components/geo-direct-answer";
 import { ConversionLandingHero } from "@/components/conversion-landing-hero";
@@ -31,13 +34,12 @@ const LandingInteractiveWorkspace = dynamic(
 
 type SeoLandingPageContentProps = {
   page: SeoLandingPage;
-  initialCountryCode?: string;
 };
 
-export function SeoLandingPageContent({
-  page,
-  initialCountryCode = "US",
-}: SeoLandingPageContentProps) {
+export function SeoLandingPageContent({ page }: SeoLandingPageContentProps) {
+  const marketContext = useMarketContext(
+    page.market === "IN" ? { market: "IN", countryCode: "IN", currencyCode: "INR" } : undefined
+  );
   const related = getRelatedLandingPages(page);
   const directAnswer = getGeoDirectAnswer(page.slug);
 
@@ -56,7 +58,10 @@ export function SeoLandingPageContent({
       {directAnswer ? <GeoDirectAnswer answer={directAnswer} /> : null}
 
       <section className="mt-8" aria-label="Interactive invoice builder">
-        <LandingInteractiveWorkspace initialCountryCode={initialCountryCode} />
+        <LandingInteractiveWorkspace
+          key={marketContext.countryCode}
+          initialCountryCode={marketContext.countryCode}
+        />
       </section>
 
       <LandingWorkflowSteps />

@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import { cookies } from "next/headers";
 import { IndiaMarketHubContent } from "@/components/india-market-hub-content";
 import { WebApplicationSchema } from "@/components/web-application-schema";
 import { buildPageMetadata, getCanonicalUrl } from "@/data/seo";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GEO_COUNTRY_COOKIE, resolveMarketContext } from "@/lib/geo-market";
 import { buildLandingWebPageSchema } from "@/data/structured-data";
 import { indiaMarketHero } from "@/data/geo-markets";
 
@@ -35,13 +33,7 @@ export const metadata: Metadata = buildPageMetadata({
   ],
 });
 
-export default async function IndiaHubPage() {
-  const cookieStore = await cookies();
-  const marketContext = resolveMarketContext({
-    countryCode: cookieStore.get(GEO_COUNTRY_COOKIE)?.value ?? "IN",
-    market: "IN",
-  });
-
+export default function IndiaHubPage() {
   return (
     <>
       <WebApplicationSchema
@@ -57,9 +49,7 @@ export default async function IndiaHubPage() {
       />
       <IndiaMarketHubContent
         workspace={
-          <LandingInteractiveWorkspace
-            initialCountryCode={marketContext.countryCode}
-          />
+          <LandingInteractiveWorkspace initialCountryCode="IN" />
         }
       />
     </>

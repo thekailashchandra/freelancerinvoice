@@ -42,6 +42,8 @@ const publicAllow = [
   "/refund-policy",
   "/invoice-templates",
   "/freelance-finances",
+  "/india",
+  "/global-freelance-invoicing-compliance",
   "/llms.txt",
   "/llms-full.txt",
   "/consensus.txt",

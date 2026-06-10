@@ -1,13 +1,14 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useMarketContext } from "@/hooks/use-market-context";
 import { ArrowRight, Clock } from "lucide-react";
 import { guideArticles } from "@/data/guides";
 import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems } from "@/data/seo";
-import { siteConfig } from "@/data/site";
 import { ConversionLandingHero } from "@/components/conversion-landing-hero";
 import { GeoKeyFacts } from "@/components/geo-key-facts";
-import type { MarketContext } from "@/lib/geo-market";
 import {
   getMarketLandingPaths,
   globalMarketHero,
@@ -35,11 +36,8 @@ const LandingInteractiveWorkspace = dynamic(
 const featuredGuides = guideArticles.slice(0, 3);
 const allFaqItems = [...faqItems, ...geoAuthoritativeAnswers];
 
-type LandingPageProps = {
-  marketContext: MarketContext;
-};
-
-export function LandingPage({ marketContext }: LandingPageProps) {
+export function LandingPage() {
+  const marketContext = useMarketContext();
   const isIndia = marketContext.market === "IN";
   const hero = isIndia ? indiaMarketHero : globalMarketHero;
   const marketPaths = getMarketLandingPaths(marketContext.market);
@@ -71,6 +69,7 @@ export function LandingPage({ marketContext }: LandingPageProps) {
 
         <section aria-label="Interactive invoice builder">
           <LandingInteractiveWorkspace
+            key={marketContext.countryCode}
             initialCountryCode={marketContext.countryCode}
           />
         </section>

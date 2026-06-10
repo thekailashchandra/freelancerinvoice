@@ -19,6 +19,9 @@ import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { SignupForm } from "./signup-form";
 
+/** Uses cookies() via createClient when Supabase is configured. */
+export const dynamic = "force-dynamic";
+
 const title = "Create Free Account";
 const description = `Create a free ${siteConfig.name} account and start generating professional invoices for freelancers with PDF export and cloud storage.`;
 

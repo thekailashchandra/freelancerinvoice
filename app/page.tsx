@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { LandingPage } from "@/components/landing-page";
-import {
-  GEO_COUNTRY_COOKIE,
-  GEO_MARKET_COOKIE,
-  resolveMarketContext,
-} from "@/lib/geo-market";
 import { StructuredData } from "@/components/structured-data";
 import {
   buildKeywordsString,
@@ -32,17 +26,11 @@ export const metadata: Metadata = {
   }),
 };
 
-export default async function HomePage() {
-  const cookieStore = await cookies();
-  const marketContext = resolveMarketContext({
-    countryCode: cookieStore.get(GEO_COUNTRY_COOKIE)?.value ?? null,
-    market: cookieStore.get(GEO_MARKET_COOKIE)?.value ?? null,
-  });
-
+export default function HomePage() {
   return (
     <>
       <StructuredData includeGeoAnswers />
-      <LandingPage marketContext={marketContext} />
+      <LandingPage />
     </>
   );
 }
