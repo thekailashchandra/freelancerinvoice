@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { Loader2, Plus, Upload, X } from "lucide-react";
 import type { CompanySettings, Invoice, InvoiceStatus } from "@/types/invoice";
@@ -10,6 +11,8 @@ import { formatInvoiceMoney } from "@/lib/currency-display";
 import { uploadInvoiceAssetAction } from "@/lib/actions/profile-assets";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import { CurrencySelect } from "@/components/currency-select";
+import { InvoiceCustomerSection } from "@/components/invoice-client-picker";
+import type { SavedClient } from "@/lib/client-mapper";
 import { sanitizePaymentForCountry } from "@/lib/country";
 import { invoicePageSpecs, resolveLogoHeight } from "@/lib/invoice-design";
 import type { InvoicePageSize } from "@/types/invoice";
@@ -26,12 +29,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface InvoiceFormProps {
   invoice: Invoice;
   onChange: (invoice: Invoice) => void;
   /** Guest landing mode — logo uploads stay in-browser (no account). */
   guestMode?: boolean;
+  savedClients?: SavedClient[];
+  onClientsChange?: (clients: SavedClient[]) => void;
+  /** Logged-in create page — customer first, compact layout */
+  createFlow?: boolean;
 }
 
 function taxEnabled(invoice: Invoice): boolean {
@@ -50,16 +58,37 @@ function taxPercent(invoice: Invoice): number {
 
 function DetailBox({
   title,
+  description,
   children,
+  relaxed = false,
 }: {
   title: string;
+  description?: React.ReactNode;
   badge?: string;
   children: React.ReactNode;
+  relaxed?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-muted/20 p-4">
-      <h3 className="mb-3 text-sm font-medium">{title}</h3>
-      <div className="space-y-3">{children}</div>
+    <div
+      className={cn(
+        "rounded-xl border border-border bg-muted/20",
+        relaxed ? "p-5 sm:p-6" : "rounded-lg p-4"
+      )}
+    >
+      <div className={cn(relaxed ? "mb-4" : "mb-3")}>
+        <h3
+          className={cn(
+            "font-semibold tracking-tight",
+            relaxed ? "text-base" : "text-sm font-medium"
+          )}
+        >
+          {title}
+        </h3>
+        {description ? (
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        ) : null}
+      </div>
+      <div className={cn(relaxed ? "space-y-4" : "space-y-3")}>{children}</div>
     </div>
   );
 }
@@ -68,9 +97,14 @@ export function InvoiceForm({
   invoice,
   onChange,
   guestMode = false,
+  savedClients = [],
+  onClientsChange,
+  createFlow = false,
 }: InvoiceFormProps) {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const isLoggedInCreate = createFlow && !guestMode && !!onClientsChange;
+  const fieldClass = isLoggedInCreate ? "h-11" : undefined;
 
   const currency = invoice.currencyCode;
   const currencySymbol = getCurrencySymbol(currency);
@@ -90,7 +124,18 @@ export function InvoiceForm({
   };
 
   const updateClient = (field: keyof Invoice["client"], value: string) => {
-    onChange({ ...invoice, client: { ...invoice.client, [field]: value } });
+    onChange({
+      ...invoice,
+      clientId: null,
+      client: { ...invoice.client, [field]: value },
+    });
+  };
+
+  const handleSelectClient = (
+    client: Invoice["client"],
+    clientId: string | null
+  ) => {
+    onChange({ ...invoice, client, clientId });
   };
 
   const updateCompany = (
@@ -179,41 +224,270 @@ export function InvoiceForm({
     }
   };
 
+  const lineItemsBlock = (
+    <div
+      className={cn(
+        "rounded-xl bg-muted/40",
+        isLoggedInCreate ? "p-5 md:p-6" : "p-4 md:p-5"
+      )}
+    >
+      <div className={cn(isLoggedInCreate ? "space-y-5" : "space-y-4")}>
+        {invoice.services.map((service) => {
+          const lineTotal = service.quantity * service.price;
+          return (
+            <article
+              key={service.id}
+              className={cn(
+                "rounded-xl border border-border/50 bg-background/60",
+                isLoggedInCreate ? "p-5" : "p-4"
+              )}
+            >
+              <div className="min-w-0 space-y-3">
+                <Label className="text-xs text-muted-foreground">Item</Label>
+                <Input
+                  className={fieldClass}
+                  placeholder="Product or service"
+                  value={service.name}
+                  onChange={(e) =>
+                    updateService(service.id, "name", e.target.value)
+                  }
+                />
+                <Textarea
+                  placeholder="Description (optional)"
+                  value={service.description}
+                  onChange={(e) =>
+                    updateService(service.id, "description", e.target.value)
+                  }
+                  rows={2}
+                  className="min-h-[56px] resize-y text-sm"
+                />
+              </div>
+
+              <div className="mt-3 flex items-end gap-2">
+                <div className="w-17 shrink-0">
+                  <Label className="mb-1.5 block text-xs text-muted-foreground">
+                    Qty
+                  </Label>
+                  <Input
+                    type="number"
+                    min={1}
+                    className="h-10 px-2 text-center tabular-nums"
+                    value={service.quantity}
+                    onChange={(e) =>
+                      updateService(
+                        service.id,
+                        "quantity",
+                        Number(e.target.value) || 1
+                      )
+                    }
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <Label className="mb-1.5 block text-xs text-muted-foreground">
+                    Rate
+                  </Label>
+                  <div className="flex h-10 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm">
+                    <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
+                      {currencySymbol}
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      value={service.price || ""}
+                      onChange={(e) =>
+                        updateService(
+                          service.id,
+                          "price",
+                          Number(e.target.value) || 0
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <Label className="mb-1.5 block text-xs text-muted-foreground">
+                    Amount
+                  </Label>
+                  <div className="flex h-10 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-2 text-sm font-semibold tabular-nums">
+                    <span className="truncate">
+                      {formatInvoiceMoney(lineTotal, currency)}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => removeService(service.id)}
+                  disabled={invoice.services.length <= 1}
+                  aria-label="Remove line item"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addService}
+          className="gap-2 rounded-full border-primary/40 bg-primary/10 px-6 text-primary hover:bg-primary/20"
+        >
+          <Plus className="h-4 w-4" />
+          Add item
+        </Button>
+      </div>
+    </div>
+  );
+
+  const businessDetailsBlock = (
+    <DetailBox
+      title="Your business details"
+      description={
+        <>
+          Loaded from your organization profile. Saved with each invoice and
+          synced to{" "}
+          <Link href="/settings" className="text-primary hover:underline">
+            Settings
+          </Link>
+          .
+        </>
+      }
+      relaxed
+    >
+      <div className="space-y-2">
+        <Label htmlFor="companyName">Business name</Label>
+        <Input
+          id="companyName"
+          className={fieldClass}
+          placeholder="Your name or business name"
+          value={invoice.company.companyName}
+          onChange={(e) => updateCompany("companyName", e.target.value)}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="companyEmail">Email</Label>
+        <Input
+          id="companyEmail"
+          className={fieldClass}
+          type="email"
+          placeholder="Email address"
+          value={invoice.company.companyEmail}
+          onChange={(e) => updateCompany("companyEmail", e.target.value)}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="companyPhone">Phone</Label>
+        <Input
+          id="companyPhone"
+          className={fieldClass}
+          type="tel"
+          placeholder="Phone"
+          value={invoice.company.companyPhone}
+          onChange={(e) => updateCompany("companyPhone", e.target.value)}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="companyAddress">Address</Label>
+        <Textarea
+          id="companyAddress"
+          placeholder="Street, city, state, country"
+          value={invoice.company.companyAddress}
+          onChange={(e) => updateCompany("companyAddress", e.target.value)}
+          rows={3}
+          className="min-h-[96px] resize-y"
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="companyGstin">GSTIN (optional)</Label>
+        <Input
+          id="companyGstin"
+          className={fieldClass}
+          placeholder="Your GSTIN (optional)"
+          value={invoice.company.gstin ?? ""}
+          onChange={(e) => updateCompany("gstin", e.target.value)}
+        />
+      </div>
+    </DetailBox>
+  );
+
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
-      <div className="space-y-5 p-4 sm:p-5">
-        {/* Header row */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
-          <div className="space-y-2">
-            <Label htmlFor="invoiceNumber">Invoice number</Label>
-            <Input
-              id="invoiceNumber"
-              value={invoice.invoice.invoiceNumber}
-              onChange={(e) =>
-                updateInvoiceDetails("invoiceNumber", e.target.value)
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <Select
-              value={invoice.status}
-              onValueChange={(v) => update({ status: v as InvoiceStatus })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="sent">Sent</SelectItem>
-                <SelectItem value="overdue">Overdue</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+      <div
+        className={cn(
+          isLoggedInCreate ? "space-y-8 p-5 sm:p-6 lg:p-7" : "space-y-5 p-4 sm:p-5"
+        )}
+      >
+        {isLoggedInCreate && businessDetailsBlock}
 
-        {/* Logo upload */}
+        {isLoggedInCreate && (
+          <InvoiceCustomerSection
+            clients={savedClients}
+            selectedClientId={invoice.clientId}
+            currentClient={invoice.client}
+            onSelectClient={handleSelectClient}
+            onClientsChange={onClientsChange}
+            onEditClientField={updateClient}
+            relaxed
+          />
+        )}
+
+        {isLoggedInCreate && (
+          <section aria-labelledby="items-section-heading">
+            <h3
+              id="items-section-heading"
+              className="mb-4 text-base font-semibold tracking-tight"
+            >
+              Items
+            </h3>
+            {lineItemsBlock}
+          </section>
+        )}
+
+        {!isLoggedInCreate && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
+            <div className="space-y-2">
+              <Label htmlFor="invoiceNumber">Invoice number</Label>
+              <Input
+                id="invoiceNumber"
+                value={invoice.invoice.invoiceNumber}
+                onChange={(e) =>
+                  updateInvoiceDetails("invoiceNumber", e.target.value)
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select
+                value={invoice.status}
+                onValueChange={(v) => update({ status: v as InvoiceStatus })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="sent">Sent</SelectItem>
+                  <SelectItem value="overdue">Overdue</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {!isLoggedInCreate && (
         <div className="space-y-2">
           <Label>Logo</Label>
           <button
@@ -254,7 +528,9 @@ export function InvoiceForm({
             }}
           />
         </div>
+        )}
 
+        {!isLoggedInCreate && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
@@ -296,8 +572,10 @@ export function InvoiceForm({
             </Select>
           </div>
         </div>
+        )}
 
         {/* From / To */}
+        {!isLoggedInCreate && (
         <div className="grid gap-4 lg:grid-cols-2">
           <DetailBox title="Your details" badge="From">
             <Input
@@ -331,6 +609,17 @@ export function InvoiceForm({
           </DetailBox>
 
           <DetailBox title="Client's details" badge="To">
+            {!guestMode && onClientsChange && (
+              <InvoiceCustomerSection
+                clients={savedClients}
+                selectedClientId={invoice.clientId}
+                currentClient={invoice.client}
+                onSelectClient={handleSelectClient}
+                onClientsChange={onClientsChange}
+                onEditClientField={updateClient}
+                showInlineFields
+              />
+            )}
             <Input
               placeholder="Client or company name"
               value={invoice.client.name}
@@ -366,9 +655,22 @@ export function InvoiceForm({
             />
           </DetailBox>
         </div>
+        )}
+
+        {isLoggedInCreate && (
+          <h3 className="text-base font-semibold tracking-tight">
+            Invoice details
+          </h3>
+        )}
 
         {/* Dates, currency & invoice meta */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={cn(
+            "grid gap-4 sm:grid-cols-2",
+            isLoggedInCreate ? "lg:grid-cols-3 lg:gap-5" : "lg:grid-cols-3"
+          )}
+        >
+          {!isLoggedInCreate && (
           <div className="space-y-2">
             <Label>Currency</Label>
             <CurrencySelect
@@ -376,10 +678,12 @@ export function InvoiceForm({
               onValueChange={(code) => update({ currencyCode: code })}
             />
           </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="invoiceDate">Invoice date</Label>
             <Input
               id="invoiceDate"
+              className={fieldClass}
               type="date"
               value={invoice.invoice.invoiceDate}
               onChange={(e) =>
@@ -391,6 +695,7 @@ export function InvoiceForm({
             <Label htmlFor="dueDate">Due date</Label>
             <Input
               id="dueDate"
+              className={fieldClass}
               type="date"
               value={invoice.invoice.dueDate}
               onChange={(e) => updateInvoiceDetails("dueDate", e.target.value)}
@@ -400,6 +705,7 @@ export function InvoiceForm({
             <Label htmlFor="paymentTerms">Payment terms</Label>
             <Input
               id="paymentTerms"
+              className={fieldClass}
               placeholder="Due on receipt"
               value={invoice.invoice.paymentTerms ?? ""}
               onChange={(e) =>
@@ -407,149 +713,9 @@ export function InvoiceForm({
               }
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="purchaseOrder">P.O. number</Label>
-            <Input
-              id="purchaseOrder"
-              placeholder="Optional"
-              value={invoice.invoice.purchaseOrder ?? ""}
-              onChange={(e) =>
-                updateInvoiceDetails("purchaseOrder", e.target.value)
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="projectName">Project name</Label>
-            <Input
-              id="projectName"
-              placeholder="Optional"
-              value={invoice.invoice.projectName ?? ""}
-              onChange={(e) =>
-                updateInvoiceDetails("projectName", e.target.value)
-              }
-            />
-          </div>
         </div>
 
-        {/* Line items */}
-        <div className="rounded-xl bg-muted/40 p-4 md:p-5">
-          <div className="space-y-4">
-            {invoice.services.map((service) => {
-              const lineTotal = service.quantity * service.price;
-              return (
-                <article
-                  key={service.id}
-                  className="rounded-xl border border-border/50 bg-background/60 p-4"
-                >
-                  <div className="min-w-0 space-y-2">
-                    <Input
-                      placeholder="Service title"
-                      value={service.name}
-                      onChange={(e) =>
-                        updateService(service.id, "name", e.target.value)
-                      }
-                    />
-                    <Textarea
-                      placeholder="Description (optional)"
-                      value={service.description}
-                      onChange={(e) =>
-                        updateService(
-                          service.id,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      rows={2}
-                      className="min-h-[56px] resize-y text-sm"
-                    />
-                  </div>
-
-                  {/* Qty · Rate · Amount · delete — always one row */}
-                  <div className="mt-3 flex items-end gap-2">
-                    <div className="w-17 shrink-0">
-                      <Label className="mb-1.5 block text-xs text-muted-foreground">
-                        Qty
-                      </Label>
-                      <Input
-                        type="number"
-                        min={1}
-                        className="h-10 px-2 text-center tabular-nums"
-                        value={service.quantity}
-                        onChange={(e) =>
-                          updateService(
-                            service.id,
-                            "quantity",
-                            Number(e.target.value) || 1
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <Label className="mb-1.5 block text-xs text-muted-foreground">
-                        Rate
-                      </Label>
-                      <div className="flex h-10 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm">
-                        <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
-                          {currencySymbol}
-                        </span>
-                        <input
-                          type="number"
-                          min={0}
-                          step="0.01"
-                          className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                          value={service.price || ""}
-                          onChange={(e) =>
-                            updateService(
-                              service.id,
-                              "price",
-                              Number(e.target.value) || 0
-                            )
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <Label className="mb-1.5 block text-xs text-muted-foreground">
-                        Amount
-                      </Label>
-                      <div className="flex h-10 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-2 text-sm font-semibold tabular-nums">
-                        <span className="truncate">
-                          {formatInvoiceMoney(lineTotal, currency)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-10 w-10 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => removeService(service.id)}
-                      disabled={invoice.services.length <= 1}
-                      aria-label="Remove line item"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="mt-6 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addService}
-              className="gap-2 rounded-full border-primary/40 bg-primary/10 px-6 text-primary hover:bg-primary/20"
-            >
-              <Plus className="h-4 w-4" />
-              Add item
-            </Button>
-          </div>
-        </div>
+        {!isLoggedInCreate && lineItemsBlock}
 
         {/* Notes + totals */}
         <div className="grid gap-6 lg:grid-cols-2">

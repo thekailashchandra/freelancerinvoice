@@ -49,9 +49,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/favicon-96.png", type: "image/png", sizes: "96x96" },
+      { url: "/icon", type: "image/png", sizes: "48x48" },
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon", type: "image/png", sizes: "32x32" },
     ],
+    shortcut: [{ url: "/favicon.ico" }],
     apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
   },
   other: {
@@ -87,6 +91,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link
+          rel="icon"
+          href="/favicon-48.png"
+          type="image/png"
+          sizes="48x48"
+        />
+        <link
+          rel="icon"
+          href="/favicon-96.png"
+          type="image/png"
+          sizes="96x96"
+        />
         <link
           rel="alternate"
           type="text/plain"

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { Cloud, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { InvoiceForm } from "@/components/invoice-form";
@@ -37,13 +37,38 @@ type LandingInteractiveWorkspaceProps = {
 export function LandingInteractiveWorkspace({
   initialCountryCode = "US",
 }: LandingInteractiveWorkspaceProps) {
-  const [invoice, setInvoice] = useState<Invoice>(() =>
-    createDefaultInvoiceForCountry(initialCountryCode)
-  );
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    setInvoice(createDefaultInvoiceForCountry(initialCountryCode));
+  }, [initialCountryCode]);
+
   const deferredInvoice = useDeferredValue(invoice);
   const previewPending = deferredInvoice !== invoice;
   const previewInvoice = deferredInvoice;
+
+  if (!invoice || !previewInvoice) {
+    return (
+      <div
+        id="invoice-builder"
+        className="scroll-mt-20 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xl shadow-primary/5"
+      >
+        <div className="flex flex-col gap-3 border-b border-border/60 bg-muted/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div>
+            <p className="text-sm font-semibold">Live interactive workspace</p>
+            <p className="text-xs text-muted-foreground">
+              Edit below — preview updates instantly. No account required.
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-0 lg:grid-cols-[minmax(300px,1fr)_minmax(360px,1.05fr)]">
+          <Skeleton className="min-h-[420px] rounded-none" aria-hidden />
+          <Skeleton className="min-h-[420px] rounded-none" aria-hidden />
+        </div>
+      </div>
+    );
+  }
 
   const handleDownloadPdf = async () => {
     setExporting(true);

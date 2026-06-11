@@ -24,9 +24,9 @@ const InvoicePreview = dynamic(
 
 export function HeroInvoiceDemo() {
   return (
-    <div className="relative mx-auto w-full max-w-xl lg:max-w-none">
+    <div className="relative mx-auto w-full max-w-xl xl:max-w-none">
       <div
-        className="pointer-events-none absolute -inset-4 rounded-3xl bg-linear-to-br from-primary/30 via-primary/15 to-primary/5 blur-2xl"
+        className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-primary/25 via-primary/10 to-transparent blur-xl"
         aria-hidden
       />
 
@@ -61,44 +61,24 @@ export function HeroInvoiceDemo() {
           </div>
         </div>
 
-        <div className="grid bg-muted/20 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="hidden space-y-3 border-r border-border/40 p-4 sm:block">
-            <div className="space-y-1.5">
-              <div className="h-2 w-16 rounded bg-muted-foreground/20" />
-              <div className="h-8 rounded-md border border-border/50 bg-background/80" />
-            </div>
-            <div className="space-y-1.5">
-              <div className="h-2 w-12 rounded bg-muted-foreground/20" />
-              <div className="h-8 rounded-md border border-border/50 bg-background/80" />
-              <div className="h-8 rounded-md border border-border/50 bg-background/60" />
-            </div>
-            <div className="space-y-1.5 pt-1">
-              <div className="h-2 w-20 rounded bg-muted-foreground/20" />
-              <div className="h-7 rounded-md border border-border/50 bg-background/80" />
-              <div className="h-7 rounded-md border border-border/50 bg-background/60" />
-              <div className="h-7 rounded-md border border-primary/30 bg-primary/5" />
-            </div>
-          </div>
-
-          <div className="p-2 sm:p-3">
-            <InvoicePreviewFrame pageSize={demoInvoice.pageSize}>
-              <InvoicePreview
-                invoice={demoInvoice}
-                previewId="hero-invoice-demo"
-                showBranding
-              />
-            </InvoicePreviewFrame>
-          </div>
+        <div className="bg-muted/20 p-2 sm:p-3">
+          <InvoicePreviewFrame pageSize={demoInvoice.pageSize}>
+            <InvoicePreview
+              invoice={demoInvoice}
+              previewId="hero-invoice-demo"
+              showBranding
+            />
+          </InvoicePreviewFrame>
         </div>
       </div>
 
-      <div
-        className="absolute -bottom-3 left-6 rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium shadow-lg sm:left-8"
+      <p
+        className="mt-4 inline-flex rounded-full border border-border/60 bg-card px-3 py-1 text-xs font-medium shadow-sm"
         aria-hidden
       >
         <span className="text-muted-foreground">Total due</span>{" "}
-        <span className="text-foreground">$7,000.00</span>
-      </div>
+        <span className="ml-1 text-foreground">$7,000.00</span>
+      </p>
     </div>
   );
 }

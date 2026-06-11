@@ -61,6 +61,7 @@ export async function saveInvoiceAction(invoice: Invoice): Promise<{ id: string 
 
       revalidatePath("/dashboard");
       revalidatePath("/invoice-history");
+      revalidatePath("/customers");
       return { id: invoiceId };
     }
   }
@@ -87,6 +88,7 @@ export async function saveInvoiceAction(invoice: Invoice): Promise<{ id: string 
 
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");
+  revalidatePath("/customers");
   return { id: savedInvoiceId };
 }
 
@@ -111,7 +113,7 @@ export async function updateInvoiceStatusAction(
 
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");
-  revalidatePath(`/invoice-history/${id}`);
+  revalidatePath("/customers");
 }
 
 export async function deleteInvoiceAction(id: string): Promise<void> {
@@ -132,6 +134,7 @@ export async function deleteInvoiceAction(id: string): Promise<void> {
 
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");
+  revalidatePath("/customers");
 }
 
 export async function fetchInvoiceByIdAction(

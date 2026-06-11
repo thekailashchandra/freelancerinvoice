@@ -60,7 +60,9 @@ export function MobileNav() {
                 ? "Create"
                 : item.href === "/invoice-history"
                   ? "History"
-                  : item.title
+                  : item.href === "/customers"
+                    ? "Customers"
+                    : item.title
             }
           />
         ))}

@@ -8,6 +8,7 @@ const PROTECTED_PREFIXES = [
   "/dashboard",
   "/create-invoice",
   "/invoice-history",
+  "/customers",
   "/settings",
   "/onboarding",
   "/create",

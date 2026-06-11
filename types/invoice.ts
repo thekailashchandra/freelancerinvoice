@@ -86,6 +86,8 @@ export interface Invoice {
   status: InvoiceStatus;
   currencyCode: string;
   taxLabel: string;
+  /** Saved customer id when chosen from address book */
+  clientId?: string | null;
   client: ClientDetails;
   invoice: InvoiceDetails;
   services: ServiceItem[];

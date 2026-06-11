@@ -9,22 +9,19 @@ import { Button } from "@/components/ui/button";
 
 export function PublicSiteHeader() {
   return (
-    <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 md:px-8">
+    <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-6 lg:px-10 xl:px-12">
       <SiteLogo variant="full" href="/" priority />
-      <nav className="flex items-center gap-1 sm:gap-2" aria-label="Main navigation">
+      <nav
+        className="flex items-center gap-0.5 sm:gap-1"
+        aria-label="Main navigation"
+      >
         <PublicMobileMenu />
         {mainNavLinks.map((link) => (
           <Button
             key={link.href}
             variant="ghost"
             asChild
-            className={
-              link.href === "/contact"
-                ? "hidden lg:inline-flex"
-                : link.href === "/about"
-                  ? "hidden md:inline-flex"
-                  : "hidden sm:inline-flex"
-            }
+            className="hidden sm:inline-flex"
           >
             <Link href={link.href}>{link.label}</Link>
           </Button>

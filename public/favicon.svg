@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Invoice for Freelance">
-  <circle cx="16" cy="16" r="16" fill="#FFE500"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Invoice for Freelance">
+  <circle cx="24" cy="24" r="24" fill="#FFE500"/>
   <text
-    x="16"
-    y="22"
+    x="24"
+    y="33"
     text-anchor="middle"
     fill="#000000"
     font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
-    font-size="20"
+    font-size="28"
     font-weight="700"
   >$</text>
 </svg>

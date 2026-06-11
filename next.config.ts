@@ -25,6 +25,14 @@ const nextConfig: NextConfig = {
   },
   // Ensure jspdf/html2canvas are compiled for the browser bundle
   transpilePackages: ["jspdf", "html2canvas"],
+  async rewrites() {
+    return [
+      {
+        source: "/favicon.ico",
+        destination: "/favicon-48.png",
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -38,6 +46,33 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/favicon.svg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/favicon-48.png",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/favicon-96.png",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/favicon.ico",
         headers: [
           {
             key: "Cache-Control",

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
-import { footerNavLinks } from "@/data/public-navigation";
+import { mobileNavLinks } from "@/data/public-navigation";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -27,7 +27,7 @@ export function PublicMobileMenu() {
       <SheetContent side="right" className="w-72 overflow-y-auto">
         <h2 className="text-lg font-semibold">Menu</h2>
         <nav className="mt-4 flex flex-col gap-1" aria-label="Mobile navigation">
-          {footerNavLinks.map((link) => (
+          {mobileNavLinks.map((link) => (
             <SheetClose key={link.href} asChild>
               <Link
                 href={link.href}
@@ -37,6 +37,14 @@ export function PublicMobileMenu() {
               </Link>
             </SheetClose>
           ))}
+          <SheetClose asChild>
+            <Link
+              href="/login"
+              className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted"
+            >
+              Sign in
+            </Link>
+          </SheetClose>
         </nav>
       </SheetContent>
     </Sheet>

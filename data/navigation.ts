@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   PlusCircle,
   Settings,
+  Users,
 } from "lucide-react";
 import { siteConfig } from "@/data/site";
 
@@ -22,6 +23,11 @@ export const navItems = [
     title: "Invoice History",
     href: "/invoice-history",
     icon: History,
+  },
+  {
+    title: "Customers",
+    href: "/customers",
+    icon: Users,
   },
   {
     title: "Settings",

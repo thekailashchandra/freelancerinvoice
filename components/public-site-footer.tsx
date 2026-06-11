@@ -7,7 +7,7 @@ import { siteConfig } from "@/data/site";
 export function PublicSiteFooter() {
   return (
     <footer className="border-t border-border/50 py-10">
-      <div className="mx-auto max-w-6xl px-4 text-center text-sm text-muted-foreground md:px-8">
+      <div className="mx-auto w-full max-w-7xl px-6 text-center text-sm text-muted-foreground lg:px-10 xl:px-12">
         <p>
           © {new Date().getFullYear()}{" "}
           <a href={siteConfig.url} className="text-foreground hover:underline">

@@ -45,6 +45,7 @@ export interface ClientRow {
   phone: string;
   company_name: string;
   address: string;
+  gstin?: string;
   created_at: string;
 }
 

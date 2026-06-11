@@ -70,6 +70,7 @@ export function dbInvoiceToApp(
     status: mapDbStatusToUi(row.status),
     currencyCode: row.currency_code,
     taxLabel: row.tax_label,
+    clientId: row.client_id,
     client: {
       name: row.client_name_snapshot,
       email: row.client_email_snapshot,
@@ -141,7 +142,7 @@ export function appInvoiceToDbPayload(
       id: invoice.id,
       user_id: userId,
       invoice_number: invoice.invoice.invoiceNumber,
-      client_id: null,
+      client_id: invoice.clientId ?? null,
       client_name_snapshot: invoice.client.name,
       client_email_snapshot: invoice.client.email,
       client_phone_snapshot: invoice.client.phone,

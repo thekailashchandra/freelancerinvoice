@@ -9,7 +9,9 @@ import { PageTransition } from "@/components/page-transition";
 import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
 import { SupportPlatformDialog } from "@/components/support-platform-dialog";
 import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
+import { CurrencySelect } from "@/components/currency-select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDefaultInvoice } from "@/data/defaults";
 import { saveInvoiceAction } from "@/lib/actions/invoices";
@@ -18,6 +20,7 @@ import { mergeProfileIntoInvoice } from "@/lib/invoice-mapper";
 import { invoiceActionState } from "@/lib/invoice-actions";
 import { deriveInvoiceStatus } from "@/lib/calculations";
 import type { CompanySettings, Invoice } from "@/types/invoice";
+import type { SavedClient } from "@/lib/client-mapper";
 import Link from "next/link";
 
 const InvoicePreviewFrame = dynamic(
@@ -40,6 +43,7 @@ type CreateInvoiceClientProps = {
   editId: string | null;
   initialSettings: CompanySettings | null;
   initialInvoice: Invoice | null;
+  initialClients: SavedClient[];
 };
 
 function buildInitialInvoice(
@@ -47,18 +51,19 @@ function buildInitialInvoice(
   existing: Invoice | null
 ): Invoice | null {
   if (existing) return existing;
-  if (!settings) return null;
-  return mergeProfileIntoInvoice(createDefaultInvoice(settings), settings);
+  return null;
 }
 
 export function CreateInvoiceClient({
   editId,
   initialSettings,
   initialInvoice,
+  initialClients,
 }: CreateInvoiceClientProps) {
   const [invoice, setInvoice] = useState<Invoice | null>(() =>
     buildInitialInvoice(initialSettings, initialInvoice)
   );
+  const [savedClients, setSavedClients] = useState(initialClients);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -89,12 +94,25 @@ export function CreateInvoiceClient({
 
   const handleSave = useCallback(async () => {
     if (!invoice) return;
+
+    if (!invoice.company.companyName.trim()) {
+      toast.error("Business name is required", {
+        description: "Add your business name at the top of the form.",
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       const { id } = await saveInvoiceAction(invoice);
-      if (invoice.company.logoHeight !== undefined) {
-        await updateProfileAction({ logoHeight: invoice.company.logoHeight });
-      }
+      await updateProfileAction({
+        companyName: invoice.company.companyName.trim(),
+        companyEmail: invoice.company.companyEmail,
+        companyPhone: invoice.company.companyPhone,
+        companyAddress: invoice.company.companyAddress,
+        logo: invoice.company.logo ?? null,
+        logoHeight: invoice.company.logoHeight,
+      });
       setInvoice((prev) => (prev ? { ...prev, id } : prev));
       toast.success("Invoice saved!", {
         description: `${invoice.invoice.invoiceNumber} synced to the cloud.`,
@@ -175,15 +193,27 @@ export function CreateInvoiceClient({
 
   return (
     <PageTransition className="mx-auto w-full max-w-6xl pb-28 xl:max-w-[1600px] xl:pb-0">
-      <div className="relative -mx-4 mb-4 hidden border-border bg-background/95 px-4 py-3 backdrop-blur-sm xl:sticky xl:top-16 xl:z-30 xl:-mt-4 xl:flex xl:items-center xl:justify-between xl:gap-4 xl:border-b md:-mx-5 md:px-5 lg:-mx-6 lg:px-6">
-        <div className="min-w-0">
-          <h2 className="text-xl font-semibold tracking-tight">
-            {editId ? "Edit invoice" : "New invoice"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Preview updates as you type
-            {previewPending && " · updating…"}
-          </p>
+      <div className="relative -mx-4 mb-4 hidden border-b border-border bg-background/95 px-4 py-3 backdrop-blur-sm xl:sticky xl:top-16 xl:z-30 xl:-mt-4 xl:flex xl:items-center xl:justify-between xl:gap-4 md:-mx-5 md:px-5 lg:-mx-6 lg:px-6">
+        <div className="flex min-w-0 items-center gap-2">
+          <Input
+            value={invoice.invoice.invoiceNumber}
+            onChange={(e) =>
+              setInvoice({
+                ...invoice,
+                invoice: { ...invoice.invoice, invoiceNumber: e.target.value },
+              })
+            }
+            className="h-9 max-w-[140px] border-transparent bg-muted/50 font-semibold shadow-none focus-visible:border-border"
+            aria-label="Invoice number"
+          />
+        </div>
+        <div className="flex min-w-0 flex-1 justify-center px-4">
+          <CurrencySelect
+            value={invoice.currencyCode}
+            onValueChange={(code) =>
+              setInvoice({ ...invoice, currencyCode: code })
+            }
+          />
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-2">
           <Button variant="outline" size="sm" onClick={handlePrint}>
@@ -197,7 +227,7 @@ export function CreateInvoiceClient({
             disabled={exporting}
           >
             <Download className="h-4 w-4" />
-            {exporting ? "Generating…" : "PDF"}
+            {exporting ? "Generating…" : "Download draft"}
           </Button>
           <Button size="sm" onClick={handleSave} disabled={saving}>
             {saving ? (
@@ -218,17 +248,42 @@ export function CreateInvoiceClient({
         )}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(320px,1fr)_minmax(420px,1.1fr)] xl:items-start xl:gap-6">
+      <div className="grid gap-6 xl:grid-cols-[minmax(480px,1.45fr)_minmax(400px,1fr)] xl:items-start xl:gap-8">
         <div className="min-w-0 space-y-4">
-          <div className="xl:hidden">
-            <h2 className="text-xl font-semibold tracking-tight">
-              {editId ? "Edit invoice" : "New invoice"}
-            </h2>
+          <div className="space-y-3 xl:hidden">
+            <div className="flex items-center gap-2">
+              <Input
+                value={invoice.invoice.invoiceNumber}
+                onChange={(e) =>
+                  setInvoice({
+                    ...invoice,
+                    invoice: {
+                      ...invoice.invoice,
+                      invoiceNumber: e.target.value,
+                    },
+                  })
+                }
+                className="h-9 max-w-[140px] font-semibold"
+                aria-label="Invoice number"
+              />
+              <CurrencySelect
+                value={invoice.currencyCode}
+                onValueChange={(code) =>
+                  setInvoice({ ...invoice, currencyCode: code })
+                }
+              />
+            </div>
             <p className="text-sm text-muted-foreground">
               Preview updates as you type
             </p>
           </div>
-          <InvoiceForm invoice={invoice} onChange={setInvoice} />
+          <InvoiceForm
+            invoice={invoice}
+            onChange={setInvoice}
+            savedClients={savedClients}
+            onClientsChange={setSavedClients}
+            createFlow
+          />
         </div>
 
         <aside className="min-w-0 xl:sticky xl:top-[7.75rem] xl:max-h-[calc(100vh-8.75rem)] xl:self-start">

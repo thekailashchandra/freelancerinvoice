@@ -38,6 +38,7 @@ export function createDefaultInvoice(company: CompanySettings = defaultCompanySe
     status: "pending",
     currencyCode: company.currencyCode,
     taxLabel: company.taxLabel,
+    clientId: null,
     client: {
       name: "",
       email: "",
