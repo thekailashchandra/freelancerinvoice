@@ -47,7 +47,7 @@ const publicAllow = [
   "/llms-full.txt",
   "/consensus.txt",
   "/favicon.ico",
-  "/favicon.svg",
+  "/icon.png",
   "/favicon-48.png",
   "/favicon-96.png",
   "/icon",

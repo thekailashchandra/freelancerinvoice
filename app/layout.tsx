@@ -51,12 +51,12 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
       { url: "/favicon-48.png", type: "image/png", sizes: "48x48" },
       { url: "/favicon-96.png", type: "image/png", sizes: "96x96" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    shortcut: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+    shortcut: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/icon.png", type: "image/png" }],
   },
   other: {
     "ai-content-declaration": "human-authored",
@@ -90,21 +90,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        {/* Primary favicon for Google Search — yellow $ on circle */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link
-          rel="icon"
-          href="/favicon-48.png"
-          type="image/png"
-          sizes="48x48"
-        />
-        <link
-          rel="icon"
-          href="/favicon-96.png"
-          type="image/png"
-          sizes="96x96"
-        />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
         <link
           rel="alternate"
           type="text/plain"
