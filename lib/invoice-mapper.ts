@@ -10,6 +10,7 @@ import type {
 import { resolveInvoicePageSize } from "@/lib/invoice-design";
 import { normalizeCountryCode, sanitizePaymentForCountry } from "@/lib/country";
 import { generateId } from "@/lib/utils";
+import { profileHasRazorpay } from "@/lib/razorpay-server";
 
 function profileRowToPayment(profile: ProfileRow): PaymentDetails {
   return sanitizePaymentForCountry(
@@ -39,6 +40,8 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     taxLabel: profile.tax_label,
     defaultPayment: profileRowToPayment(profile),
     hideInvoiceBranding: profile.hide_invoice_branding ?? false,
+    razorpayKeyId: profile.razorpay_key_id ?? "",
+    razorpayConfigured: profileHasRazorpay(profile),
   };
 }
 

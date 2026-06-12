@@ -21,6 +21,9 @@ import { buildInvoiceUpiLink } from "@/lib/upi";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
+import { InvoicePreviewModern } from "@/components/invoice-preview-modern";
+import { InvoicePreviewMinimal } from "@/components/invoice-preview-minimal";
+import { InvoicePreviewBold } from "@/components/invoice-preview-bold";
 
 type DesignColors = typeof invoiceDesign.colors;
 
@@ -131,6 +134,39 @@ export const InvoicePreview = memo(function InvoicePreview({
           backgroundColor: d.colors.tableHeader,
           color: d.colors.tableHeaderText,
         };
+
+  if (d.layout === "modern") {
+    return (
+      <InvoicePreviewModern
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "minimal") {
+    return (
+      <InvoicePreviewMinimal
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "bold") {
+    return (
+      <InvoicePreviewBold
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
 
   return (
     <div

@@ -1,11 +1,18 @@
 import { revalidatePath } from "next/cache";
 import { profileToCompanySettings } from "@/lib/invoice-mapper";
 import { sanitizePaymentForCountry } from "@/lib/country";
+import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 import { createClient } from "@/lib/supabase/server";
 import type { CompanySettings } from "@/types/invoice";
+import type { ProfileRow } from "@/types/database";
 
-const PROFILE_SELECT =
+const PROFILE_SELECT_BASE =
   "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_sort_code, logo_height, hide_invoice_branding, created_at, updated_at";
+
+function profileSelectColumns(): string {
+  if (!isRazorpayEnabled()) return PROFILE_SELECT_BASE;
+  return `${PROFILE_SELECT_BASE}, razorpay_key_id, razorpay_key_secret`;
+}
 
 export async function fetchProfile(): Promise<CompanySettings | null> {
   const supabase = await createClient();
@@ -17,13 +24,13 @@ export async function fetchProfile(): Promise<CompanySettings | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select(PROFILE_SELECT)
+    .select(profileSelectColumns())
     .eq("id", user.id)
     .single();
 
   if (error || !data) return null;
 
-  return profileToCompanySettings(data);
+  return profileToCompanySettings(data as unknown as ProfileRow);
 }
 
 export async function updateProfile(
@@ -61,6 +68,18 @@ export async function updateProfile(
   }
   if (settings.hideInvoiceBranding !== undefined) {
     row.hide_invoice_branding = settings.hideInvoiceBranding;
+  }
+
+  if (isRazorpayEnabled()) {
+    if (settings.razorpayKeyId !== undefined) {
+      row.razorpay_key_id = settings.razorpayKeyId.trim();
+    }
+    if (
+      settings.razorpayKeySecret !== undefined &&
+      settings.razorpayKeySecret.trim()
+    ) {
+      row.razorpay_key_secret = settings.razorpayKeySecret.trim();
+    }
   }
 
   if (settings.defaultPayment !== undefined) {

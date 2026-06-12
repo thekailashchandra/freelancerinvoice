@@ -93,8 +93,14 @@ export function CreateInvoiceClient({
     unlockingKofi,
     pricing: templatePricing,
     confirmKofiUnlock,
+    confirmRazorpayUnlock,
+    razorpayEnabled,
+    payingRazorpay,
     startCheckout: startTemplateCheckout,
-  } = useTemplateCheckout({ market });
+  } = useTemplateCheckout({
+    market,
+    razorpayConfigured: initialSettings?.razorpayConfigured,
+  });
 
   const selectedTemplateId = invoice?.templateId ?? "classic";
   const selectedTemplateUnlocked = useTemplateUnlocked(selectedTemplateId);
@@ -476,6 +482,9 @@ export function CreateInvoiceClient({
         displayAmount={templatePricing.displayAmount}
         onConfirmPaid={confirmKofiUnlock}
         confirming={unlockingKofi}
+        razorpayEnabled={razorpayEnabled}
+        onPayWithRazorpay={() => void confirmRazorpayUnlock()}
+        payingRazorpay={payingRazorpay}
       />
     </PageTransition>
   );

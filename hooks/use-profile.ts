@@ -19,6 +19,8 @@ const emptySettings: CompanySettings = {
   currencyCode: "USD",
   taxLabel: "VAT",
   defaultPayment: emptyPaymentDetails(),
+  razorpayKeyId: "",
+  razorpayConfigured: false,
 };
 
 export function useProfile() {

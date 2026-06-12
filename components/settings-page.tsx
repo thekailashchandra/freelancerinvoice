@@ -22,6 +22,8 @@ import {
   type CountryCode,
 } from "@/lib/country";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
+import { SettingsRazorpayCard } from "@/components/settings-razorpay-card";
+import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 import type { AssetKind } from "@/lib/supabase/asset-storage";
 import type { CompanySettings } from "@/types/invoice";
 
@@ -74,6 +76,7 @@ export default function SettingsPage() {
         defaultPayment,
       };
       await update(payload);
+      setForm((prev) => ({ ...prev, razorpayKeySecret: "" }));
       toast.success("Settings saved", {
         description: "Default company info updated for new invoices.",
       });
@@ -223,6 +226,14 @@ export default function SettingsPage() {
             </Button>
           </CardContent>
         </Card>
+
+      {isRazorpayEnabled() ? (
+        <SettingsRazorpayCard
+          form={form}
+          onChange={(next) => setForm((prev) => ({ ...prev, ...next }))}
+          razorpaySecretStored={Boolean(form.razorpayConfigured)}
+        />
+      ) : null}
 
       <Card className="border-dashed">
         <CardContent className="p-6 text-sm text-muted-foreground">

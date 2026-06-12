@@ -79,6 +79,12 @@ export interface CompanySettings {
   defaultPayment: PaymentDetails;
   /** When true, omit the platform footer after a Ko-fi contribution is confirmed */
   hideInvoiceBranding?: boolean;
+  /** Razorpay Key ID (BYOK) — safe to show in Settings */
+  razorpayKeyId?: string;
+  /** Sent only when saving; never returned from the profile API */
+  razorpayKeySecret?: string;
+  /** True when Key ID and Secret are stored server-side */
+  razorpayConfigured?: boolean;
 }
 
 export interface Invoice {

@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   Ban,
   CheckCircle2,
+  Copy,
   Download,
   Loader2,
   Pencil,
@@ -34,6 +35,8 @@ import {
 } from "@/lib/api/invoices-client";
 import { deriveInvoiceStatus } from "@/lib/calculations";
 import { printInvoice } from "@/lib/invoice-print";
+import { invoicePayUrl } from "@/lib/invoice-pay-url";
+import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 
 type InvoiceViewClientProps = {
   invoiceId: string;
@@ -112,6 +115,23 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   );
   const { canEdit, canMarkPaid, canVoid, isLocked } =
     invoiceActionState(displayStatus);
+  const showRazorpayLink =
+    isRazorpayEnabled() &&
+    Boolean(invoice.company.razorpayConfigured) &&
+    canMarkPaid &&
+    displayStatus !== "paid";
+
+  const handleCopyPayLink = async () => {
+    const url = invoicePayUrl(invoice.id);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Razorpay payment link copied", {
+        description: "Share this link with your client to collect payment.",
+      });
+    } catch {
+      toast.error("Could not copy link", { description: url });
+    }
+  };
 
   const handleDownloadPdf = async () => {
     setExporting(true);
@@ -279,6 +299,17 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
                 <CheckCircle2 className="h-4 w-4" />
               )}
               Mark as paid
+            </Button>
+          )}
+          {showRazorpayLink && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={() => void handleCopyPayLink()}
+            >
+              <Copy className="h-4 w-4" />
+              Copy Razorpay link
             </Button>
           )}
           {canVoid && (

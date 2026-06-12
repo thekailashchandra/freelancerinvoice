@@ -22,6 +22,9 @@ type TemplateUnlockDialogProps = {
   displayAmount: string;
   onConfirmPaid: () => void;
   confirming?: boolean;
+  razorpayEnabled?: boolean;
+  onPayWithRazorpay?: () => void;
+  payingRazorpay?: boolean;
 };
 
 export function TemplateUnlockDialog({
@@ -31,6 +34,9 @@ export function TemplateUnlockDialog({
   displayAmount,
   onConfirmPaid,
   confirming = false,
+  razorpayEnabled = false,
+  onPayWithRazorpay,
+  payingRazorpay = false,
 }: TemplateUnlockDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,26 +47,43 @@ export function TemplateUnlockDialog({
             Unlock {templateName} template
           </DialogTitle>
           <DialogDescription className="text-left leading-relaxed">
-            Premium templates are a one-time {displayAmount} unlock. Support{" "}
-            {siteConfig.name} on Ko-fi, then confirm below to enable downloads.
+            Premium templates are a one-time {displayAmount} unlock.
+            {razorpayEnabled
+              ? " Pay with Razorpay (Test Mode supported) or support on Ko-fi, then confirm below."
+              : ` Support ${siteConfig.name} on Ko-fi, then confirm below to enable downloads.`}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <SupportTipLink
-            showIcon={false}
-            className={cn(buttonVariants(), "flex-1 no-underline hover:no-underline")}
-          >
-            Pay {displayAmount} on Ko-fi
-          </SupportTipLink>
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={onConfirmPaid}
-            disabled={confirming}
-          >
-            {confirming ? "Unlocking…" : "I've paid — unlock template"}
-          </Button>
+        <div className="flex flex-col gap-2">
+          {razorpayEnabled && onPayWithRazorpay ? (
+            <Button
+              className="w-full"
+              onClick={onPayWithRazorpay}
+              disabled={payingRazorpay || confirming}
+            >
+              {payingRazorpay ? "Opening Razorpay…" : `Pay ${displayAmount} with Razorpay`}
+            </Button>
+          ) : null}
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <SupportTipLink
+              showIcon={false}
+              className={cn(
+                buttonVariants({ variant: razorpayEnabled ? "outline" : "default" }),
+                "flex-1 no-underline hover:no-underline"
+              )}
+            >
+              Pay {displayAmount} on Ko-fi
+            </SupportTipLink>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={onConfirmPaid}
+              disabled={confirming || payingRazorpay}
+            >
+              {confirming ? "Unlocking…" : "I've paid on Ko-fi — unlock"}
+            </Button>
+          </div>
         </div>
 
         <Button

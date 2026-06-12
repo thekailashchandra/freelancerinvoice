@@ -54,6 +54,7 @@ export const demoInvoice: Invoice = {
   },
   notes: "Thank you for your business. Payment is due within 14 days.",
   termsAndConditions: "",
+  templateId: "modern",
   pageSize: "a4",
   company: {
     companyName: "Pixel & Code Studio",
