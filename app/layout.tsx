@@ -9,9 +9,6 @@ import { geistMono, geistSans } from "@/lib/fonts";
 import { siteConfig } from "@/data/site";
 import "./globals.css";
 
-export const dynamic =
-  process.env.NODE_ENV === "development" ? "force-dynamic" : "auto";
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {

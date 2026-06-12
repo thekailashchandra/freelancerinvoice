@@ -5,7 +5,6 @@ import { ChevronRight, Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   createClientClient,
-  signOutClient,
   uploadInvoiceAssetClient,
   uploadProfileAssetClient,
 } from "@/lib/api/app-client";
