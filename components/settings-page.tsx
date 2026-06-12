@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Building2, Heart, MessageSquarePlus, Save } from "lucide-react";
+import { Building2, MessageSquarePlus, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/page-transition";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/use-profile";
-import { uploadProfileAssetAction } from "@/lib/actions/profile-assets";
+import { uploadProfileAssetClient } from "@/lib/api/app-client";
 import { AssetFileField } from "@/components/asset-file-field";
 import { CountrySelect } from "@/components/country-select";
 import { CurrencySelect } from "@/components/currency-select";
@@ -23,8 +23,6 @@ import {
 } from "@/lib/country";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import type { AssetKind } from "@/lib/supabase/asset-storage";
-import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
-import { invoiceBrandingText } from "@/lib/invoice-branding";
 import type { CompanySettings } from "@/types/invoice";
 
 export default function SettingsPage() {
@@ -32,8 +30,6 @@ export default function SettingsPage() {
   const [form, setForm] = useState<CompanySettings>(settings);
   const [defaultPayment, setDefaultPayment] = useState(emptyPaymentDetails());
   const [saving, setSaving] = useState(false);
-  const [brandingDialogOpen, setBrandingDialogOpen] = useState(false);
-  const [removingBranding, setRemovingBranding] = useState(false);
 
   const handleCountryChange = (countryCode: CountryCode) => {
     const defaults = applyCountryDefaults(countryCode);
@@ -58,7 +54,7 @@ export default function SettingsPage() {
     formData.set("kind", kind);
     formData.set("file", file);
 
-    const result = await uploadProfileAssetAction(formData);
+    const result = await uploadProfileAssetClient(formData);
 
     if (!result.ok) {
       toast.error("Upload failed", { description: result.error });
@@ -70,29 +66,14 @@ export default function SettingsPage() {
     return result.url;
   };
 
-  const handleRemoveBranding = async () => {
-    setRemovingBranding(true);
-    try {
-      const next = { ...form, hideInvoiceBranding: true };
-      await update(next);
-      setForm(next);
-      setBrandingDialogOpen(false);
-      toast.success("Branding removed", {
-        description: "Thank you for supporting the project.",
-      });
-    } catch (err) {
-      toast.error("Could not update branding", {
-        description: err instanceof Error ? err.message : "Unknown error",
-      });
-    } finally {
-      setRemovingBranding(false);
-    }
-  };
-
   const handleSave = async () => {
     setSaving(true);
     try {
-      await update({ ...form, defaultPayment });
+      const payload: CompanySettings = {
+        ...form,
+        defaultPayment,
+      };
+      await update(payload);
       toast.success("Settings saved", {
         description: "Default company info updated for new invoices.",
       });
@@ -178,6 +159,7 @@ export default function SettingsPage() {
                   appear on invoices (e.g. UPI is only for India).
                 </p>
               </div>
+
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="companyAddress">Address</Label>
                 <Textarea
@@ -242,38 +224,6 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Heart className="h-4 w-4 text-primary" />
-            Invoice branding
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
-          {form.hideInvoiceBranding ? (
-            <p>
-              The &ldquo;{invoiceBrandingText}&rdquo; footer is hidden on your
-              invoices. Thank you for your support.
-            </p>
-          ) : (
-            <>
-              <p>
-                A small &ldquo;{invoiceBrandingText}&rdquo; line appears at the
-                bottom of printed, PDF, and saved invoice previews. To remove it,
-                support the project with any amount on Ko-fi.
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setBrandingDialogOpen(true)}
-              >
-                Remove branding
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
       <Card className="border-dashed">
         <CardContent className="p-6 text-sm text-muted-foreground">
           <p>
@@ -291,12 +241,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <RemoveBrandingDialog
-        open={brandingDialogOpen}
-        onOpenChange={setBrandingDialogOpen}
-        onConfirmContributed={handleRemoveBranding}
-        confirming={removingBranding}
-      />
     </PageTransition>
   );
 }

@@ -1,13 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useState, type FormEvent } from "react";
 import { Loader2, MessageSquarePlus } from "lucide-react";
 import { toast } from "sonner";
-import {
-  submitSupportRequestAction,
-  type SupportFormState,
-} from "@/lib/actions/support";
+import { submitSupportRequestClient } from "@/lib/api/support-client";
 import { useProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,17 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" className="gap-2" disabled={pending}>
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      Send request
-    </Button>
-  );
-}
-
 type SupportRequestFormProps = {
   source?: string;
 };
@@ -42,19 +27,36 @@ export function SupportRequestForm({
 }: SupportRequestFormProps) {
   const { settings } = useProfile();
   const [requestType, setRequestType] = useState("Feature request");
-  const [state, formAction] = useActionState<SupportFormState, FormData>(
-    submitSupportRequestAction,
-    null
-  );
+  const [pending, setPending] = useState(false);
 
-  useEffect(() => {
-    if (!state) return;
-    if (state.ok) {
-      toast.success("Request sent", { description: state.message });
-      return;
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    setPending(true);
+    try {
+      const result = await submitSupportRequestClient({
+        type: requestType,
+        subject: String(formData.get("subject") ?? ""),
+        message: String(formData.get("message") ?? ""),
+        contactName: String(formData.get("contactName") ?? ""),
+        contactEmail: String(formData.get("contactEmail") ?? ""),
+        source,
+      });
+
+      if (result.ok) {
+        toast.success("Request sent", { description: result.message });
+        form.reset();
+        setRequestType("Feature request");
+        return;
+      }
+
+      toast.error("Could not send request", { description: result.message });
+    } finally {
+      setPending(false);
     }
-    toast.error("Could not send request", { description: state.message });
-  }, [state]);
+  };
 
   return (
     <Card>
@@ -65,10 +67,7 @@ export function SupportRequestForm({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-4">
-          <input type="hidden" name="source" value={source} />
-          <input type="hidden" name="type" value={requestType} />
-
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="contactName">Your name</Label>
@@ -127,7 +126,10 @@ export function SupportRequestForm({
             />
           </div>
 
-          <SubmitButton />
+          <Button type="submit" className="gap-2" disabled={pending}>
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+            Send request
+          </Button>
         </form>
       </CardContent>
     </Card>

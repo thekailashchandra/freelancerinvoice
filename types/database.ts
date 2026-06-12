@@ -33,6 +33,8 @@ export interface ProfileRow {
   default_sort_code: string;
   logo_height?: number;
   hide_invoice_branding?: boolean;
+  razorpay_key_id?: string;
+  razorpay_key_secret?: string;
   created_at: string;
   updated_at: string;
 }

@@ -10,6 +10,7 @@ import {
   resolveInvoicePageSize,
   resolveLogoHeight,
 } from "@/lib/invoice-design";
+import { resolveTemplateDesign } from "@/lib/invoice-templates";
 import { InvoiceMoney } from "@/components/invoice-money";
 import { UpiQrCode } from "@/components/upi-qr-code";
 import {
@@ -21,18 +22,17 @@ import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
 
-const d = invoiceDesign;
+type DesignColors = typeof invoiceDesign.colors;
 
-interface InvoicePreviewProps {
-  invoice: Invoice;
-  previewId?: string;
-  /** Override profile branding preference (e.g. always show on marketing demos) */
-  showBranding?: boolean;
-  /** Screen-only: prompt to remove branding via Ko-fi tip */
-  onRemoveBranding?: () => void;
-}
-
-function MetaRow({ label, value }: { label: string; value: string }) {
+function MetaRow({
+  label,
+  value,
+  colors,
+}: {
+  label: string;
+  value: string;
+  colors: DesignColors;
+}) {
   if (!value) return null;
   return (
     <div
@@ -45,12 +45,12 @@ function MetaRow({ label, value }: { label: string; value: string }) {
         lineHeight: "20px",
       }}
     >
-      <span style={{ color: d.colors.textMuted, whiteSpace: "nowrap" }}>
+      <span style={{ color: colors.textMuted, whiteSpace: "nowrap" }}>
         {label}
       </span>
       <span
         style={{
-          color: d.colors.text,
+          color: colors.text,
           fontWeight: 500,
           textAlign: "right",
         }}
@@ -61,15 +61,27 @@ function MetaRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+interface InvoicePreviewProps {
+  invoice: Invoice;
+  previewId?: string;
+  /** Override profile branding preference (e.g. always show on marketing demos) */
+  showBranding?: boolean;
+  /** Screen-only: Ko-fi flow to remove the footer */
+  onRemoveBranding?: () => void;
+}
+
 export const InvoicePreview = memo(function InvoicePreview({
   invoice,
   previewId = "invoice-preview",
   showBranding,
   onRemoveBranding,
 }: InvoicePreviewProps) {
+  const d = useMemo(
+    () => resolveTemplateDesign(invoice.templateId ?? "classic"),
+    [invoice.templateId]
+  );
   const showPoweredBy =
-    showBranding ??
-    shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
+    showBranding ?? shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
   const totals = useMemo(
     () =>
       calculateTotals(invoice.services, invoice.taxDiscount, invoice.taxLabel),
@@ -108,12 +120,24 @@ export const InvoicePreview = memo(function InvoicePreview({
   const tableCols = ["#", "Item & Description", "Qty", "Rate", "Tax", "Amount"];
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const logo = getLogoDimensions(resolveLogoHeight(invoice.company.logoHeight));
+  const tableHeadStyle =
+    d.features.tableStyle === "outline"
+      ? {
+          backgroundColor: "transparent",
+          color: d.colors.text,
+          borderBottom: `2px solid ${d.colors.borderStrong}`,
+        }
+      : {
+          backgroundColor: d.colors.tableHeader,
+          color: d.colors.tableHeaderText,
+        };
 
   return (
     <div
       id={previewId}
       className="invoice-print-area font-sans"
       data-page-size={pageSpec.pdfFormat}
+      data-template={invoice.templateId ?? "classic"}
       data-logo-height={String(logo.height)}
       style={{
         fontFamily: d.font,
@@ -133,6 +157,44 @@ export const InvoicePreview = memo(function InvoicePreview({
       }}
     >
       <div style={{ flex: 1, minHeight: 0 }}>
+      {d.features.headerBanner ? (
+        <div
+          style={{
+            backgroundColor: d.colors.accent,
+            margin: `-${pageSpec.paddingPx}px -${pageSpec.paddingPx}px 32px`,
+            padding: "28px 40px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 24,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                color: "#ffffff",
+                fontSize: 28,
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+              }}
+            >
+              INVOICE
+            </div>
+            <div
+              style={{
+                color: "rgba(255,255,255,0.85)",
+                fontSize: 13,
+                marginTop: 6,
+              }}
+            >
+              #{invoice.invoice.invoiceNumber}
+            </div>
+          </div>
+          <div style={{ color: "#ffffff", fontSize: 24, fontWeight: 700 }}>
+            <InvoiceMoney amount={totals.total} currencyCode={currency} />
+          </div>
+        </div>
+      ) : null}
       {/* Header: company left, invoice meta right */}
       <div
         style={{
@@ -143,7 +205,18 @@ export const InvoicePreview = memo(function InvoicePreview({
           marginBottom: 36,
         }}
       >
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            ...(d.features.accentBar
+              ? {
+                  borderLeft: `4px solid ${d.colors.accentLine}`,
+                  paddingLeft: 16,
+                }
+              : {}),
+          }}
+        >
           <div
             style={{
               display: "flex",
@@ -285,6 +358,7 @@ export const InvoicePreview = memo(function InvoicePreview({
         </div>
 
         <div style={{ width: 280, flexShrink: 0, textAlign: "right" }}>
+          {!d.features.headerBanner ? (
           <h1
             style={{
               margin: 0,
@@ -292,11 +366,15 @@ export const InvoicePreview = memo(function InvoicePreview({
               fontWeight: 700,
               letterSpacing: "0.12em",
               lineHeight: "36px",
-              color: d.colors.text,
+              color: d.features.titleAccent
+                ? d.colors.accentBlue
+                : d.colors.text,
             }}
           >
             INVOICE
           </h1>
+          ) : null}
+          {!d.features.headerBanner ? (
           <p
             style={{
               margin: "10px 0 0",
@@ -306,6 +384,8 @@ export const InvoicePreview = memo(function InvoicePreview({
           >
             Invoice# {invoice.invoice.invoiceNumber}
           </p>
+          ) : null}
+          {!d.features.headerBanner ? (
           <div
             style={{
               margin: "8px 0 0",
@@ -318,23 +398,28 @@ export const InvoicePreview = memo(function InvoicePreview({
           >
             <InvoiceMoney amount={totals.total} currencyCode={currency} />
           </div>
-          <div style={{ marginTop: 20, textAlign: "left" }}>
+          ) : null}
+          <div style={{ marginTop: d.features.headerBanner ? 0 : 20, textAlign: "left" }}>
             <MetaRow
               label="Invoice Date"
               value={formatDate(invoice.invoice.invoiceDate)}
+              colors={d.colors}
             />
-            <MetaRow label="Terms" value={paymentTerms} />
+            <MetaRow label="Terms" value={paymentTerms} colors={d.colors} />
             <MetaRow
               label="Due Date"
               value={formatDate(invoice.invoice.dueDate)}
+              colors={d.colors}
             />
             <MetaRow
               label="P.O.#"
               value={invoice.invoice.purchaseOrder ?? ""}
+              colors={d.colors}
             />
             <MetaRow
               label="Project Name"
               value={invoice.invoice.projectName ?? ""}
+              colors={d.colors}
             />
           </div>
         </div>
@@ -359,7 +444,7 @@ export const InvoicePreview = memo(function InvoicePreview({
         <thead>
           <tr
             className="invoice-table-header"
-            style={{ backgroundColor: d.colors.tableHeader }}
+            style={tableHeadStyle}
           >
             {tableCols.map((col, i) => (
               <th
@@ -368,7 +453,9 @@ export const InvoicePreview = memo(function InvoicePreview({
                   padding: "11px 12px",
                   fontSize: d.type.tableHead.size,
                   fontWeight: 600,
-                  color: d.colors.tableHeaderText,
+                  color: tableHeadStyle.color,
+                  backgroundColor: tableHeadStyle.backgroundColor,
+                  borderBottom: tableHeadStyle.borderBottom,
                   textAlign: i >= 2 ? "right" : "left",
                   width:
                     i === 0

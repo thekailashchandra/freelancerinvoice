@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { UserMenu } from "@/components/user-menu";
 import { navItems } from "@/data/navigation";
 import { siteConfig } from "@/data/site";
@@ -18,7 +17,6 @@ export function Navbar() {
       </h1>
 
       <div className="flex shrink-0 items-center gap-1">
-        <ThemeToggle />
         <UserMenu />
       </div>
     </header>

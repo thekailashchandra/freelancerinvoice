@@ -1,24 +1,35 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { CalmLoader } from "@/components/calm-loader";
-import { signUpFormAction, type AuthFormState } from "@/lib/actions/auth";
+import {
+  markEnteringApp,
+  signUpClient,
+} from "@/lib/api/auth-client";
 import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
-import { GoogleSignInButton } from "@/components/google-sign-in-button";
-import { SiteLogo } from "@/components/site-logo";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const GoogleSignInButton = dynamic(
+  () =>
+    import("@/components/google-sign-in-button").then((m) => ({
+      default: m.GoogleSignInButton,
+    })),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-11 w-full rounded-lg" />,
+  }
+);
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  AuthAlert,
+  AuthDivider,
+  AuthFooterLinks,
+  AuthScreen,
+} from "@/components/auth-screen";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -30,7 +41,11 @@ function SubmitButton({
   pending: boolean;
 }) {
   return (
-    <Button type="submit" className="w-full gap-2" disabled={disabled || pending}>
+    <Button
+      type="submit"
+      className="h-11 w-full rounded-lg font-medium shadow-none"
+      disabled={disabled || pending}
+    >
       {pending ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -43,8 +58,10 @@ function SubmitButton({
   );
 }
 
+const authFieldClass =
+  "h-11 rounded-lg border-0 bg-muted/50 px-3.5 shadow-none ring-1 ring-border/50 transition-shadow placeholder:text-muted-foreground/70 focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-ring/80";
+
 type SignupFormProps = {
-  /** From server — avoids client env mismatch during hydration */
   configured: boolean;
   canSignUp: boolean;
   supabaseConfig: SupabaseBrowserConfig | null;
@@ -57,93 +74,121 @@ export function SignupForm({
   supabaseConfig,
   googleClientId,
 }: SignupFormProps) {
-  const [state, formAction, isPending] = useActionState<AuthFormState, FormData>(
-    signUpFormAction,
-    null
-  );
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
-  useEffect(() => {
-    if (state?.error) {
-      toast.error("Sign up failed", { description: state.error });
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canSignUp) return;
+
+    const form = event.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "");
+    const password = String(new FormData(form).get("password") ?? "");
+
+    setIsPending(true);
+    setError(null);
+
+    try {
+      const result = await signUpClient(email, password);
+
+      if (!result.ok) {
+        setError(result.error);
+        toast.error("Sign up failed", { description: result.error });
+        return;
+      }
+
+      markEnteringApp();
+      window.location.href = result.redirect;
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Could not create account.";
+      setError(message);
+      toast.error("Sign up failed", { description: message });
+    } finally {
+      setIsPending(false);
     }
-  }, [state]);
+  };
 
   return (
-    <Card className="relative w-full max-w-md border-border/50">
-      {isPending && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-background/90 calm-overlay-enter">
-          <CalmLoader message="Setting up your account…" />
-        </div>
-      )}
-      <CardHeader className="text-center">
-        <div className="mx-auto mb-4 flex justify-center">
-          <SiteLogo variant="full" href={null} />
-        </div>
-        <CardTitle>Create your {brand.name} account</CardTitle>
-        <CardDescription>Cloud-backed invoices for freelancers</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {!configured && (
-          <p className="mb-4 rounded-lg border border-primary/40 bg-primary/15 p-3 text-sm text-foreground">
-            Copy <code className="text-xs">.env.example</code> to{" "}
-            <code className="text-xs">.env.local</code> and set{" "}
-            <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
-            <code className="text-xs">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>
-            , and <code className="text-xs">SUPABASE_SECRET_KEY</code>. Restart{" "}
-            <code className="text-xs">npm run dev</code> after saving.
-          </p>
-        )}
-        {state?.error && (
-          <p className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            {state.error}
-          </p>
-        )}
-        <GoogleSignInButton
-          disabled={!configured}
-          redirectTo="/onboarding"
-          supabaseConfig={supabaseConfig}
-          googleClientId={googleClientId}
+    <AuthScreen
+      title="Create your account"
+      description={`Start invoicing with ${brand.name}`}
+      loading={isPending}
+      loadingMessage="Setting up your account…"
+      footer={
+        <AuthFooterLinks
+          primary={{ href: "/", label: "Back to home" }}
+          secondary={{ href: "/login", label: "Sign in" }}
         />
-        <div className="relative my-6">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            or sign up with email
-          </span>
+      }
+    >
+      {!configured && (
+        <AuthAlert variant="info">
+          Copy <code className="text-xs">.env.example</code> to{" "}
+          <code className="text-xs">.env.local</code> and set{" "}
+          <code className="text-xs">NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
+          <code className="text-xs">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>
+          , and <code className="text-xs">SUPABASE_SECRET_KEY</code>.
+        </AuthAlert>
+      )}
+      {error && <AuthAlert>{error}</AuthAlert>}
+
+      <GoogleSignInButton
+        disabled={!configured}
+        redirectTo="/onboarding"
+        supabaseConfig={supabaseConfig}
+        googleClientId={googleClientId}
+      />
+
+      <AuthDivider label="or" />
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+            Email address
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@company.com"
+            required
+            className={authFieldClass}
+          />
         </div>
-        <form action={formAction} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={6}
-              required
-            />
-          </div>
-          <SubmitButton disabled={!canSignUp} pending={isPending} />
-        </form>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          <Link href="/" className="text-primary hover:underline">
-            ← Back to home
-          </Link>
-          {" · "}
-          <Link href="/login" className="text-primary hover:underline">
-            Sign in
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+        <div className="space-y-2">
+          <Label
+            htmlFor="password"
+            className="text-xs font-medium text-muted-foreground"
+          >
+            Password
+          </Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder="At least 6 characters"
+            minLength={6}
+            required
+            className={authFieldClass}
+          />
+        </div>
+        <SubmitButton disabled={!canSignUp} pending={isPending} />
+      </form>
+
+      <p className="text-center text-xs text-muted-foreground">
+        By creating an account, you agree to our{" "}
+        <Link href="/terms" className="underline-offset-2 hover:underline">
+          Terms
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="underline-offset-2 hover:underline">
+          Privacy Policy
+        </Link>
+        .
+      </p>
+    </AuthScreen>
   );
 }

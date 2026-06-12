@@ -77,6 +77,7 @@ export function createDefaultInvoice(company: CompanySettings = defaultCompanySe
     notes: "Thanks for your business.",
     termsAndConditions: "",
     pageSize: "a4",
+    templateId: "classic",
     company,
   };
 }

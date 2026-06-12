@@ -10,7 +10,7 @@ import { InvoiceTable } from "@/components/invoice-table";
 import { PageTransition } from "@/components/page-transition";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { deleteInvoiceAction } from "@/lib/actions/invoices";
+import { deleteInvoiceClient } from "@/lib/api/invoices-client";
 import { formatMoney } from "@/lib/currency";
 import { downloadClientStatementPdf } from "@/lib/client-statement-pdf";
 import {
@@ -57,7 +57,7 @@ export function CustomerDetailClient({
   const handleDelete = async (id: string) => {
     setBusyInvoiceId(id);
     try {
-      await deleteInvoiceAction(id);
+      await deleteInvoiceClient(id);
       setInvoices((prev) => prev.filter((inv) => inv.id !== id));
       toast.success("Invoice deleted");
       router.refresh();

@@ -38,7 +38,7 @@ export function IndiaMarketHubContent({ workspace }: IndiaMarketHubContentProps)
   const directAnswer = getGeoDirectAnswer("gst-invoice-generator-india");
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-12 xl:max-w-[1600px]">
       <ConversionLandingHero
         badge={indiaMarketHero.badge}
         title={indiaMarketHero.title}

@@ -2,7 +2,7 @@
  * Generates static PNG favicons for Google Search and browsers.
  * Run: npx tsx scripts/generate-favicons.ts
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import React from "react";
 import { ImageResponse } from "next/og";
@@ -63,6 +63,13 @@ async function writePng(size: number, filename: string) {
 async function main() {
   await writePng(48, "favicon-48.png");
   await writePng(96, "favicon-96.png");
+
+  const { default: pngToIco } = await import("png-to-ico");
+  const png48 = readFileSync(join(publicDir, "favicon-48.png"));
+  const png96 = readFileSync(join(publicDir, "favicon-96.png"));
+  const ico = await pngToIco([png48, png96]);
+  writeFileSync(join(publicDir, "favicon.ico"), ico);
+  console.log(`Wrote public/favicon.ico (${ico.length} bytes)`);
 }
 
 main().catch((err) => {

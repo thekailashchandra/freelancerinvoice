@@ -17,6 +17,7 @@ import {
 } from "@/data/structured-data";
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
+import { AuthPageLayout } from "@/components/auth-screen";
 import { SignupForm } from "./signup-form";
 
 /** Uses cookies() via createClient when Supabase is configured. */
@@ -63,20 +64,18 @@ export default async function SignupPage() {
           }),
         ]}
       />
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <AuthPageLayout>
         <SignupForm
-        configured={configured}
-        canSignUp={canSignUp}
-        supabaseConfig={supabaseConfig}
-        googleClientId={googleClientId}
+          configured={configured}
+          canSignUp={canSignUp}
+          supabaseConfig={supabaseConfig}
+          googleClientId={googleClientId}
         />
-      </div>
-      <div className="mx-auto max-w-md px-4 pb-16">
         <PageFaqSection
           faqItems={getPageFaqs("/signup")}
           heading="Signup FAQ"
         />
-      </div>
+      </AuthPageLayout>
     </>
   );
 }

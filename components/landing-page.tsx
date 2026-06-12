@@ -125,52 +125,50 @@ export function LandingPage() {
           className="py-12 md:py-16 lg:py-20"
           aria-labelledby="hero-heading"
         >
-          <div className="grid items-center gap-10 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] xl:gap-14 2xl:gap-20">
-            <div className="min-w-0 text-center xl:text-left">
-              <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary xl:mx-0">
-                <Sparkles className="h-4 w-4" aria-hidden />
-                Built for freelancers & agencies
-              </div>
-              <h1
-                id="hero-heading"
-                className="mx-auto text-4xl font-bold tracking-tight md:text-5xl xl:mx-0 xl:text-6xl"
-              >
-                Free{" "}
-                <span className="gradient-text">Invoice for Freelancers</span>
-                : Professional Billing in Minutes
-              </h1>
-              <p className="seo-hero-summary mx-auto mt-6 text-lg text-muted-foreground xl:mx-0">
-                {siteConfig.name} is the fastest way to create an invoice for
-                freelance work. Generate beautiful PDF invoices, track payments,
-                and manage your entire freelance billing workflow in one
-                cloud-backed platform with no spreadsheets or messy templates.
-              </p>
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-3 xl:justify-start">
-                <Button size="lg" asChild className="gap-2 px-8">
-                  <Link href="/signup">
-                    Create your first freelancer invoice
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/features">See features</Link>
-                </Button>
-                <Button size="lg" variant="ghost" asChild>
-                  <Link href="/login">Sign in</Link>
-                </Button>
-              </div>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Free to start ·{" "}
-                <Link href="/pricing" className="text-foreground hover:underline">
-                  See pricing
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary">
+              <Sparkles className="h-4 w-4" aria-hidden />
+              Built for freelancers & agencies
+            </div>
+            <h1
+              id="hero-heading"
+              className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl"
+            >
+              Free{" "}
+              <span className="gradient-text">Invoice for Freelancers</span>
+              : Professional Billing in Minutes
+            </h1>
+            <p className="seo-hero-summary mt-6 text-lg text-muted-foreground">
+              {siteConfig.name} is the fastest way to create an invoice for
+              freelance work. Generate beautiful PDF invoices, track payments,
+              and manage your entire freelance billing workflow in one
+              cloud-backed platform with no spreadsheets or messy templates.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <Button size="lg" asChild className="gap-2 px-8">
+                <Link href="/signup">
+                  Create your first freelancer invoice
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
-                {" · "}PDF export · Cloud invoice history
-              </p>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/features">See features</Link>
+              </Button>
+              <Button size="lg" variant="ghost" asChild>
+                <Link href="/login">Sign in</Link>
+              </Button>
             </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Free to start ·{" "}
+              <Link href="/pricing" className="text-foreground hover:underline">
+                See pricing
+              </Link>
+              {" · "}PDF export · Cloud invoice history
+            </p>
+          </div>
 
-            <div className="min-w-0 xl:justify-self-end">
-              <HeroInvoiceDemo />
-            </div>
+          <div className="mt-12 md:mt-14 lg:mt-16">
+            <HeroInvoiceDemo />
           </div>
         </section>
 

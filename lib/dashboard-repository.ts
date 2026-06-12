@@ -1,5 +1,3 @@
-"use server";
-
 import { createClient } from "@/lib/supabase/server";
 import { applyInvoiceToDashboardStats } from "@/lib/dashboard-stats";
 import type { DashboardStats, InvoiceStatus } from "@/types/invoice";
@@ -8,21 +6,21 @@ function itemLineTotal(qty: number, price: number): number {
   return qty * Number(price);
 }
 
-export async function fetchDashboardStatsAction(): Promise<DashboardStats> {
+const emptyStats: DashboardStats = {
+  totalInvoices: 0,
+  paidInvoices: 0,
+  pendingAmount: 0,
+  totalRevenue: 0,
+  currencyCode: "USD",
+};
+
+export async function fetchDashboardStats(): Promise<DashboardStats> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return {
-      totalInvoices: 0,
-      paidInvoices: 0,
-      pendingAmount: 0,
-      totalRevenue: 0,
-      currencyCode: "USD",
-    };
-  }
+  if (!user) return emptyStats;
 
   const { data: invoices, error } = await supabase
     .from("invoices")
@@ -31,15 +29,7 @@ export async function fetchDashboardStatsAction(): Promise<DashboardStats> {
     )
     .eq("user_id", user.id);
 
-  if (error || !invoices) {
-    return {
-      totalInvoices: 0,
-      paidInvoices: 0,
-      pendingAmount: 0,
-      totalRevenue: 0,
-      currencyCode: "USD",
-    };
-  }
+  if (error || !invoices) return emptyStats;
 
   const { data: profile } = await supabase
     .from("profiles")

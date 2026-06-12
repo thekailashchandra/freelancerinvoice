@@ -11,11 +11,8 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  completeOnboardingAction,
-  skipOnboardingAction,
-} from "@/lib/actions/profile";
-import { uploadProfileAssetAction } from "@/lib/actions/profile-assets";
+import { uploadProfileAssetClient } from "@/lib/api/app-client";
+import { updateProfileClient } from "@/lib/api/profile-client";
 import { AssetFileField } from "@/components/asset-file-field";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import { Button } from "@/components/ui/button";
@@ -86,7 +83,7 @@ export function OnboardingForm({
     formData.set("kind", kind);
     formData.set("file", file);
 
-    const result = await uploadProfileAssetAction(formData);
+    const result = await uploadProfileAssetClient(formData);
     if (!result.ok) {
       toast.error("Upload failed", { description: result.error });
       return null;
@@ -120,7 +117,7 @@ export function OnboardingForm({
 
     setLoading(true);
     try {
-      await completeOnboardingAction({
+      await updateProfileClient({
         companyName: displayName.trim(),
         companyEmail: companyEmail.trim(),
         companyPhone: companyPhone.trim(),
@@ -147,7 +144,18 @@ export function OnboardingForm({
   const handleSkip = async () => {
     setSkipping(true);
     try {
-      await skipOnboardingAction();
+      const fallbackName =
+        displayName.trim() ||
+        initialName.trim() ||
+        initialEmail.split("@")[0] ||
+        "My Invoices";
+      await updateProfileClient({
+        companyName: fallbackName,
+        companyEmail: companyEmail.trim() || initialEmail,
+        countryCode: "US",
+        currencyCode: "USD",
+        taxLabel: "Sales Tax",
+      });
       toast.success("Skipped for now. You can finish setup in Settings anytime.");
       router.push("/dashboard");
       router.refresh();

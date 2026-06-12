@@ -7,25 +7,34 @@ import { EmptyState } from "@/components/empty-state";
 import { PageTransition } from "@/components/page-transition";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCustomers } from "@/hooks/use-customers";
+import { useProfile } from "@/hooks/use-profile";
 import { formatMoney } from "@/lib/currency";
 import { formatDate } from "@/lib/utils";
 import { clientDisplayName, type ClientSummary } from "@/lib/customer-invoices";
 
 type CustomersPageClientProps = {
-  initialSummaries: ClientSummary[];
-  currencyCode: string;
+  initialSummaries?: ClientSummary[];
+  currencyCode?: string;
 };
 
 export function CustomersPageClient({
   initialSummaries,
-  currencyCode,
+  currencyCode: currencyCodeProp,
 }: CustomersPageClientProps) {
+  const { summaries, loading, error, refresh } = useCustomers();
+  const { settings } = useProfile();
   const [search, setSearch] = useState("");
+
+  const initialSummariesList = initialSummaries ?? summaries;
+  const currencyCode = currencyCodeProp ?? settings.currencyCode ?? "USD";
+  const showLoading = loading && initialSummariesList.length === 0;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return initialSummaries;
-    return initialSummaries.filter((client) => {
+    if (!q) return initialSummariesList;
+    return initialSummariesList.filter((client) => {
       const haystack = [
         client.name,
         client.company,
@@ -36,7 +45,21 @@ export function CustomersPageClient({
         .toLowerCase();
       return haystack.includes(q);
     });
-  }, [initialSummaries, search]);
+  }, [initialSummariesList, search]);
+
+  if (showLoading) {
+    return (
+      <div className="mx-auto max-w-6xl space-y-4">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-10 w-full max-w-md" />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <Skeleton className="h-40 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PageTransition className="mx-auto max-w-6xl space-y-6">
@@ -51,6 +74,19 @@ export function CustomersPageClient({
           <Link href="/create-invoice">Create invoice</Link>
         </Button>
       </div>
+
+      {error ? (
+        <p className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}{" "}
+          <button
+            type="button"
+            className="font-medium underline"
+            onClick={() => void refresh()}
+          >
+            Retry
+          </button>
+        </p>
+      ) : null}
 
       <div className="relative max-w-md">
         <Search
@@ -68,14 +104,14 @@ export function CustomersPageClient({
       {filtered.length === 0 ? (
         <EmptyState
           icon={Users}
-          title={initialSummaries.length === 0 ? "No customers yet" : "No matches"}
+          title={initialSummariesList.length === 0 ? "No customers yet" : "No matches"}
           description={
-            initialSummaries.length === 0
+            initialSummariesList.length === 0
               ? "Add customers while creating an invoice, then manage them here."
               : "Try a different name, email, or company."
           }
-          actionLabel={initialSummaries.length === 0 ? "Create invoice" : undefined}
-          actionHref={initialSummaries.length === 0 ? "/create-invoice" : undefined}
+          actionLabel={initialSummariesList.length === 0 ? "Create invoice" : undefined}
+          actionHref={initialSummariesList.length === 0 ? "/create-invoice" : undefined}
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

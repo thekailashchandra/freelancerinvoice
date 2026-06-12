@@ -44,7 +44,7 @@ export function SeoLandingPageContent({ page }: SeoLandingPageContentProps) {
   const directAnswer = getGeoDirectAnswer(page.slug);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8 md:py-12 xl:max-w-[1600px]">
       <p className="text-center text-sm font-medium text-primary">
         {page.category}
       </p>

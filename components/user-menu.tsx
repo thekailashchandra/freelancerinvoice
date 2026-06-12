@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, MessageSquarePlus, Settings } from "lucide-react";
 import { toast } from "sonner";
-import { signOutAction } from "@/lib/actions/auth";
+import { signOutClient } from "@/lib/api/app-client";
 import { useProfile } from "@/hooks/use-profile";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,9 @@ export function UserMenu() {
 
   const handleSignOut = async () => {
     try {
-      await signOutAction();
+      await signOutClient();
+      router.push("/login");
+      router.refresh();
     } catch {
       router.push("/login");
       router.refresh();

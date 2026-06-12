@@ -24,7 +24,7 @@ export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [contentHeight, setContentHeight] = useState<number>(spec.heightPx);
+  const [contentHeight, setContentHeight] = useState<number | null>(null);
 
   const updateScale = useCallback(() => {
     const viewport = viewportRef.current;
@@ -52,17 +52,20 @@ export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
     return () => ro.disconnect();
   }, [children]);
 
+  const scaledHeight =
+    contentHeight !== null ? contentHeight * scale : undefined;
+
   return (
     <div
       ref={viewportRef}
       className={cn("w-full", className)}
-      style={{ minHeight: contentHeight * scale }}
+      style={scaledHeight !== undefined ? { height: scaledHeight } : undefined}
     >
       <div
         className="mx-auto"
         style={{
           width: spec.widthPx * scale,
-          height: contentHeight * scale,
+          height: scaledHeight,
           overflow: "hidden",
         }}
       >

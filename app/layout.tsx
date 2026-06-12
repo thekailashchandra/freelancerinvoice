@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { geoConsensus, geoEntity, geoEntityStatement, geoTopics } from "@/data/geo";
 import { buildKeywordsString, homeSeo } from "@/data/seo";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
+import { DevEarlyGuards } from "@/components/dev-early-guards";
+import { readDevBuildId } from "@/lib/dev-build";
 import { geistMono, geistSans } from "@/lib/fonts";
 import { siteConfig } from "@/data/site";
 import "./globals.css";
+
+export const dynamic =
+  process.env.NODE_ENV === "development" ? "force-dynamic" : "auto";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -49,10 +53,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-48.png", type: "image/png", sizes: "48x48" },
       { url: "/favicon-96.png", type: "image/png", sizes: "96x96" },
-      { url: "/icon", type: "image/png", sizes: "48x48" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     shortcut: [{ url: "/favicon.ico" }],
@@ -77,10 +80,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
@@ -88,10 +88,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const devBuildId = readDevBuildId();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        {/* Primary favicon for Google Search — yellow $ on circle */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link
           rel="icon"
           href="/favicon-48.png"
@@ -104,6 +107,7 @@ export default function RootLayout({
           type="image/png"
           sizes="96x96"
         />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link
           rel="alternate"
           type="text/plain"
@@ -116,20 +120,14 @@ export default function RootLayout({
           href={`${siteConfig.url}/consensus.txt`}
           title="Brand consensus block for directories"
         />
+        <DevEarlyGuards buildId={devBuildId} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <GooglePrivacyScripts />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster richColors position="top-center" closeButton />
-        </ThemeProvider>
+        {children}
+        <Toaster richColors position="top-center" closeButton />
       </body>
     </html>
   );

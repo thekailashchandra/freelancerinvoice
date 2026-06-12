@@ -148,9 +148,21 @@ function buildGenericConfig(code: string): CountryConfig {
 
 export function normalizeCountryCode(code: string | null | undefined): CountryCode {
   if (!code) return "US";
-  if (code in PROFILE_COUNTRY_CONFIGS) return code;
-  if (getIsoCountry(code)) return code;
+  const trimmed = code.trim();
+  const upper = trimmed.toUpperCase();
+  if (upper in PROFILE_COUNTRY_CONFIGS) return upper;
+  if (getIsoCountry(trimmed)) return trimmed;
+  if (getIsoCountry(upper)) return upper;
+  const byName = ISO_COUNTRIES.find(
+    (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+  );
+  if (byName) return byName.code;
   return "US";
+}
+
+/** India (IN) — INR defaults and UPI payment fields */
+export function isIndianCountry(code: string | null | undefined): boolean {
+  return normalizeCountryCode(code) === "IN";
 }
 
 export function getCountryConfig(code: string | null | undefined): CountryConfig {

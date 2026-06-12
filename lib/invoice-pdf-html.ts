@@ -21,10 +21,7 @@ import {
   shouldShowInvoiceBranding,
 } from "@/lib/invoice-branding";
 import type { Invoice } from "@/types/invoice";
-
-const d = invoiceDesign;
-
-const F = d.pdfFont;
+import { resolveTemplateDesign } from "@/lib/invoice-templates";
 
 function escapeHtml(text: string): string {
 
@@ -46,21 +43,18 @@ function cell(attrs = "", inner = ""): string {
 
 }
 
-function metaRow(label: string, value: string): string {
-
-  if (!value) return "";
-
-  return `<div style="display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-family:${F};font-size:13px;line-height:20px">
-
-    <span style="color:${d.colors.textMuted};white-space:nowrap">${escapeHtml(label)}</span>
-
-    <span style="color:${d.colors.text};font-weight:500;text-align:right">${escapeHtml(value)}</span>
-
-  </div>`;
-
-}
-
 export function buildInvoicePdfHtml(invoice: Invoice): string {
+  const d = resolveTemplateDesign(invoice.templateId ?? "classic");
+  const F = d.pdfFont;
+
+  function metaRow(label: string, value: string): string {
+    if (!value) return "";
+    return `<div style="display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-family:${F};font-size:13px;line-height:20px">
+    <span style="color:${d.colors.textMuted};white-space:nowrap">${escapeHtml(label)}</span>
+    <span style="color:${d.colors.text};font-weight:500;text-align:right">${escapeHtml(value)}</span>
+  </div>`;
+  }
+
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const W = pageSpec.contentWidthPx;
   const logo = getLogoDimensions(resolveLogoHeight(invoice.company.logoHeight));

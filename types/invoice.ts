@@ -18,6 +18,8 @@ export type GstSupplyType = "intra" | "inter";
 
 export type InvoicePageSize = "a4" | "letter";
 
+export type InvoiceTemplateId = "classic" | "modern" | "minimal" | "bold";
+
 export interface ClientDetails {
   name: string;
   email: string;
@@ -75,7 +77,7 @@ export interface CompanySettings {
   gstin?: string;
   /** Default payment details copied onto new invoices */
   defaultPayment: PaymentDetails;
-  /** When true, omit the platform "Powered by" footer on invoices */
+  /** When true, omit the platform footer after a Ko-fi contribution is confirmed */
   hideInvoiceBranding?: boolean;
 }
 
@@ -97,6 +99,8 @@ export interface Invoice {
   termsAndConditions?: string;
   /** Paper size for preview, print, and PDF */
   pageSize?: InvoicePageSize;
+  /** Visual PDF layout style */
+  templateId?: InvoiceTemplateId;
   company: CompanySettings;
 }
 

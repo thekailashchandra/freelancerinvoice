@@ -1,5 +1,3 @@
-"use server";
-
 import { revalidatePath } from "next/cache";
 import {
   uploadAndSaveProfileAsset,
@@ -17,8 +15,7 @@ function parseKind(value: FormDataEntryValue | null): AssetKind | null {
   return null;
 }
 
-/** Upload logo/signature to storage and save URL on the user's profile. */
-export async function uploadProfileAssetAction(
+export async function uploadProfileAsset(
   formData: FormData
 ): Promise<AssetUploadResult> {
   try {
@@ -48,8 +45,7 @@ export async function uploadProfileAssetAction(
   }
 }
 
-/** Upload to storage only (e.g. invoice editor); does not update profile defaults. */
-export async function uploadInvoiceAssetAction(
+export async function uploadInvoiceAsset(
   formData: FormData
 ): Promise<AssetUploadResult> {
   try {

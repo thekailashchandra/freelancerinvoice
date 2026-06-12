@@ -8,7 +8,7 @@ import type {
   ServiceItem,
 } from "@/types/invoice";
 import { resolveInvoicePageSize } from "@/lib/invoice-design";
-import { sanitizePaymentForCountry } from "@/lib/country";
+import { normalizeCountryCode, sanitizePaymentForCountry } from "@/lib/country";
 import { generateId } from "@/lib/utils";
 
 function profileRowToPayment(profile: ProfileRow): PaymentDetails {
@@ -34,7 +34,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     logo: profile.logo_url,
     logoHeight: profile.logo_height ?? 80,
     signature: profile.signature_url,
-    countryCode: profile.country_code ?? "OTHER",
+    countryCode: normalizeCountryCode(profile.country_code),
     currencyCode: profile.currency_code,
     taxLabel: profile.tax_label,
     defaultPayment: profileRowToPayment(profile),

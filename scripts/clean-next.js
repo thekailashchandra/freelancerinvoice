@@ -1,24 +1,31 @@
 const fs = require("fs");
 const path = require("path");
 
-const distName = process.env.NEXT_DIST_DIR || ".next-dev";
-const nextDir = path.join(__dirname, "..", distName);
+const dirs = [".next-dev", ".next"];
+let failed = false;
 
-if (!fs.existsSync(nextDir)) {
-  console.log(".next folder not found — nothing to clean");
-  process.exit(0);
+for (const distName of dirs) {
+  const nextDir = path.join(__dirname, "..", distName);
+
+  if (!fs.existsSync(nextDir)) {
+    console.log(`${distName} not found — skipping`);
+    continue;
+  }
+
+  try {
+    fs.rmSync(nextDir, { recursive: true, force: true, maxRetries: 3 });
+    console.log(`Removed ${distName}`);
+  } catch (err) {
+    failed = true;
+    console.warn(
+      `\nCould not remove ${distName} (files may be locked by another process).`
+    );
+    if (err instanceof Error) console.warn(err.message);
+  }
 }
 
-try {
-  fs.rmSync(nextDir, { recursive: true, force: true, maxRetries: 3 });
-  console.log("Removed .next cache");
-} catch (err) {
-  console.error(
-    "\nCould not remove .next (files are locked by another process).\n" +
-      "1. Stop ALL terminals running `npm run dev` (Ctrl+C)\n" +
-      "2. Close other tools using this project folder\n" +
-      "3. Run `npm run clean` again\n"
+if (failed) {
+  console.warn(
+    "\nSome cache folders could not be removed. Stop all dev servers and retry if issues persist.\n"
   );
-  if (err instanceof Error) console.error(err.message);
-  process.exit(1);
 }

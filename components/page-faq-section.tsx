@@ -21,10 +21,7 @@ export function PageFaqSection({
       {includeSchema && (
         <SchemaGraph nodes={[buildFaqPageSchemaFromItems(faqItems)]} />
       )}
-      <section
-        className="mt-14"
-        aria-labelledby="page-faq-heading"
-      >
+      <section aria-labelledby="page-faq-heading">
         <h2 id="page-faq-heading" className="text-2xl font-bold tracking-tight">
           {heading}
         </h2>

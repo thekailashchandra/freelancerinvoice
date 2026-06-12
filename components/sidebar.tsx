@@ -7,6 +7,7 @@ import { PrivacyConsentLink } from "@/components/privacy-consent-link";
 import { NavLink } from "@/components/nav-link";
 import { SiteLogo } from "@/components/site-logo";
 import { Button } from "@/components/ui/button";
+import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -21,6 +22,7 @@ export function Sidebar({
   onToggle,
 }: SidebarProps) {
   const pathname = usePathname();
+  const mounted = useMounted();
 
   return (
     <aside className="flex h-full flex-col">
@@ -64,32 +66,41 @@ export function Sidebar({
         )}
       </div>
 
-      <nav className={cn("mt-5 flex flex-1 flex-col gap-0.5", collapsed && "items-center")}>
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          const Icon = item.icon;
+      <nav
+        className={cn(
+          "mt-5 flex flex-1 flex-col gap-0.5",
+          collapsed && "items-center",
+          !mounted && "min-h-[11.5rem]"
+        )}
+        aria-label="Main navigation"
+      >
+        {mounted
+          ? navItems.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              const Icon = item.icon;
 
-          return (
-            <NavLink
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              title={collapsed ? item.title : undefined}
-              className={cn(
-                "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
-                collapsed
-                  ? "h-10 w-10 justify-center"
-                  : "gap-2.5 px-3 py-2",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>{item.title}</span>}
-            </NavLink>
-          );
-        })}
+              return (
+                <NavLink
+                  key={item.href}
+                  href={item.href}
+                  onClick={onNavigate}
+                  title={collapsed ? item.title : undefined}
+                  className={cn(
+                    "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
+                    collapsed
+                      ? "h-10 w-10 justify-center"
+                      : "gap-2.5 px-3 py-2",
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {!collapsed && <span>{item.title}</span>}
+                </NavLink>
+              );
+            })
+          : null}
       </nav>
 
       {!collapsed && (

@@ -17,19 +17,23 @@ import { toast } from "sonner";
 import { InvoicePreview } from "@/components/invoice-preview";
 import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { PageTransition } from "@/components/page-transition";
+import {
+  InvoicePdfDialog,
+  type InvoicePdfDialogPhase,
+} from "@/components/invoice-pdf-dialog";
 import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
-import { SupportPlatformDialog } from "@/components/support-platform-dialog";
 import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { invoiceActionState } from "@/lib/invoice-actions";
 import {
-  deleteInvoiceAction,
-  fetchInvoiceByIdAction,
-  updateInvoiceStatusAction,
-} from "@/lib/actions/invoices";
+  deleteInvoiceClient,
+  fetchInvoiceByIdClient,
+  updateInvoiceStatusClient,
+} from "@/lib/api/invoices-client";
 import { deriveInvoiceStatus } from "@/lib/calculations";
+import { printInvoice } from "@/lib/invoice-print";
 
 type InvoiceViewClientProps = {
   invoiceId: string;
@@ -38,11 +42,14 @@ type InvoiceViewClientProps = {
 export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const router = useRouter();
   const [invoice, setInvoice] = useState<Awaited<
-    ReturnType<typeof fetchInvoiceByIdAction>
+    ReturnType<typeof fetchInvoiceByIdClient>
   > | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
+  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
+  const [pdfDialogPhase, setPdfDialogPhase] =
+    useState<InvoicePdfDialogPhase>("generating");
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [actionBusy, setActionBusy] = useState<
     "paid" | "void" | "delete" | null
   >(null);
@@ -52,8 +59,9 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     dialogOpen: brandingDialogOpen,
     setDialogOpen: setBrandingDialogOpen,
     requestRemoval: requestBrandingRemoval,
-    confirmRemoval: confirmBrandingRemoval,
-    confirming: confirmingBrandingRemoval,
+    confirmKofiRemoval,
+    confirming: brandingConfirming,
+    pricing: brandingPricing,
   } = useInvoiceBrandingRemoval(invoice, setInvoice);
 
   useEffect(() => {
@@ -62,7 +70,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     async function load() {
       setLoading(true);
       try {
-        const data = await fetchInvoiceByIdAction(invoiceId);
+        const data = await fetchInvoiceByIdClient(invoiceId);
         if (!cancelled) setInvoice(data);
       } finally {
         if (!cancelled) setLoading(false);
@@ -107,17 +115,23 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
   const handleDownloadPdf = async () => {
     setExporting(true);
+    setPdfError(null);
+    setPdfDialogPhase("generating");
+    setPdfDialogOpen(true);
     try {
+      await new Promise((r) =>
+        requestAnimationFrame(() => requestAnimationFrame(r))
+      );
       const { downloadInvoicePdf } = await import("@/lib/pdf");
       await downloadInvoicePdf(invoice, `${invoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
       });
-      toast.success("PDF downloaded");
-      setSupportOpen(true);
+      setPdfDialogPhase("success");
     } catch (err) {
-      toast.error("PDF export failed", {
-        description: err instanceof Error ? err.message : "Unknown error",
-      });
+      setPdfError(
+        err instanceof Error ? err.message : "Unknown error"
+      );
+      setPdfDialogPhase("error");
     } finally {
       setExporting(false);
     }
@@ -126,7 +140,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const handleMarkPaid = async () => {
     setActionBusy("paid");
     try {
-      await updateInvoiceStatusAction(invoice.id, "paid");
+      await updateInvoiceStatusClient(invoice.id, "paid");
       setInvoice((prev) => (prev ? { ...prev, status: "paid" } : prev));
       toast.success("Invoice marked as paid");
       router.refresh();
@@ -149,7 +163,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     }
     setActionBusy("void");
     try {
-      await updateInvoiceStatusAction(invoice.id, "void");
+      await updateInvoiceStatusClient(invoice.id, "void");
       setInvoice((prev) => (prev ? { ...prev, status: "void" } : prev));
       toast.success("Invoice voided");
       router.refresh();
@@ -172,7 +186,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     }
     setActionBusy("delete");
     try {
-      await deleteInvoiceAction(invoice.id);
+      await deleteInvoiceClient(invoice.id);
       toast.success("Invoice deleted");
       router.push("/invoice-history");
     } catch (err) {
@@ -216,8 +230,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             className="gap-2"
             onClick={async () => {
               try {
-                const { printInvoice } = await import("@/lib/pdf");
-                await printInvoice();
+                await printInvoice({ previewId: "invoice-preview" });
               } catch (err) {
                 const message =
                   err instanceof Error
@@ -313,12 +326,18 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         </InvoicePreviewFrame>
       </div>
 
-      <SupportPlatformDialog open={supportOpen} onOpenChange={setSupportOpen} />
+      <InvoicePdfDialog
+        open={pdfDialogOpen}
+        onOpenChange={setPdfDialogOpen}
+        phase={pdfDialogPhase}
+        errorMessage={pdfError}
+      />
       <RemoveBrandingDialog
         open={brandingDialogOpen}
         onOpenChange={setBrandingDialogOpen}
-        onConfirmContributed={confirmBrandingRemoval}
-        confirming={confirmingBrandingRemoval}
+        displayAmount={brandingPricing.displayAmount}
+        onConfirmPaid={() => void confirmKofiRemoval()}
+        confirming={brandingConfirming}
       />
     </PageTransition>
   );

@@ -8,7 +8,7 @@ import { createEmptyService } from "@/data/defaults";
 import { calculateTotals, isIndianGstInvoice } from "@/lib/calculations";
 import { formatMoney, getCurrencySymbol } from "@/lib/currency";
 import { formatInvoiceMoney } from "@/lib/currency-display";
-import { uploadInvoiceAssetAction } from "@/lib/actions/profile-assets";
+import { uploadInvoiceAssetClient } from "@/lib/api/app-client";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import { CurrencySelect } from "@/components/currency-select";
 import { InvoiceCustomerSection } from "@/components/invoice-client-picker";
@@ -104,7 +104,8 @@ export function InvoiceForm({
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const isLoggedInCreate = createFlow && !guestMode && !!onClientsChange;
-  const fieldClass = isLoggedInCreate ? "h-11" : undefined;
+  const isGuestRelaxed = guestMode && !createFlow;
+  const fieldClass = isLoggedInCreate || isGuestRelaxed ? "h-11" : undefined;
 
   const currency = invoice.currencyCode;
   const currencySymbol = getCurrencySymbol(currency);
@@ -208,7 +209,7 @@ export function InvoiceForm({
       const formData = new FormData();
       formData.set("kind", "logo");
       formData.set("file", file);
-      const result = await uploadInvoiceAssetAction(formData);
+      const result = await uploadInvoiceAssetClient(formData);
       if (!result.ok) {
         toast.error("Upload failed", { description: result.error });
         return;
@@ -228,10 +229,10 @@ export function InvoiceForm({
     <div
       className={cn(
         "rounded-xl bg-muted/40",
-        isLoggedInCreate ? "p-5 md:p-6" : "p-4 md:p-5"
+        isLoggedInCreate ? "p-5 md:p-6" : isGuestRelaxed ? "p-5 md:p-6" : "p-4 md:p-5"
       )}
     >
-      <div className={cn(isLoggedInCreate ? "space-y-5" : "space-y-4")}>
+      <div className={cn(isLoggedInCreate || isGuestRelaxed ? "space-y-5" : "space-y-4")}>
         {invoice.services.map((service) => {
           const lineTotal = service.quantity * service.price;
           return (
@@ -239,7 +240,7 @@ export function InvoiceForm({
               key={service.id}
               className={cn(
                 "rounded-xl border border-border/50 bg-background/60",
-                isLoggedInCreate ? "p-5" : "p-4"
+                isLoggedInCreate || isGuestRelaxed ? "p-5" : "p-4"
               )}
             >
               <div className="min-w-0 space-y-3">
@@ -263,73 +264,79 @@ export function InvoiceForm({
                 />
               </div>
 
-              <div className="mt-3 flex items-end gap-2">
-                <div className="w-17 shrink-0">
-                  <Label className="mb-1.5 block text-xs text-muted-foreground">
-                    Qty
-                  </Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    className="h-10 px-2 text-center tabular-nums"
-                    value={service.quantity}
-                    onChange={(e) =>
-                      updateService(
-                        service.id,
-                        "quantity",
-                        Number(e.target.value) || 1
-                      )
-                    }
-                  />
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <Label className="mb-1.5 block text-xs text-muted-foreground">
-                    Rate
-                  </Label>
-                  <div className="flex h-10 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm">
-                    <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
-                      {currencySymbol}
-                    </span>
-                    <input
+              <div className="mt-3 space-y-3 sm:space-y-0">
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-2">
+                  <div className="w-full shrink-0 sm:w-17">
+                    <Label className="mb-1.5 block text-xs text-muted-foreground">
+                      Qty
+                    </Label>
+                    <Input
                       type="number"
-                      min={0}
-                      step="0.01"
-                      className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                      value={service.price || ""}
+                      min={1}
+                      inputMode="numeric"
+                      className="h-11 px-2 text-center tabular-nums sm:h-10"
+                      value={service.quantity}
                       onChange={(e) =>
                         updateService(
                           service.id,
-                          "price",
-                          Number(e.target.value) || 0
+                          "quantity",
+                          Number(e.target.value) || 1
                         )
                       }
                     />
                   </div>
-                </div>
 
-                <div className="min-w-0 flex-1">
-                  <Label className="mb-1.5 block text-xs text-muted-foreground">
-                    Amount
-                  </Label>
-                  <div className="flex h-10 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-2 text-sm font-semibold tabular-nums">
-                    <span className="truncate">
-                      {formatInvoiceMoney(lineTotal, currency)}
-                    </span>
+                  <div className="min-w-0 flex-1">
+                    <Label className="mb-1.5 block text-xs text-muted-foreground">
+                      Rate
+                    </Label>
+                    <div className="flex h-11 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm sm:h-10">
+                      <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
+                        {currencySymbol}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        inputMode="decimal"
+                        className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        value={service.price || ""}
+                        onChange={(e) =>
+                          updateService(
+                            service.id,
+                            "price",
+                            Number(e.target.value) || 0
+                          )
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-10 w-10 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => removeService(service.id)}
-                  disabled={invoice.services.length <= 1}
-                  aria-label="Remove line item"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                <div className="flex items-end gap-2">
+                  <div className="min-w-0 flex-1">
+                    <Label className="mb-1.5 block text-xs text-muted-foreground">
+                      Amount
+                    </Label>
+                    <div className="flex h-11 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-3 text-sm font-semibold tabular-nums sm:h-10">
+                      <span className="truncate">
+                        {formatInvoiceMoney(lineTotal, currency)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive sm:h-10 sm:w-10"
+                    onClick={() => removeService(service.id)}
+                    disabled={invoice.services.length <= 1}
+                    aria-label="Remove line item"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </article>
           );
@@ -426,7 +433,11 @@ export function InvoiceForm({
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div
         className={cn(
-          isLoggedInCreate ? "space-y-8 p-5 sm:p-6 lg:p-7" : "space-y-5 p-4 sm:p-5"
+          isLoggedInCreate
+            ? "space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-7"
+            : isGuestRelaxed
+              ? "space-y-6 p-5 sm:p-6 lg:p-7"
+              : "space-y-5 p-4 sm:p-5"
         )}
       >
         {isLoggedInCreate && businessDetailsBlock}
@@ -667,9 +678,30 @@ export function InvoiceForm({
         <div
           className={cn(
             "grid gap-4 sm:grid-cols-2",
-            isLoggedInCreate ? "lg:grid-cols-3 lg:gap-5" : "lg:grid-cols-3"
+            isLoggedInCreate ? "lg:grid-cols-4 lg:gap-5" : "lg:grid-cols-3"
           )}
         >
+          {isLoggedInCreate && (
+            <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+              <Label>Paper size</Label>
+              <Select
+                value={invoice.pageSize ?? "a4"}
+                onValueChange={(v) =>
+                  update({ pageSize: v as InvoicePageSize })
+                }
+              >
+                <SelectTrigger className={fieldClass}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="a4">{invoicePageSpecs.a4.label}</SelectItem>
+                  <SelectItem value="letter">
+                    {invoicePageSpecs.letter.label}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           {!isLoggedInCreate && (
           <div className="space-y-2">
             <Label>Currency</Label>
@@ -718,7 +750,7 @@ export function InvoiceForm({
         {!isLoggedInCreate && lineItemsBlock}
 
         {/* Notes + totals */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="notes">Notes</Label>

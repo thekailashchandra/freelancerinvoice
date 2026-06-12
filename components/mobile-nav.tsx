@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { navItems } from "@/data/navigation";
 import { NavLink } from "@/components/nav-link";
 import { useNavPending } from "@/components/navigation-provider";
+import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 
 function MobileNavItem({
@@ -42,6 +43,7 @@ function MobileNavItem({
 
 export function MobileNav() {
   const pathname = usePathname();
+  const mounted = useMounted();
 
   return (
     <nav
@@ -49,7 +51,8 @@ export function MobileNav() {
       aria-label="Main navigation"
     >
       <div className="mx-auto flex h-14 max-w-lg items-stretch justify-around px-2">
-        {navItems.map((item) => (
+        {mounted &&
+          navItems.map((item) => (
           <MobileNavItem
             key={item.href}
             href={item.href}
@@ -65,7 +68,7 @@ export function MobileNav() {
                     : item.title
             }
           />
-        ))}
+          ))}
       </div>
     </nav>
   );

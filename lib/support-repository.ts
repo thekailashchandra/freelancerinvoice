@@ -1,9 +1,5 @@
-"use server";
-
 import nodemailer from "nodemailer";
 import { createClient } from "@/lib/supabase/server";
-
-export type SupportFormState = { ok: boolean; message: string } | null;
 
 const DEFAULT_SUPPORT_EMAIL = "invoiceforfreelance@gmail.com";
 
@@ -13,8 +9,7 @@ function readSupportConfig() {
   const user = process.env.SUPPORT_SMTP_USER?.trim() ?? "";
   const pass = process.env.SUPPORT_SMTP_PASS?.trim() ?? "";
   const from = process.env.SUPPORT_FROM_EMAIL?.trim() || user;
-  const to =
-    process.env.SUPPORT_TO_EMAIL?.trim() || DEFAULT_SUPPORT_EMAIL;
+  const to = process.env.SUPPORT_TO_EMAIL?.trim() || DEFAULT_SUPPORT_EMAIL;
   const port = Number(portRaw);
 
   if (!host || !user || !pass || !from || Number.isNaN(port)) {
@@ -32,16 +27,28 @@ function readSupportConfig() {
   };
 }
 
-export async function submitSupportRequestAction(
-  _prev: SupportFormState,
-  formData: FormData
-): Promise<SupportFormState> {
-  const type = String(formData.get("type") ?? "Feature request").trim();
-  const subject = String(formData.get("subject") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
-  const contactName = String(formData.get("contactName") ?? "").trim();
-  const contactEmail = String(formData.get("contactEmail") ?? "").trim();
-  const source = String(formData.get("source") ?? "support-page").trim();
+export type SupportRequestInput = {
+  type: string;
+  subject: string;
+  message: string;
+  contactName: string;
+  contactEmail: string;
+  source: string;
+};
+
+export type SupportRequestResult =
+  | { ok: true; message: string }
+  | { ok: false; message: string };
+
+export async function submitSupportRequest(
+  input: SupportRequestInput
+): Promise<SupportRequestResult> {
+  const type = input.type.trim() || "Feature request";
+  const subject = input.subject.trim();
+  const message = input.message.trim();
+  const contactName = input.contactName.trim();
+  const contactEmail = input.contactEmail.trim();
+  const source = input.source.trim() || "support-page";
 
   if (!subject || !message || !contactEmail) {
     return {

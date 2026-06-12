@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { CalmLoader } from "@/components/calm-loader";
 import { createClient, type SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
-import { getGoogleClientId } from "@/lib/supabase/env";
+import { getGoogleClientId } from "@/lib/supabase/client-env";
 
 type GoogleCredentialResponse = {
   credential: string;
@@ -108,10 +108,10 @@ export function GoogleSignInButton({
     const width = Math.max(container.offsetWidth, 280);
     window.google.accounts.id.renderButton(container, {
       type: "standard",
-      theme: "outline",
+      theme: "filled_black",
       size: "large",
       text: "continue_with",
-      shape: "rectangular",
+      shape: "pill",
       width,
       logo_alignment: "left",
     });
@@ -142,7 +142,7 @@ export function GoogleSignInButton({
         <div
           ref={containerRef}
           className={[
-            "flex min-h-10 w-full justify-center [&>div]:!w-full",
+            "flex min-h-11 w-full justify-center overflow-hidden rounded-lg [&>div]:!w-full [&_iframe]:!rounded-lg",
             disabled || loading ? "pointer-events-none opacity-50" : "",
           ].join(" ")}
           aria-hidden={disabled || loading}

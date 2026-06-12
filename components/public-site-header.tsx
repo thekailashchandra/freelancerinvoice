@@ -3,13 +3,13 @@ import { ArrowRight } from "lucide-react";
 import { GuideNavMenu } from "@/components/guide-nav-menu";
 import { PublicMobileMenu } from "@/components/public-mobile-menu";
 import { SiteLogo } from "@/components/site-logo";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { mainNavLinks } from "@/data/public-navigation";
 import { Button } from "@/components/ui/button";
 
 export function PublicSiteHeader() {
   return (
-    <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-6 lg:px-10 xl:px-12">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-10 xl:px-12">
       <SiteLogo variant="full" href="/" priority />
       <nav
         className="flex items-center gap-0.5 sm:gap-1"
@@ -17,20 +17,18 @@ export function PublicSiteHeader() {
       >
         <PublicMobileMenu />
         {mainNavLinks.map((link) => (
-          <Button
-            key={link.href}
-            variant="ghost"
-            asChild
-            className="hidden sm:inline-flex"
-          >
-            <Link href={link.href}>{link.label}</Link>
-          </Button>
+          <div key={link.href} className="hidden sm:block">
+            <Button variant="ghost" asChild>
+              <Link href={link.href}>{link.label}</Link>
+            </Button>
+          </div>
         ))}
         <GuideNavMenu />
-        <ThemeToggle />
-        <Button variant="ghost" asChild className="hidden sm:inline-flex">
-          <Link href="/login">Sign in</Link>
-        </Button>
+        <div className="hidden sm:block">
+          <Button variant="ghost" asChild>
+            <Link href="/login">Sign in</Link>
+          </Button>
+        </div>
         <Button asChild size="sm" className="sm:size-default">
           <Link href="/signup">
             <span className="hidden sm:inline">Get started free</span>
@@ -39,6 +37,7 @@ export function PublicSiteHeader() {
           </Link>
         </Button>
       </nav>
+      </div>
     </header>
   );
 }

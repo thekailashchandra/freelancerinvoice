@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInvoices } from "@/hooks/use-invoices";
 import { useProfile } from "@/hooks/use-profile";
-import { updateInvoiceStatusAction } from "@/lib/actions/invoices";
+import { updateInvoiceStatusClient } from "@/lib/api/invoices-client";
 import { computeDashboardStats } from "@/lib/dashboard-stats";
 import { getCurrencySymbol } from "@/lib/currency";
 
@@ -53,7 +53,7 @@ export default function DashboardPage() {
     setBusyInvoiceId(id);
     setBusyAction("paid");
     try {
-      await updateInvoiceStatusAction(id, "paid");
+      await updateInvoiceStatusClient(id, "paid");
       await refresh();
       toast.success("Invoice marked as paid");
     } catch (err) {
@@ -70,7 +70,7 @@ export default function DashboardPage() {
     setBusyInvoiceId(id);
     setBusyAction("void");
     try {
-      await updateInvoiceStatusAction(id, "void");
+      await updateInvoiceStatusClient(id, "void");
       await refresh();
       toast.success("Invoice voided");
     } catch (err) {

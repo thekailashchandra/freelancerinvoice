@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSupabasePublishableEnv } from "@/lib/supabase/env";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
+import { ensureProfile } from "@/lib/supabase/ensure-profile";
 import { NextRequest, NextResponse } from "next/server";
 
 type CookieToSet = {
@@ -21,6 +22,13 @@ export async function POST(request: NextRequest) {
     if (!email?.trim() || !password) {
       return NextResponse.json(
         { ok: false, error: "Email and password are required." },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { ok: false, error: "Password must be at least 6 characters." },
         { status: 400 }
       );
     }
@@ -56,7 +64,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: trimmedEmail,
       password,
     });
@@ -70,6 +78,10 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       );
+    }
+
+    if (data.user) {
+      await ensureProfile(supabase, data.user);
     }
 
     const response = NextResponse.json({

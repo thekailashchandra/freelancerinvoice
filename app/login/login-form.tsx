@@ -1,25 +1,36 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { signInFormAction, type AuthFormState } from "@/lib/actions/auth";
+import {
+  markEnteringApp,
+  signInClient,
+} from "@/lib/api/auth-client";
 import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
-import { GoogleSignInButton } from "@/components/google-sign-in-button";
-import { CalmLoader } from "@/components/calm-loader";
-import { SiteLogo } from "@/components/site-logo";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const GoogleSignInButton = dynamic(
+  () =>
+    import("@/components/google-sign-in-button").then((m) => ({
+      default: m.GoogleSignInButton,
+    })),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-11 w-full rounded-lg" />,
+  }
+);
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  AuthAlert,
+  AuthDivider,
+  AuthFooterLinks,
+  AuthScreen,
+} from "@/components/auth-screen";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -31,7 +42,11 @@ function SubmitButton({
   pending: boolean;
 }) {
   return (
-    <Button type="submit" className="w-full gap-2" disabled={disabled || pending}>
+    <Button
+      type="submit"
+      className="h-11 w-full rounded-lg font-medium shadow-none"
+      disabled={disabled || pending}
+    >
       {pending ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -43,6 +58,9 @@ function SubmitButton({
     </Button>
   );
 }
+
+const authFieldClass =
+  "h-11 rounded-lg border-0 bg-muted/50 px-3.5 shadow-none ring-1 ring-border/50 transition-shadow placeholder:text-muted-foreground/70 focus-visible:bg-background focus-visible:ring-2 focus-visible:ring-ring/80";
 
 type LoginFormProps = {
   configured: boolean;
@@ -59,95 +77,127 @@ export function LoginForm({
   const redirectParam = searchParams.get("redirect") ?? "/dashboard";
   const authError = searchParams.get("error");
 
-  const [state, formAction, isPending] = useActionState<AuthFormState, FormData>(
-    signInFormAction,
-    null
-  );
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
-  useEffect(() => {
-    if (state?.error) {
-      toast.error("Sign in failed", { description: state.error });
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!configured) return;
+
+    const form = event.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "");
+    const password = String(new FormData(form).get("password") ?? "");
+
+    setIsPending(true);
+    setError(null);
+
+    try {
+      const result = await signInClient(email, password);
+
+      if (!result.ok) {
+        setError(result.error);
+        toast.error("Sign in failed", { description: result.error });
+        return;
+      }
+
+      const next =
+        redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+          ? redirectParam
+          : result.redirect;
+
+      markEnteringApp();
+      window.location.href = next;
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Could not sign in.";
+      setError(message);
+      toast.error("Sign in failed", { description: message });
+    } finally {
+      setIsPending(false);
     }
-  }, [state]);
+  };
 
   return (
-    <Card className="relative w-full max-w-md border-border/50">
-      {isPending && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-background/90 calm-overlay-enter">
-          <CalmLoader message="Taking you to your dashboard…" />
-        </div>
-      )}
-      <CardHeader className="text-center">
-        <div className="mx-auto mb-4 flex justify-center">
-          <SiteLogo variant="full" href={null} />
-        </div>
-        <CardTitle>Sign in to {brand.name}</CardTitle>
-        <CardDescription>{brand.tagline}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {authError && (
-          <p className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            Authentication failed. Please try again.
-          </p>
-        )}
-        {!configured && (
-          <p className="mb-4 rounded-lg border border-primary/40 bg-primary/15 p-3 text-sm text-foreground">
-            Copy <code className="text-xs">.env.example</code> to{" "}
-            <code className="text-xs">.env.local</code> and set your Supabase
-            keys.
-          </p>
-        )}
-        {state?.error && (
-          <p className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            {state.error}
-          </p>
-        )}
-        <GoogleSignInButton
-          disabled={!configured}
-          redirectTo={redirectParam}
-          supabaseConfig={supabaseConfig}
-          googleClientId={googleClientId}
+    <AuthScreen
+      title={`Welcome back`}
+      description={`Sign in to continue to ${brand.name}`}
+      loading={isPending}
+      loadingMessage="Taking you to your dashboard…"
+      footer={
+        <AuthFooterLinks
+          primary={{ href: "/", label: "Back to home" }}
+          secondary={{ href: "/signup", label: "Create account" }}
         />
-        <div className="relative my-6">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            or continue with email
-          </span>
+      }
+    >
+      {authError && (
+        <AuthAlert>Authentication failed. Please try again.</AuthAlert>
+      )}
+      {!configured && (
+        <AuthAlert variant="info">
+          Copy <code className="text-xs">.env.example</code> to{" "}
+          <code className="text-xs">.env.local</code> and set your Supabase keys.
+        </AuthAlert>
+      )}
+      {error && <AuthAlert>{error}</AuthAlert>}
+
+      <GoogleSignInButton
+        disabled={!configured}
+        redirectTo={redirectParam}
+        supabaseConfig={supabaseConfig}
+        googleClientId={googleClientId}
+      />
+
+      <AuthDivider label="or" />
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+            Email address
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@company.com"
+            required
+            className={authFieldClass}
+          />
         </div>
-        <form action={formAction} className="space-y-4">
-          <input type="hidden" name="redirect" value={redirectParam} />
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-            />
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <Label
+              htmlFor="password"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              Password
+            </Label>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-          <SubmitButton disabled={!configured} pending={isPending} />
-        </form>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          <Link href="/" className="text-primary hover:underline">
-            ← Back to home
-          </Link>
-          {" · "}
-          <Link href="/signup" className="text-primary hover:underline">
-            Create account
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            required
+            className={authFieldClass}
+          />
+        </div>
+        <SubmitButton disabled={!configured} pending={isPending} />
+      </form>
+
+      <p className="text-center text-xs text-muted-foreground">
+        By continuing, you agree to our{" "}
+        <Link href="/terms" className="underline-offset-2 hover:underline">
+          Terms
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="underline-offset-2 hover:underline">
+          Privacy Policy
+        </Link>
+        .
+      </p>
+    </AuthScreen>
   );
 }

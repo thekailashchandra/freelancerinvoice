@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { handleStaleServerActionError } from "@/lib/server-action-error";
 
 export default function Error({
   error,
@@ -12,6 +13,7 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error(error);
+    if (handleStaleServerActionError(error)) return;
   }, [error]);
 
   return (
@@ -31,8 +33,8 @@ export default function Error({
       </div>
       <p className="text-xs text-muted-foreground">
         If this keeps happening, stop the dev server, delete the{" "}
-        <code className="rounded bg-muted px-1">.next</code> folder, and run{" "}
-        <code className="rounded bg-muted px-1">npm run dev</code> again.
+        <code className="rounded bg-muted px-1">.next-dev</code> folder, and run{" "}
+        <code className="rounded bg-muted px-1">npm run dev:clean</code> again.
       </p>
     </div>
   );

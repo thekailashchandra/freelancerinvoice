@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  experimental: {
-    /** Tree-shake icon imports — inline SVG per usage, smaller bundles. */
-    optimizePackageImports: ["lucide-react", "framer-motion"],
-  },
   images: {
     remotePatterns: [
       {
@@ -25,15 +21,27 @@ const nextConfig: NextConfig = {
   },
   // Ensure jspdf/html2canvas are compiled for the browser bundle
   transpilePackages: ["jspdf", "html2canvas"],
-  async rewrites() {
-    return [
-      {
-        source: "/favicon.ico",
-        destination: "/favicon-48.png",
-      },
-    ];
+  webpack: (config, { dev, isServer }) => {
+    // Avoid corrupted persistent webpack cache on Windows dev (undefined module .call errors).
+    if (dev) {
+      config.cache = { type: "memory" };
+    }
+
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        html2canvas: false,
+        jspdf: false,
+      };
+    }
+    return config;
   },
   async headers() {
+    const staticCacheControl =
+      process.env.NODE_ENV === "production"
+        ? "public, max-age=31536000, immutable"
+        : "no-store, no-cache, must-revalidate";
+
     return [
       {
         source: "/brand/:path*",
@@ -85,7 +93,16 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: staticCacheControl,
+          },
+        ],
+      },
+      {
+        source: "/dev-build.json",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
           },
         ],
       },
@@ -94,7 +111,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: staticCacheControl,
           },
         ],
       },

@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useInvoices } from "@/hooks/use-invoices";
 import { useProfile } from "@/hooks/use-profile";
-import { updateInvoiceStatusAction } from "@/lib/actions/invoices";
+import { updateInvoiceStatusClient } from "@/lib/api/invoices-client";
 import { deriveInvoiceStatus } from "@/lib/calculations";
 import type { InvoiceStatus } from "@/types/invoice";
 import { cn } from "@/lib/utils";
@@ -77,7 +77,7 @@ export default function InvoiceHistoryPage() {
     setBusyInvoiceId(id);
     setBusyAction("paid");
     try {
-      await updateInvoiceStatusAction(id, "paid");
+      await updateInvoiceStatusClient(id, "paid");
       await refresh();
       toast.success("Invoice marked as paid");
     } catch (err) {
@@ -94,7 +94,7 @@ export default function InvoiceHistoryPage() {
     setBusyInvoiceId(id);
     setBusyAction("void");
     try {
-      await updateInvoiceStatusAction(id, "void");
+      await updateInvoiceStatusClient(id, "void");
       await refresh();
       toast.success("Invoice voided");
     } catch (err) {

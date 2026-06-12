@@ -204,6 +204,24 @@
   }
 }
 
+.create-invoice-mobile-tab {
+  touch-action: manipulation;
+}
+
+.create-invoice-mobile-actions {
+  bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.create-invoice-page {
+  padding-bottom: calc(8.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .create-invoice-page {
+    padding-bottom: 0;
+  }
+}
+
 /* Use the Print button for invoice output (isolated iframe in lib/pdf.ts). */
 @media print {
   @page {

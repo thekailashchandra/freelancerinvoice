@@ -11,6 +11,7 @@ import {
   getSupabasePublishableEnv,
   isSupabaseConfigured,
 } from "@/lib/supabase/env";
+import { AuthPageLayout } from "@/components/auth-screen";
 import { LoginForm } from "./login-form";
 
 const title = "Sign In";
@@ -32,28 +33,25 @@ export default function LoginPage() {
   return (
     <>
       <PublicBreadcrumbSchema segments={[{ name: "Login", path: "/login" }]} />
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Suspense
         fallback={
-          <div className="w-full max-w-md space-y-4">
-            <Skeleton className="mx-auto h-12 w-12 rounded-xl" />
-            <Skeleton className="h-64 w-full rounded-xl" />
-          </div>
+          <AuthPageLayout>
+            <Skeleton className="h-[480px] w-full rounded-xl" />
+          </AuthPageLayout>
         }
       >
-        <LoginForm
-          configured={configured}
-          supabaseConfig={supabaseConfig}
-          googleClientId={googleClientId}
-        />
+        <AuthPageLayout>
+          <LoginForm
+            configured={configured}
+            supabaseConfig={supabaseConfig}
+            googleClientId={googleClientId}
+          />
+          <PageFaqSection
+            faqItems={getPageFaqs("/login")}
+            heading="Sign-in FAQ"
+          />
+        </AuthPageLayout>
       </Suspense>
-      </div>
-      <div className="mx-auto max-w-md px-4 pb-16">
-        <PageFaqSection
-          faqItems={getPageFaqs("/login")}
-          heading="Sign-in FAQ"
-        />
-      </div>
     </>
   );
 }

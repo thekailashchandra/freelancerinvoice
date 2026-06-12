@@ -1,5 +1,8 @@
 import { invoiceDesign } from "@/lib/invoice-design";
-import { invoiceBrandingLabel } from "@/lib/invoice-branding";
+import {
+  invoiceBrandingLabel,
+  invoiceKofiTipUrl,
+} from "@/lib/invoice-branding";
 
 const d = invoiceDesign;
 
@@ -7,11 +10,11 @@ type InvoicePoweredByProps = {
   className?: string;
   /** Pin to the bottom of a full invoice page (flex child). */
   pinned?: boolean;
-  /** Screen-only: opens Ko-fi tip flow to remove branding. */
+  /** Screen-only: open Ko-fi removal flow */
   onRemoveBranding?: () => void;
 };
 
-/** Small footer shown on exported invoices when branding is enabled. */
+/** Platform footer with Ko-fi tip — removable after a confirmed contribution. */
 export function InvoicePoweredBy({
   className,
   pinned,
@@ -42,27 +45,39 @@ export function InvoicePoweredBy({
           {invoiceBrandingLabel}
         </span>
       </p>
-      {onRemoveBranding && (
-        <button
-          type="button"
-          className="invoice-screen-only"
-          onClick={onRemoveBranding}
-          style={{
-            display: "block",
-            margin: "6px auto 0",
-            padding: 0,
-            border: "none",
-            background: "none",
-            fontSize: 9,
-            lineHeight: "12px",
-            color: d.colors.textMuted,
-            textDecoration: "underline",
-            cursor: "pointer",
-          }}
+      <p
+        className="invoice-screen-only"
+        style={{ margin: "6px 0 0", fontSize: 9, lineHeight: "12px" }}
+      >
+        <a
+          href={invoiceKofiTipUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: d.colors.textMuted, textDecoration: "underline" }}
         >
-          Remove · tip on Ko-fi
-        </button>
-      )}
+          Tip on Ko-fi
+        </a>
+        {onRemoveBranding ? (
+          <>
+            {" · "}
+            <button
+              type="button"
+              onClick={onRemoveBranding}
+              style={{
+                color: d.colors.textMuted,
+                textDecoration: "underline",
+                background: "none",
+                border: "none",
+                padding: 0,
+                font: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              Remove footer
+            </button>
+          </>
+        ) : null}
+      </p>
     </div>
   );
 }

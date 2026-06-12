@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { DashboardStats } from "@/types/invoice";
-import { fetchDashboardStatsAction } from "@/lib/actions/dashboard";
+import { fetchDashboardStatsClient } from "@/lib/api/dashboard-client";
 
 const emptyStats: DashboardStats = {
   totalInvoices: 0,
@@ -19,7 +19,7 @@ export function useDashboardStats() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchDashboardStatsAction();
+      const data = await fetchDashboardStatsClient();
       setStats(data);
     } finally {
       setLoading(false);

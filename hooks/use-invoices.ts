@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Invoice } from "@/types/invoice";
 import {
-  deleteInvoiceAction,
-  fetchInvoicesAction,
-  saveInvoiceAction,
-} from "@/lib/actions/invoices";
+  deleteInvoiceClient,
+  fetchInvoicesClient,
+  saveInvoiceClient,
+} from "@/lib/api/invoices-client";
 
 export function useInvoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -15,8 +15,10 @@ export function useInvoices() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchInvoicesAction();
+      const data = await fetchInvoicesClient();
       setInvoices(data);
+    } catch (err) {
+      console.error("Failed to load invoices:", err);
     } finally {
       setLoading(false);
     }
@@ -28,7 +30,7 @@ export function useInvoices() {
 
   const upsert = useCallback(
     async (invoice: Invoice) => {
-      const { id } = await saveInvoiceAction(invoice);
+      const { id } = await saveInvoiceClient(invoice);
       await refresh();
       return id;
     },
@@ -37,7 +39,7 @@ export function useInvoices() {
 
   const remove = useCallback(
     async (id: string) => {
-      await deleteInvoiceAction(id);
+      await deleteInvoiceClient(id);
       await refresh();
     },
     [refresh]

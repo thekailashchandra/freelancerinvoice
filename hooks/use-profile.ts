@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import type { CompanySettings } from "@/types/invoice";
 import { emptyPaymentDetails } from "@/lib/country";
-import { fetchProfileAction, updateProfileAction } from "@/lib/actions/profile";
+import {
+  fetchProfileClient,
+  updateProfileClient,
+} from "@/lib/api/profile-client";
 
 const emptySettings: CompanySettings = {
   companyName: "",
@@ -25,8 +28,10 @@ export function useProfile() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const profile = await fetchProfileAction();
+      const profile = await fetchProfileClient();
       if (profile) setSettings(profile);
+    } catch (err) {
+      console.error("Failed to load profile:", err);
     } finally {
       setLoading(false);
     }
@@ -36,13 +41,11 @@ export function useProfile() {
     refresh();
   }, [refresh]);
 
-  const update = useCallback(
-    async (next: CompanySettings) => {
-      await updateProfileAction(next);
-      setSettings(next);
-    },
-    []
-  );
+  const update = useCallback(async (next: CompanySettings) => {
+    const profile = await updateProfileClient(next);
+    if (profile) setSettings(profile);
+    else setSettings(next);
+  }, []);
 
   return { settings, loading, refresh, update };
 }

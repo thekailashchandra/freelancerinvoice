@@ -1,8 +1,6 @@
-"use server";
-
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { fetchInvoicesAction } from "@/lib/actions/invoices";
+import { fetchInvoices } from "@/lib/invoice-repository";
 import {
   clientDetailsToClientRow,
   clientRowToSavedClient,
@@ -14,10 +12,10 @@ import {
   summarizeClient,
   type ClientSummary,
 } from "@/lib/customer-invoices";
-import type { ClientDetails } from "@/types/invoice";
-import type { Invoice } from "@/types/invoice";
+import type { ClientDetails, Invoice } from "@/types/invoice";
 import type { ClientRow } from "@/types/database";
-export async function fetchClientsAction(): Promise<SavedClient[]> {
+
+export async function fetchClients(): Promise<SavedClient[]> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -36,7 +34,7 @@ export async function fetchClientsAction(): Promise<SavedClient[]> {
   return (data as ClientRow[]).map(clientRowToSavedClient);
 }
 
-export async function createClientAction(
+export async function createSavedClient(
   details: ClientDetails
 ): Promise<SavedClient> {
   const supabase = await createClient();
@@ -64,7 +62,7 @@ export async function createClientAction(
   return clientRowToSavedClient(data as ClientRow);
 }
 
-export async function updateClientAction(
+export async function updateClient(
   id: string,
   details: ClientDetails
 ): Promise<SavedClient> {
@@ -96,10 +94,10 @@ export async function updateClientAction(
   return clientRowToSavedClient(data as ClientRow);
 }
 
-export async function fetchClientSummariesAction(): Promise<ClientSummary[]> {
+export async function fetchClientSummaries(): Promise<ClientSummary[]> {
   const [clients, invoices] = await Promise.all([
-    fetchClientsAction(),
-    fetchInvoicesAction(),
+    fetchClients(),
+    fetchInvoices(),
   ]);
 
   return clients
@@ -107,24 +105,22 @@ export async function fetchClientSummariesAction(): Promise<ClientSummary[]> {
     .sort((a, b) => clientDisplayName(a).localeCompare(clientDisplayName(b)));
 }
 
-export async function fetchClientDetailAction(clientId: string): Promise<{
+export async function fetchClientDetail(clientId: string): Promise<{
   client: SavedClient;
   summary: ClientSummary;
   invoices: Invoice[];
 } | null> {
   const [clients, invoices] = await Promise.all([
-    fetchClientsAction(),
-    fetchInvoicesAction(),
+    fetchClients(),
+    fetchInvoices(),
   ]);
 
   const client = clients.find((c) => c.id === clientId);
   if (!client) return null;
 
-  const clientInvoices = getInvoicesForClient(client, invoices);
-
   return {
     client,
     summary: summarizeClient(client, invoices),
-    invoices: clientInvoices,
+    invoices: getInvoicesForClient(client, invoices),
   };
 }

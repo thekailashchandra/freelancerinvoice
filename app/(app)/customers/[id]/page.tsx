@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CustomerDetailClient } from "@/components/customer-detail-client";
-import { fetchClientDetailAction } from "@/lib/actions/clients";
-import { fetchProfileAction } from "@/lib/actions/profile";
+import { fetchClientDetail } from "@/lib/clients-repository";
+import { fetchProfile } from "@/lib/profile-repository";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -10,8 +10,8 @@ type PageProps = {
 export default async function CustomerDetailPage({ params }: PageProps) {
   const { id } = await params;
   const [detail, profile] = await Promise.all([
-    fetchClientDetailAction(id),
-    fetchProfileAction(),
+    fetchClientDetail(id),
+    fetchProfile(),
   ]);
 
   if (!detail) notFound();

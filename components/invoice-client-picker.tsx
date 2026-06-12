@@ -3,7 +3,12 @@
 import { useMemo, useRef, useState } from "react";
 import { ChevronRight, Loader2, Search, X } from "lucide-react";
 import { toast } from "sonner";
-import { createClientAction } from "@/lib/actions/clients";
+import {
+  createClientClient,
+  signOutClient,
+  uploadInvoiceAssetClient,
+  uploadProfileAssetClient,
+} from "@/lib/api/app-client";
 import {
   savedClientToClientDetails,
   type SavedClient,
@@ -104,7 +109,7 @@ export function NewCustomerDialog({
 
     setSaving(true);
     try {
-      const created = await createClientAction({
+      const created = await createClientClient({
         ...form,
         name,
         company: form.company.trim(),
@@ -448,14 +453,14 @@ export function InvoiceCustomerSection({
             No recent customers
           </p>
         ) : (
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
             {recentClients.map((client) => (
               <button
                 key={client.id}
                 type="button"
                 onClick={() => pickClient(client)}
                 className={cn(
-                  "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                  "max-w-[14rem] shrink-0 truncate rounded-full border px-3 py-1.5 text-xs font-medium transition-colors sm:max-w-none",
                   selectedClientId === client.id
                     ? "border-primary bg-primary/10 text-foreground"
                     : "border-border bg-background hover:border-primary/40"
