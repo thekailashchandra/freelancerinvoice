@@ -88,6 +88,11 @@ function buildRules() {
       allow: [...publicAllow],
       disallow: [...appDisallow],
     },
+    {
+      userAgent: "Googlebot-Image",
+      allow: [...publicAllow],
+      disallow: [...appDisallow],
+    },
   ];
 
   const aiRules = aiCrawlers.map((userAgent) => ({

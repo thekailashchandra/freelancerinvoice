@@ -9,6 +9,10 @@ import { geistMono, geistSans } from "@/lib/fonts";
 import { siteConfig } from "@/data/site";
 import "./globals.css";
 
+const favicon48 = `${siteConfig.url}/favicon-48.png`;
+const favicon96 = `${siteConfig.url}/favicon-96.png`;
+const faviconIco = `${siteConfig.url}/favicon.ico`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -50,13 +54,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "512x512" },
-      { url: "/favicon-48.png", type: "image/png", sizes: "48x48" },
-      { url: "/favicon-96.png", type: "image/png", sizes: "96x96" },
+      { url: favicon48, type: "image/png", sizes: "48x48" },
+      { url: favicon96, type: "image/png", sizes: "96x96" },
+      { url: faviconIco, sizes: "any" },
     ],
-    shortcut: [{ url: "/icon.png", type: "image/png" }],
-    apple: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: [{ url: faviconIco }],
+    apple: [{ url: `${siteConfig.url}/apple-icon`, type: "image/png", sizes: "180x180" }],
   },
   other: {
     "ai-content-declaration": "human-authored",
@@ -90,9 +93,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/icon.png" />
+        {/* Google Search reads favicon from the home page — 48×48 PNG + ICO */}
+        <link rel="icon" type="image/png" href={favicon48} sizes="48x48" />
+        <link rel="icon" type="image/png" href={favicon96} sizes="96x96" />
+        <link rel="icon" href={faviconIco} sizes="any" />
+        <link rel="shortcut icon" href={faviconIco} />
+        <link rel="apple-touch-icon" href={`${siteConfig.url}/apple-icon`} sizes="180x180" />
         <link
           rel="alternate"
           type="text/plain"
