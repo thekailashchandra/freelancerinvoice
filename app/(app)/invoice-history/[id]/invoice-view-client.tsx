@@ -9,9 +9,12 @@ import {
   CheckCircle2,
   Copy,
   Download,
+  ExternalLink,
   Loader2,
   Pencil,
   Printer,
+  Receipt,
+  Share2,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -23,7 +26,9 @@ import {
   type InvoicePdfDialogPhase,
 } from "@/components/invoice-pdf-dialog";
 import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
+import { TemplateUnlockDialog } from "@/components/template-unlock-dialog";
 import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
+import { useTemplateCheckout } from "@/hooks/use-template-checkout";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,7 +41,13 @@ import {
 import { deriveInvoiceStatus } from "@/lib/calculations";
 import { printInvoice } from "@/lib/invoice-print";
 import { invoicePayUrl } from "@/lib/invoice-pay-url";
+import { invoiceReceiptUrl } from "@/lib/invoice-receipt-url";
+import { downloadInvoiceReceiptPdf, shareInvoiceReceipt } from "@/lib/invoice-receipt-pdf";
+import type { InvoiceReceiptData } from "@/lib/invoice-receipt";
 import { isRazorpayEnabled } from "@/lib/razorpay-feature";
+import { getInvoiceTemplate } from "@/lib/invoice-templates";
+import type { MarketRegion } from "@/lib/geo-market";
+import { requiresTemplatePayment } from "@/lib/template-export-guard";
 
 type InvoiceViewClientProps = {
   invoiceId: string;
@@ -56,6 +67,10 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const [actionBusy, setActionBusy] = useState<
     "paid" | "void" | "delete" | null
   >(null);
+  const [receiptBusy, setReceiptBusy] = useState(false);
+  const [receiptData, setReceiptData] = useState<InvoiceReceiptData | null>(
+    null
+  );
 
   const {
     hideBranding,
@@ -66,6 +81,20 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     confirming: brandingConfirming,
     pricing: brandingPricing,
   } = useInvoiceBrandingRemoval(invoice, setInvoice);
+
+  const market: MarketRegion =
+    invoice?.company.countryCode === "IN" ? "IN" : "GLOBAL";
+
+  const {
+    unlockDialogOpen,
+    setUnlockDialogOpen,
+    pendingTemplateId,
+    pricing: templatePricing,
+    payWithRazorpay,
+    razorpayEnabled,
+    payingRazorpay,
+    startCheckout: startTemplateCheckout,
+  } = useTemplateCheckout({ market });
 
   useEffect(() => {
     let cancelled = false;
@@ -85,6 +114,31 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
       cancelled = true;
     };
   }, [invoiceId]);
+
+  useEffect(() => {
+    if (!invoice || invoice.status !== "paid") {
+      setReceiptData(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadReceipt() {
+      try {
+        const res = await fetch(`/api/receipt/${encodeURIComponent(invoice!.id)}`);
+        if (!res.ok) return;
+        const data = (await res.json()) as InvoiceReceiptData;
+        if (!cancelled) setReceiptData(data);
+      } catch {
+        /* receipt optional */
+      }
+    }
+
+    void loadReceipt();
+    return () => {
+      cancelled = true;
+    };
+  }, [invoice]);
 
   if (loading) {
     return (
@@ -120,6 +174,46 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     Boolean(invoice.company.razorpayConfigured) &&
     canMarkPaid &&
     displayStatus !== "paid";
+  const isPaid = displayStatus === "paid";
+  const receiptUrl = invoiceReceiptUrl(invoice.id);
+
+  const handleCopyReceiptLink = async () => {
+    try {
+      await navigator.clipboard.writeText(receiptUrl);
+      toast.success("Receipt link copied", {
+        description: "Share this link with your client as proof of payment.",
+      });
+    } catch {
+      toast.error("Could not copy link", { description: receiptUrl });
+    }
+  };
+
+  const handleDownloadReceipt = async () => {
+    if (!receiptData) {
+      toast.error("Receipt not ready", { description: "Try again in a moment." });
+      return;
+    }
+    setReceiptBusy(true);
+    try {
+      await downloadInvoiceReceiptPdf(receiptData);
+      toast.success("Receipt downloaded");
+    } catch (err) {
+      toast.error("Could not download receipt", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setReceiptBusy(false);
+    }
+  };
+
+  const handleShareReceipt = async () => {
+    if (!receiptData) {
+      await handleCopyReceiptLink();
+      return;
+    }
+    const shared = await shareInvoiceReceipt(receiptData, receiptUrl);
+    if (!shared) await handleCopyReceiptLink();
+  };
 
   const handleCopyPayLink = async () => {
     const url = invoicePayUrl(invoice.id);
@@ -133,7 +227,23 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     }
   };
 
+  const promptTemplateUnlock = (action: "print" | "download") => {
+    const template = getInvoiceTemplate(invoice.templateId);
+    toast.message(`Unlock ${template.name} to ${action}`, {
+      description: `One-time ${templatePricing.displayAmount} payment required.`,
+      action: {
+        label: `Pay ${templatePricing.displayAmount}`,
+        onClick: () => void startTemplateCheckout(invoice.templateId ?? "modern"),
+      },
+    });
+  };
+
   const handleDownloadPdf = async () => {
+    if (requiresTemplatePayment(invoice.templateId)) {
+      promptTemplateUnlock("download");
+      return;
+    }
+
     setExporting(true);
     setPdfError(null);
     setPdfDialogPhase("generating");
@@ -162,7 +272,13 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     try {
       await updateInvoiceStatusClient(invoice.id, "paid");
       setInvoice((prev) => (prev ? { ...prev, status: "paid" } : prev));
-      toast.success("Invoice marked as paid");
+      toast.success("Invoice marked as paid", {
+        description: "You can download or share a payment receipt now.",
+        action: {
+          label: "View receipt",
+          onClick: () => window.open(`/receipt/${invoice.id}`, "_blank"),
+        },
+      });
       router.refresh();
     } catch (err) {
       toast.error("Could not mark as paid", {
@@ -221,7 +337,7 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const statusMessage = isLocked
     ? displayStatus === "void"
       ? "Voided invoice: view and download only."
-      : "Paid invoice: view and download only."
+      : "Paid invoice: download the invoice or share a payment receipt."
     : "Read-only preview. Use Edit to change details.";
 
   return (
@@ -249,6 +365,10 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             size="sm"
             className="gap-2"
             onClick={async () => {
+              if (requiresTemplatePayment(invoice.templateId)) {
+                promptTemplateUnlock("print");
+                return;
+              }
               try {
                 await printInvoice({ previewId: "invoice-preview" });
               } catch (err) {
@@ -277,6 +397,44 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             )}
             Download PDF
           </Button>
+          {isPaid ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => void handleDownloadReceipt()}
+                disabled={receiptBusy}
+              >
+                {receiptBusy ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Receipt className="h-4 w-4" />
+                )}
+                Receipt
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                asChild
+              >
+                <Link href={`/receipt/${invoice.id}`} target="_blank">
+                  <ExternalLink className="h-4 w-4" />
+                  View receipt
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => void handleShareReceipt()}
+              >
+                <Share2 className="h-4 w-4" />
+                Share receipt
+              </Button>
+            </>
+          ) : null}
           {canEdit && (
             <Button size="sm" className="gap-2" asChild>
               <Link href={`/create-invoice?id=${invoice.id}`}>
@@ -346,7 +504,10 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
       </div>
 
       <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
-        <InvoicePreviewFrame pageSize={invoice.pageSize}>
+        <InvoicePreviewFrame
+          pageSize={invoice.pageSize}
+          exportLocked={requiresTemplatePayment(invoice.templateId)}
+        >
           <InvoicePreview
             invoice={invoice}
             previewId="invoice-preview"
@@ -369,6 +530,16 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         displayAmount={brandingPricing.displayAmount}
         onConfirmPaid={() => void confirmKofiRemoval()}
         confirming={brandingConfirming}
+      />
+      <TemplateUnlockDialog
+        open={unlockDialogOpen}
+        onOpenChange={setUnlockDialogOpen}
+        templateId={pendingTemplateId}
+        templateName={getInvoiceTemplate(pendingTemplateId).name}
+        displayAmount={templatePricing.displayAmount}
+        razorpayEnabled={razorpayEnabled}
+        onPayWithRazorpay={() => void payWithRazorpay()}
+        payingRazorpay={payingRazorpay}
       />
     </PageTransition>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Loader2, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { openRazorpayCheckout } from "@/lib/razorpay-checkout";
 import { InvoiceMoney } from "@/components/invoice-money";
@@ -145,11 +146,19 @@ export function InvoicePayClient({ invoiceId }: { invoiceId: string }) {
 
   if (paid) {
     return (
-      <div className="mx-auto max-w-md rounded-xl border border-border bg-card p-8 text-center">
-        <h1 className="text-xl font-semibold">Payment received</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Invoice {summary.invoice.number} has been marked as paid. Thank you!
-        </p>
+      <div className="mx-auto max-w-md space-y-6 rounded-xl border border-border bg-card p-8 text-center">
+        <div>
+          <h1 className="text-xl font-semibold">Payment received</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Invoice {summary.invoice.number} has been marked as paid. Thank you!
+          </p>
+        </div>
+        <Button asChild className="w-full gap-2">
+          <Link href={`/receipt/${invoiceId}`}>
+            <Receipt className="h-4 w-4" />
+            View &amp; download receipt
+          </Link>
+        </Button>
       </div>
     );
   }
@@ -212,9 +221,7 @@ export function InvoicePayClient({ invoiceId }: { invoiceId: string }) {
       </Button>
 
       <p className="text-center text-xs text-muted-foreground">
-        Secure checkout powered by Razorpay. Use Test Mode card{" "}
-        <code className="rounded bg-muted px-1">4111 1111 1111 1111</code> or UPI{" "}
-        <code className="rounded bg-muted px-1">success@razorpay</code>.
+        Secure checkout powered by Razorpay.
       </p>
     </div>
   );

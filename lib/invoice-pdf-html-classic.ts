@@ -22,6 +22,7 @@ import {
 } from "@/lib/invoice-branding";
 import type { Invoice } from "@/types/invoice";
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
+import { companySignatureBlockHtml } from "@/lib/invoice-company-identity";
 
 function escapeHtml(text: string): string {
 
@@ -110,11 +111,19 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
 
     : "";
 
-  const companyGstin = invoice.company.gstin?.trim()
-    ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${d.colors.textSecondary}">GSTIN: ${escapeHtml(invoice.company.gstin.trim())}</div>`
+  const companyEmail = invoice.company.companyEmail?.trim()
+    ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${d.colors.textMuted}">${escapeHtml(invoice.company.companyEmail.trim())}</div>`
     : "";
 
-  const companyDetailsBlock = `${companyNameBlock}${companyAddress}${companyGstin}`;
+  const companyPhone = invoice.company.companyPhone?.trim()
+    ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:${d.colors.textMuted}">${escapeHtml(invoice.company.companyPhone.trim())}</div>`
+    : "";
+
+  const companyGstin = invoice.company.gstin?.trim()
+    ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:${d.colors.textSecondary}">GSTIN: ${escapeHtml(invoice.company.gstin.trim())}</div>`
+    : "";
+
+  const companyDetailsBlock = `${companyNameBlock}${companyAddress}${companyEmail}${companyPhone}${companyGstin}`;
 
   const companyMark = invoice.company.logo ? logoImg : initialBlock;
 
@@ -362,6 +371,8 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
   ${termsBlock}
 
 </td></tr></table>
+
+${companySignatureBlockHtml(invoice.company, { font: F, maxHeight: d.signature.maxHeight, maxWidth: d.signature.maxWidth, align: "right", marginTop: 32 })}
 
 </div>
 

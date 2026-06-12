@@ -17,6 +17,11 @@ import { resolveTemplateDesign } from "@/lib/invoice-templates";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
 import { hasInvoicePaymentInfo } from "@/lib/invoice-payment-display";
+import {
+  companyContactDetailsHtml,
+  companyLogoMarkHtml,
+  companySignatureBlockHtml,
+} from "@/lib/invoice-company-identity";
 
 function escapeHtml(text: string): string {
   return text
@@ -112,6 +117,18 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
 
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:28px"><tr>
   <td valign="top">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td valign="top" style="padding-right:16px">${companyLogoMarkHtml(invoice.company, { font: F, variant: "bold" })}</td>
+      <td valign="top">
+        <div style="font-family:${F};font-size:15px;font-weight:700;color:${c.text}">${escapeHtml(invoice.company.companyName || "Your business")}</div>
+        ${companyContactDetailsHtml(invoice.company, { font: F, color: c.textMuted, marginTop: 6, fullAddress: true })}
+      </td>
+    </tr></table>
+  </td>
+</tr></table>
+
+<table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:28px"><tr>
+  <td valign="top">
     <div style="font-family:${F};font-size:11px;color:${c.textMuted}">Invoice Number</div>
     <div style="margin-top:6px;font-family:${F};font-size:13px;font-weight:700">#${escapeHtml(invoice.invoice.invoiceNumber)}</div>
   </td>
@@ -183,10 +200,13 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
 
 </div>
 
+${companySignatureBlockHtml(invoice.company, { font: F, maxHeight: d.signature.maxHeight, maxWidth: d.signature.maxWidth, align: "right" })}
+
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-top:40px;border-top:1px solid ${c.line}"><tr>
   <td width="33%" valign="top" style="padding-top:20px;font-family:${F};font-size:11px;color:${c.textMuted}">
     <div style="font-weight:700;color:${c.text}">${escapeHtml(invoice.company.companyName || "Your business")}</div>
     ${invoice.company.companyAddress ? `<div style="margin-top:6px;white-space:pre-wrap">${escapeHtml(invoice.company.companyAddress)}</div>` : ""}
+    ${invoice.company.gstin?.trim() ? `<div style="margin-top:4px">GSTIN: ${escapeHtml(invoice.company.gstin.trim())}</div>` : ""}
   </td>
   <td width="34%" valign="top" align="center" style="padding-top:20px;font-family:${F};font-size:11px;color:${c.textMuted}">
     ${invoice.company.companyPhone ? `<div>${escapeHtml(invoice.company.companyPhone)}</div>` : ""}

@@ -6,14 +6,18 @@ import type { ProfileRow } from "@/types/database";
 export type RazorpayCredentials = {
   keyId: string;
   keySecret: string;
-  source: "profile" | "platform_demo";
 };
 
-function readPlatformDemoCredentials(): RazorpayCredentials | null {
-  const keyId = process.env.RAZORPAY_PLATFORM_KEY_ID?.trim();
-  const keySecret = process.env.RAZORPAY_PLATFORM_KEY_SECRET?.trim();
+/** Platform keys for ₹99 template unlocks — set in .env.local / Vercel (server only). */
+export function getPlatformRazorpayCredentials(): RazorpayCredentials | null {
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
   if (!keyId || !keySecret) return null;
-  return { keyId, keySecret, source: "platform_demo" };
+  return { keyId, keySecret };
+}
+
+export function isPlatformRazorpayConfigured(): boolean {
+  return getPlatformRazorpayCredentials() !== null;
 }
 
 export function createRazorpayClient(credentials: RazorpayCredentials): Razorpay {
@@ -63,7 +67,9 @@ export function verifyRazorpayWebhookSignature(
   }
 }
 
-export function profileHasRazorpay(profile: Pick<ProfileRow, "razorpay_key_id" | "razorpay_key_secret">): boolean {
+export function profileHasRazorpay(
+  profile: Pick<ProfileRow, "razorpay_key_id" | "razorpay_key_secret">
+): boolean {
   return Boolean(
     profile.razorpay_key_id?.trim() && profile.razorpay_key_secret?.trim()
   );
@@ -75,7 +81,7 @@ export function credentialsFromProfile(
   const keyId = profile.razorpay_key_id?.trim();
   const keySecret = profile.razorpay_key_secret?.trim();
   if (!keyId || !keySecret) return null;
-  return { keyId, keySecret, source: "profile" };
+  return { keyId, keySecret };
 }
 
 export async function getUserRazorpayCredentials(
@@ -90,10 +96,6 @@ export async function getUserRazorpayCredentials(
 
   if (profile && profileHasRazorpay(profile as ProfileRow)) {
     return credentialsFromProfile(profile as ProfileRow);
-  }
-
-  if (process.env.RAZORPAY_DEMO_MODE === "true") {
-    return readPlatformDemoCredentials();
   }
 
   return null;

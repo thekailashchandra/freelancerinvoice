@@ -36,6 +36,7 @@ import Link from "next/link";
 import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { InvoicePreview } from "@/components/invoice-preview";
 import { printInvoice } from "@/lib/invoice-print";
+import { requiresTemplatePayment } from "@/lib/template-export-guard";
 import { cn } from "@/lib/utils";
 
 type MobileCreateTab = "edit" | "preview";
@@ -90,17 +91,12 @@ export function CreateInvoiceClient({
     unlockDialogOpen,
     setUnlockDialogOpen,
     pendingTemplateId,
-    unlockingKofi,
     pricing: templatePricing,
-    confirmKofiUnlock,
-    confirmRazorpayUnlock,
+    payWithRazorpay,
     razorpayEnabled,
     payingRazorpay,
     startCheckout: startTemplateCheckout,
-  } = useTemplateCheckout({
-    market,
-    razorpayConfigured: initialSettings?.razorpayConfigured,
-  });
+  } = useTemplateCheckout({ market });
 
   const selectedTemplateId = invoice?.templateId ?? "classic";
   const selectedTemplateUnlocked = useTemplateUnlocked(selectedTemplateId);
@@ -155,7 +151,7 @@ export function CreateInvoiceClient({
     if (!invoice) return;
 
     const template = getInvoiceTemplate(invoice.templateId);
-    if (template.isPremium && !selectedTemplateUnlocked && !forceClassic) {
+    if (requiresTemplatePayment(invoice.templateId) && !forceClassic) {
       toast.message(`Unlock ${template.name} to download`, {
         description: `One-time ${templatePricing.displayAmount} payment, or download with Classic free.`,
         action: {
@@ -184,6 +180,7 @@ export function CreateInvoiceClient({
       const { downloadInvoicePdf } = await import("@/lib/pdf");
       await downloadInvoicePdf(exportInvoice, `${exportInvoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
+        skipTemplateGuard: forceClassic,
       });
       setPdfDialogPhase("success");
     } catch (err) {
@@ -202,6 +199,21 @@ export function CreateInvoiceClient({
   };
 
   const handlePrint = async () => {
+    if (!invoice) return;
+
+    const template = getInvoiceTemplate(invoice.templateId);
+    if (requiresTemplatePayment(invoice.templateId)) {
+      toast.message(`Unlock ${template.name} to print`, {
+        description: `One-time ${templatePricing.displayAmount} payment required.`,
+        action: {
+          label: `Pay ${templatePricing.displayAmount}`,
+          onClick: () =>
+            void startTemplateCheckout(invoice.templateId ?? "modern"),
+        },
+      });
+      return;
+    }
+
     toast.info("Opening print dialog…");
     try {
       await printInvoice({ previewId: "invoice-preview" });
@@ -254,8 +266,12 @@ export function CreateInvoiceClient({
       <p className="mb-2 hidden text-xs font-medium uppercase tracking-wide text-muted-foreground @min-[680px]:block">
         Live preview
       </p>
-      <div className="overflow-x-auto rounded-lg border border-border bg-muted/20 p-2 @min-[680px]:max-h-[calc(100vh-10rem)] @min-[680px]:overflow-y-auto sm:p-3">
-        <InvoicePreviewFrame pageSize={invoice.pageSize}>
+      <div className="overflow-x-auto rounded-lg border border-border bg-muted/20 p-1 @min-[680px]:max-h-[calc(100vh-9rem)] @min-[680px]:overflow-y-auto sm:p-2">
+        <InvoicePreviewFrame
+          pageSize={invoice.pageSize}
+          exportLocked={needsTemplatePayment}
+          maxScale={1}
+        >
           <InvoicePreview
             invoice={invoice}
             onRemoveBranding={
@@ -382,7 +398,7 @@ export function CreateInvoiceClient({
       <div className="@container w-full">
         <div
           className={cn(
-            "flex flex-col gap-5 @min-[680px]:grid @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(260px,360px)] @min-[680px]:items-start @min-[680px]:gap-6"
+            "flex flex-col gap-5 @min-[680px]:grid @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(340px,44%)] @min-[1100px]:grid-cols-[minmax(0,1fr)_minmax(400px,48%)] @min-[1400px]:grid-cols-[minmax(0,1fr)_540px] @min-[680px]:items-start @min-[680px]:gap-6"
           )}
         >
         <div
@@ -480,10 +496,8 @@ export function CreateInvoiceClient({
         templateId={pendingTemplateId}
         templateName={getInvoiceTemplate(pendingTemplateId).name}
         displayAmount={templatePricing.displayAmount}
-        onConfirmPaid={confirmKofiUnlock}
-        confirming={unlockingKofi}
         razorpayEnabled={razorpayEnabled}
-        onPayWithRazorpay={() => void confirmRazorpayUnlock()}
+        onPayWithRazorpay={() => void payWithRazorpay()}
         payingRazorpay={payingRazorpay}
       />
     </PageTransition>

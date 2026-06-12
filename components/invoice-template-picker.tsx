@@ -37,7 +37,7 @@ export function InvoiceTemplatePicker({
         <p className="mt-1 text-sm text-muted-foreground">
           Classic is free. Premium layouts unlock with a one-time{" "}
           <span className="font-medium text-foreground">{pricing.label}</span>{" "}
-          tip on Ko-fi.
+          payment via Razorpay.
         </p>
       </div>
 

@@ -21,6 +21,7 @@ import { buildInvoiceUpiLink } from "@/lib/upi";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
+import { InvoiceCompanySignature } from "@/components/invoice-company-branding";
 import { InvoicePreviewModern } from "@/components/invoice-preview-modern";
 import { InvoicePreviewMinimal } from "@/components/invoice-preview-minimal";
 import { InvoicePreviewBold } from "@/components/invoice-preview-bold";
@@ -318,10 +319,34 @@ export const InvoicePreview = memo(function InvoicePreview({
                   {invoice.company.companyAddress}
                 </p>
               )}
-              {invoice.company.gstin?.trim() && (
+              {invoice.company.companyEmail?.trim() && (
                 <p
                   style={{
                     margin: "6px 0 0",
+                    fontSize: d.type.bodySm.size,
+                    lineHeight: `${d.type.bodySm.lineHeight}px`,
+                    color: d.colors.textMuted,
+                  }}
+                >
+                  {invoice.company.companyEmail.trim()}
+                </p>
+              )}
+              {invoice.company.companyPhone?.trim() && (
+                <p
+                  style={{
+                    margin: "4px 0 0",
+                    fontSize: d.type.bodySm.size,
+                    lineHeight: `${d.type.bodySm.lineHeight}px`,
+                    color: d.colors.textMuted,
+                  }}
+                >
+                  {invoice.company.companyPhone.trim()}
+                </p>
+              )}
+              {invoice.company.gstin?.trim() && (
+                <p
+                  style={{
+                    margin: "4px 0 0",
                     fontSize: 12,
                     color: d.colors.textSecondary,
                   }}
@@ -925,21 +950,12 @@ export const InvoicePreview = memo(function InvoicePreview({
         )}
       </div>
 
-      {invoice.company.signature && (
-        <div style={{ marginTop: 32, textAlign: "right" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={invoice.company.signature}
-            alt=""
-            style={{
-              display: "inline-block",
-              maxHeight: d.signature.maxHeight,
-              maxWidth: d.signature.maxWidth,
-              objectFit: "contain",
-            }}
-          />
-        </div>
-      )}
+      <InvoiceCompanySignature
+        company={invoice.company}
+        maxHeight={d.signature.maxHeight}
+        maxWidth={d.signature.maxWidth}
+        align="right"
+      />
       </div>
 
       {showPoweredBy && (

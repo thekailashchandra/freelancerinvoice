@@ -8,6 +8,7 @@ import {
   Loader2,
   MoreHorizontal,
   Pencil,
+  Receipt,
   Trash2,
 } from "lucide-react";
 import type { Invoice, InvoiceStatus } from "@/types/invoice";
@@ -39,6 +40,7 @@ export function InvoiceActionsMenu({
   onDelete,
 }: InvoiceActionsMenuProps) {
   const { canEdit, canMarkPaid, canVoid } = invoiceActionState(displayStatus);
+  const isPaid = displayStatus === "paid";
   const isBusy = busyAction !== null;
 
   const handleDelete = () => {
@@ -106,6 +108,15 @@ export function InvoiceActionsMenu({
           >
             <CheckCircle2 className="text-emerald-600" />
             Mark as paid
+          </DropdownMenuItem>
+        )}
+
+        {isPaid && (
+          <DropdownMenuItem asChild>
+            <Link href={`/receipt/${invoice.id}`} target="_blank">
+              <Receipt className="text-indigo-600" />
+              Payment receipt
+            </Link>
           </DropdownMenuItem>
         )}
 

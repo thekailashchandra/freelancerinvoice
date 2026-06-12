@@ -228,4 +228,9 @@
     margin: 12mm;
     size: auto;
   }
+
+  .template-export-locked,
+  .template-export-locked * {
+    visibility: hidden !important;
+  }
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,7 @@ export function SettingsRazorpayCard({
           <Label htmlFor="razorpayKeyId">Key ID</Label>
           <Input
             id="razorpayKeyId"
-            placeholder="rzp_test_… or rzp_live_…"
+            placeholder="rzp_live_…"
             value={form.razorpayKeyId ?? ""}
             onChange={(e) => onChange({ razorpayKeyId: e.target.value })}
             autoComplete="off"
@@ -49,7 +48,7 @@ export function SettingsRazorpayCard({
             placeholder={
               razorpaySecretStored
                 ? "••••••••  (saved — enter new value to replace)"
-                : "Paste from Razorpay Dashboard → API Keys"
+                : "Paste Live Mode secret from Razorpay Dashboard → API Keys"
             }
             value={form.razorpayKeySecret ?? ""}
             onChange={(e) => onChange({ razorpayKeySecret: e.target.value })}
@@ -59,19 +58,6 @@ export function SettingsRazorpayCard({
             Stored server-side only. Never shown again after save.
           </p>
         </div>
-
-        <p className="rounded-lg border border-dashed border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-          Share invoice payment links from Invoice History. Clients pay at{" "}
-          <code className="rounded bg-muted px-1">/pay/[invoiceId]</code>. For
-          Razorpay integration review, see{" "}
-          <Link
-            href="/razorpay-integration"
-            className="font-medium text-foreground underline-offset-2 hover:underline"
-          >
-            test credentials guide
-          </Link>
-          .
-        </p>
 
         <a
           href="https://dashboard.razorpay.com/app/keys"

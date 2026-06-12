@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   amountToPaise,
   createRazorpayClient,
-  getUserRazorpayCredentials,
+  getPlatformRazorpayCredentials,
 } from "@/lib/razorpay-server";
 import {
   getInvoiceTemplate,
@@ -25,15 +25,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const credentials = await getUserRazorpayCredentials(user.id);
+  const credentials = getPlatformRazorpayCredentials();
   if (!credentials) {
     return NextResponse.json(
       {
-        error:
-          "Add your Razorpay Test/Live keys in Settings to receive payments.",
-        code: "RAZORPAY_NOT_CONFIGURED",
+        error: "Template payments are not configured on the server.",
+        code: "RAZORPAY_PLATFORM_NOT_CONFIGURED",
       },
-      { status: 400 }
+      { status: 503 }
     );
   }
 

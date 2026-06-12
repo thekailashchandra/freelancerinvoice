@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  getPlatformRazorpayCredentials,
   getUserRazorpayCredentials,
   verifyRazorpayPaymentSignature,
 } from "@/lib/razorpay-server";
@@ -40,7 +41,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
   }
 
-  const credentials = await getUserRazorpayCredentials(paymentRow.user_id);
+  const credentials =
+    paymentRow.purpose === "template"
+      ? getPlatformRazorpayCredentials()
+      : await getUserRazorpayCredentials(paymentRow.user_id);
   if (!credentials) {
     return NextResponse.json(
       { error: "Payment verification unavailable." },

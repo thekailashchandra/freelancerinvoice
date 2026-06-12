@@ -210,10 +210,17 @@ async function buildPdfFromCanvas(
 export async function downloadInvoicePdf(
   invoice: Invoice,
   filename: string,
-  options?: { previewId?: string; preferHtml?: boolean }
+  options?: { previewId?: string; preferHtml?: boolean; skipTemplateGuard?: boolean }
 ): Promise<void> {
   if (typeof window === "undefined") {
     throw new Error("PDF export is only available in the browser.");
+  }
+
+  if (!options?.skipTemplateGuard) {
+    const { requiresTemplatePayment } = await import("@/lib/template-export-guard");
+    if (requiresTemplatePayment(invoice.templateId)) {
+      throw new Error("Unlock this template to download.");
+    }
   }
 
   const previewId = options?.previewId ?? DEFAULT_PREVIEW_ID;

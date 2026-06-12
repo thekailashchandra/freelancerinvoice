@@ -19,6 +19,7 @@ import {
 } from "@/lib/invoice-templates";
 import { useTemplateUnlocked } from "@/hooks/use-template-unlocked";
 import type { Invoice } from "@/types/invoice";
+import { requiresTemplatePayment } from "@/lib/template-export-guard";
 
 const LANDING_PREVIEW_ID = "landing-invoice-preview";
 
@@ -53,9 +54,10 @@ export function LandingInteractiveWorkspace({
     unlockDialogOpen,
     setUnlockDialogOpen,
     pendingTemplateId,
-    unlockingKofi,
     pricing,
-    confirmKofiUnlock,
+    payWithRazorpay,
+    razorpayEnabled,
+    payingRazorpay,
     startCheckout,
   } = useTemplateCheckout({ market: marketContext.market });
 
@@ -114,6 +116,7 @@ export function LandingInteractiveWorkspace({
       const { downloadInvoicePdf } = await import("@/lib/pdf");
       await downloadInvoicePdf(exportInvoice, filename, {
         previewId: LANDING_PREVIEW_ID,
+        skipTemplateGuard: forceClassic,
       });
       toast.success("PDF downloaded", {
         description: forceClassic
@@ -208,7 +211,10 @@ export function LandingInteractiveWorkspace({
           <div
             className={`overflow-y-auto rounded-lg border border-border/50 bg-background/80 p-2 transition-opacity duration-100 sm:p-3 ${previewPending ? "opacity-80" : "opacity-100"}`}
           >
-            <InvoicePreviewFrame pageSize={previewInvoice.pageSize}>
+            <InvoicePreviewFrame
+              pageSize={previewInvoice.pageSize}
+              exportLocked={needsPayment}
+            >
               <InvoicePreview
                 invoice={previewInvoice}
                 previewId={LANDING_PREVIEW_ID}
@@ -225,8 +231,9 @@ export function LandingInteractiveWorkspace({
         templateId={pendingTemplateId}
         templateName={getInvoiceTemplate(pendingTemplateId).name}
         displayAmount={pricing.displayAmount}
-        onConfirmPaid={confirmKofiUnlock}
-        confirming={unlockingKofi}
+        razorpayEnabled={razorpayEnabled}
+        onPayWithRazorpay={() => void payWithRazorpay()}
+        payingRazorpay={payingRazorpay}
       />
     </div>
   );

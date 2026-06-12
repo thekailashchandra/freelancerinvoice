@@ -1,20 +1,16 @@
 import type { MarketRegion } from "@/lib/geo-market";
 
-/** Premium templates unlock via Ko-fi (global) or Razorpay when IN + keys configured. */
+/** Premium templates unlock only via verified Razorpay payment. */
 export function getPreferredTemplatePaymentMethod(
-  market: MarketRegion,
+  _market: MarketRegion,
   razorpayConfigured?: boolean
-): "kofi" | "razorpay" {
-  if (market === "IN" && razorpayConfigured) return "razorpay";
-  return "kofi";
+): "razorpay" | null {
+  return razorpayConfigured ? "razorpay" : null;
 }
 
 export function templatePaymentMethodLabel(
-  market: MarketRegion,
+  _market: MarketRegion,
   razorpayConfigured?: boolean
 ): string {
-  return getPreferredTemplatePaymentMethod(market, razorpayConfigured) ===
-    "razorpay"
-    ? "Razorpay"
-    : "Ko-fi";
+  return razorpayConfigured ? "Razorpay" : "Unavailable";
 }

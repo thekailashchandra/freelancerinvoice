@@ -1,10 +1,8 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
-import { siteConfig } from "@/data/site";
-import { SupportTipLink } from "@/components/support-tip-link";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -20,10 +18,8 @@ type TemplateUnlockDialogProps = {
   templateId: InvoiceTemplateId;
   templateName: string;
   displayAmount: string;
-  onConfirmPaid: () => void;
-  confirming?: boolean;
-  razorpayEnabled?: boolean;
-  onPayWithRazorpay?: () => void;
+  razorpayEnabled: boolean;
+  onPayWithRazorpay: () => void;
   payingRazorpay?: boolean;
 };
 
@@ -32,9 +28,7 @@ export function TemplateUnlockDialog({
   onOpenChange,
   templateName,
   displayAmount,
-  onConfirmPaid,
-  confirming = false,
-  razorpayEnabled = false,
+  razorpayEnabled,
   onPayWithRazorpay,
   payingRazorpay = false,
 }: TemplateUnlockDialogProps) {
@@ -47,44 +41,26 @@ export function TemplateUnlockDialog({
             Unlock {templateName} template
           </DialogTitle>
           <DialogDescription className="text-left leading-relaxed">
-            Premium templates are a one-time {displayAmount} unlock.
-            {razorpayEnabled
-              ? " Pay with Razorpay (Test Mode supported) or support on Ko-fi, then confirm below."
-              : ` Support ${siteConfig.name} on Ko-fi, then confirm below to enable downloads.`}
+            Premium templates are a one-time {displayAmount} unlock. Payment is
+            verified automatically — no manual confirmation.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-2">
-          {razorpayEnabled && onPayWithRazorpay ? (
-            <Button
-              className="w-full"
-              onClick={onPayWithRazorpay}
-              disabled={payingRazorpay || confirming}
-            >
-              {payingRazorpay ? "Opening Razorpay…" : `Pay ${displayAmount} with Razorpay`}
-            </Button>
-          ) : null}
-
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <SupportTipLink
-              showIcon={false}
-              className={cn(
-                buttonVariants({ variant: razorpayEnabled ? "outline" : "default" }),
-                "flex-1 no-underline hover:no-underline"
-              )}
-            >
-              Pay {displayAmount} on Ko-fi
-            </SupportTipLink>
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={onConfirmPaid}
-              disabled={confirming || payingRazorpay}
-            >
-              {confirming ? "Unlocking…" : "I've paid on Ko-fi — unlock"}
-            </Button>
-          </div>
-        </div>
+        {razorpayEnabled ? (
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={onPayWithRazorpay}
+            disabled={payingRazorpay}
+          >
+            {payingRazorpay ? "Opening Razorpay…" : `Pay ${displayAmount} with Razorpay`}
+          </Button>
+        ) : (
+          <p className="rounded-lg border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+            Template payments are not available right now. You can keep using the
+            free Classic template.
+          </p>
+        )}
 
         <Button
           variant="ghost"
@@ -93,6 +69,15 @@ export function TemplateUnlockDialog({
         >
           Keep using Classic (free)
         </Button>
+
+        {!razorpayEnabled ? (
+          <p className="text-center text-xs text-muted-foreground">
+            <Link href="/login" className="underline-offset-2 hover:underline">
+              Sign in
+            </Link>{" "}
+            if you have an account.
+          </p>
+        ) : null}
       </DialogContent>
     </Dialog>
   );

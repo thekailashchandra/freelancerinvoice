@@ -18,6 +18,11 @@ import { InvoiceMoney } from "@/components/invoice-money";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
+import {
+  InvoiceCompanyContactDetails,
+  InvoiceCompanyLogo,
+  InvoiceCompanySignature,
+} from "@/components/invoice-company-branding";
 
 type InvoicePreviewMinimalProps = {
   invoice: Invoice;
@@ -115,73 +120,19 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
             marginBottom: 48,
           }}
         >
-          {invoice.company.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={invoice.company.logo}
-              alt=""
-              style={{
-                display: "block",
-                width: logoSize,
-                height: logoSize,
-                objectFit: "contain",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: logoSize,
-                height: logoSize,
-                backgroundColor: "#111827",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: Math.round(logoSize * 0.42),
-                fontWeight: 400,
-                flexShrink: 0,
-              }}
-            >
-              {(invoice.company.companyName || "y")
-                .charAt(0)
-                .toLowerCase()}
-              .
-            </div>
-          )}
+          <InvoiceCompanyLogo company={invoice.company} variant="minimal" />
 
           <div style={{ textAlign: "right", maxWidth: 280 }}>
-            <p
-              style={{
-                margin: 0,
+            <InvoiceCompanyContactDetails
+              company={invoice.company}
+              nameStyle={{
                 fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "#111827",
               }}
-            >
-              {invoice.company.companyName || "Your business"}
-            </p>
-            {invoice.company.companyEmail ? (
-              <p style={{ ...bodyMuted, marginTop: 6 }}>
-                {invoice.company.companyEmail}
-              </p>
-            ) : null}
-            {invoice.company.companyPhone ? (
-              <p style={bodyMuted}>{invoice.company.companyPhone}</p>
-            ) : null}
-            {invoice.company.companyAddress ? (
-              <p
-                style={{
-                  ...bodyMuted,
-                  maxWidth: 240,
-                  marginLeft: "auto",
-                  whiteSpace: "pre-line",
-                }}
-              >
-                {invoice.company.companyAddress.split("\n")[0]}
-              </p>
-            ) : null}
+              lineStyle={{ ...bodyMuted, marginLeft: "auto", maxWidth: 240 }}
+            />
           </div>
         </div>
 
@@ -469,6 +420,13 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           </p>
         </div>
       </div>
+
+      <InvoiceCompanySignature
+        company={invoice.company}
+        maxHeight={d.signature.maxHeight}
+        maxWidth={d.signature.maxWidth}
+        align="right"
+      />
 
       {/* Footer */}
       <p

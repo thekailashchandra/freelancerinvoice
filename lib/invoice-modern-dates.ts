@@ -1,5 +1,7 @@
 /** Date formats used by the Modern invoice template. */
 
+import { modernTheme } from "@/lib/invoice-modern-theme";
+
 export function formatModernHeaderDate(dateString: string): string {
   if (!dateString) return "DATE. —";
   const date = new Date(`${dateString}T12:00:00`);
@@ -23,6 +25,5 @@ export function formatModernMetaDate(dateString: string): string {
     .toUpperCase();
 }
 
-/** Diagonal stripe fill for the Total Due highlight box. */
-export const modernTotalDuePattern =
-  "repeating-linear-gradient(-45deg, #f2f2f2 0, #f2f2f2 10px, #e8e8e8 10px, #e8e8e8 20px)";
+/** Hero fill for the Total Due highlight box. */
+export const modernTotalDuePattern = modernTheme.totalGradient;

@@ -29,6 +29,10 @@ export async function printInvoice(options?: {
     throw new Error("Invoice preview not found.");
   }
 
+  if (preview.closest(".template-export-locked")) {
+    throw new Error("Unlock this template to print.");
+  }
+
   preview.scrollIntoView({ block: "nearest" });
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 

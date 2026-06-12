@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   getInvoiceTemplate,
@@ -18,56 +18,52 @@ import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 
 type UseTemplateCheckoutOptions = {
   market: MarketRegion;
-  razorpayConfigured?: boolean;
   onUnlocked?: () => void;
 };
 
 export function useTemplateCheckout({
   market,
-  razorpayConfigured = false,
   onUnlocked,
 }: UseTemplateCheckoutOptions) {
   const [unlockDialogOpen, setUnlockDialogOpen] = useState(false);
   const [pendingTemplateId, setPendingTemplateId] = useState<InvoiceTemplateId>(
     "modern"
   );
-  const [unlockingKofi, setUnlockingKofi] = useState(false);
   const [payingRazorpay, setPayingRazorpay] = useState(false);
+  const [platformRazorpay, setPlatformRazorpay] = useState(false);
 
   const pricing = getTemplatePricing(market);
-  const razorpayEnabled =
-    isRazorpayEnabled() && market === "IN" && razorpayConfigured;
+  const razorpayEnabled = isRazorpayEnabled() && platformRazorpay;
 
-  const openKofiUnlock = useCallback((templateId: InvoiceTemplateId) => {
+  useEffect(() => {
+    if (!isRazorpayEnabled()) return;
+    let cancelled = false;
+    fetch("/api/razorpay/status", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data: { templateCheckout?: boolean }) => {
+        if (!cancelled) setPlatformRazorpay(Boolean(data.templateCheckout));
+      })
+      .catch(() => {
+        if (!cancelled) setPlatformRazorpay(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const openUnlockDialog = useCallback((templateId: InvoiceTemplateId) => {
     setPendingTemplateId(templateId);
     setUnlockDialogOpen(true);
   }, []);
 
-  const confirmKofiUnlock = useCallback(() => {
-    setUnlockingKofi(true);
-    const unlock = {
-      templateId: pendingTemplateId,
-      sessionId: `kofi_${Date.now()}`,
-      unlockedAt: new Date().toISOString(),
-      amountDisplay: pricing.displayAmount,
-      currency: pricing.currency,
-    };
-    unlockTemplate(unlock);
-    setUnlockDialogOpen(false);
-    setUnlockingKofi(false);
-    onUnlocked?.();
-    toast.success("Template unlocked!", {
-      description: "You can now download your PDF.",
-      action: {
-        label: "Download receipt",
-        onClick: () => {
-          void downloadPaymentReceiptPdf(buildReceiptData(unlock, null));
-        },
-      },
-    });
-  }, [pendingTemplateId, pricing, onUnlocked]);
+  const payWithRazorpay = useCallback(async () => {
+    if (!razorpayEnabled) {
+      toast.error("Payments unavailable", {
+        description: "Template checkout is not configured yet.",
+      });
+      return;
+    }
 
-  const confirmRazorpayUnlock = useCallback(async () => {
     setPayingRazorpay(true);
     try {
       const orderRes = await fetch("/api/razorpay/template-order", {
@@ -80,6 +76,9 @@ export function useTemplateCheckout({
       });
       const orderData = await orderRes.json();
       if (!orderRes.ok) {
+        if (orderRes.status === 401) {
+          throw new Error("Sign in to unlock premium templates.");
+        }
         throw new Error(orderData.error ?? "Could not start Razorpay checkout");
       }
 
@@ -135,7 +134,7 @@ export function useTemplateCheckout({
     } finally {
       setPayingRazorpay(false);
     }
-  }, [pendingTemplateId, market, pricing, onUnlocked]);
+  }, [pendingTemplateId, market, pricing, onUnlocked, razorpayEnabled]);
 
   const startCheckout = useCallback(
     async (templateId: InvoiceTemplateId) => {
@@ -145,10 +144,18 @@ export function useTemplateCheckout({
         return true;
       }
 
-      openKofiUnlock(templateId);
+      if (!razorpayEnabled) {
+        toast.error("Payments unavailable", {
+          description: `Premium templates require a ${getTemplatePricing(market).displayAmount} Razorpay payment.`,
+        });
+        openUnlockDialog(templateId);
+        return false;
+      }
+
+      openUnlockDialog(templateId);
       return false;
     },
-    [openKofiUnlock]
+    [market, openUnlockDialog, razorpayEnabled]
   );
 
   return {
@@ -156,13 +163,11 @@ export function useTemplateCheckout({
     unlockDialogOpen,
     setUnlockDialogOpen,
     pendingTemplateId,
-    unlockingKofi,
     payingRazorpay,
     razorpayEnabled,
     pricing,
-    openKofiUnlock,
-    confirmKofiUnlock,
-    confirmRazorpayUnlock,
+    openUnlockDialog,
+    payWithRazorpay,
     startCheckout,
   };
 }

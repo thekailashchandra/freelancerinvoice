@@ -19,6 +19,11 @@ import { hasInvoicePaymentInfo } from "@/lib/invoice-payment-display";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
+import {
+  InvoiceCompanyContactDetails,
+  InvoiceCompanyLogo,
+  InvoiceCompanySignature,
+} from "@/components/invoice-company-branding";
 
 type InvoicePreviewBoldProps = {
   invoice: Invoice;
@@ -112,6 +117,7 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
       className="invoice-print-area font-sans"
       data-page-size={pageSpec.pdfFormat}
       data-template="bold"
+      data-logo-height={String(invoice.company.logoHeight ?? 80)}
       style={{
         fontFamily: d.font,
         backgroundColor: c.bg,
@@ -127,6 +133,22 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
       }}
     >
       <div style={{ flex: 1, minHeight: 0 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            alignItems: "flex-start",
+            marginBottom: 28,
+          }}
+        >
+          <InvoiceCompanyLogo company={invoice.company} variant="bold" />
+          <InvoiceCompanyContactDetails
+            company={invoice.company}
+            lineStyle={{ color: c.textMuted }}
+            nameStyle={{ color: c.text, fontSize: 15 }}
+          />
+        </div>
+
         {/* Top meta row */}
         <div
           style={{
@@ -530,6 +552,13 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
         </div>
       </div>
 
+      <InvoiceCompanySignature
+        company={invoice.company}
+        maxHeight={d.signature.maxHeight}
+        maxWidth={d.signature.maxWidth}
+        align="right"
+      />
+
       {/* Footer */}
       <div
         style={{
@@ -560,6 +589,9 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
           ) : null}
           {invoice.company.companyEmail ? (
             <p style={{ margin: "4px 0 0" }}>{invoice.company.companyEmail}</p>
+          ) : null}
+          {invoice.company.gstin?.trim() ? (
+            <p style={{ margin: "4px 0 0" }}>GSTIN: {invoice.company.gstin.trim()}</p>
           ) : null}
         </div>
         <div style={{ textAlign: "right", fontStyle: "italic" }}>

@@ -1,11 +1,6 @@
 import { calculateTotals } from "@/lib/calculations";
 import { invoiceMoneyHtml } from "@/lib/currency-display";
-import {
-  getInvoicePageSpec,
-  getLogoDimensions,
-  resolveInvoicePageSize,
-  resolveLogoHeight,
-} from "@/lib/invoice-design";
+import { getInvoicePageSpec, resolveInvoicePageSize } from "@/lib/invoice-design";
 import {
   formatMinimalFooterYear,
   formatMinimalTableDate,
@@ -17,6 +12,11 @@ import {
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
 import { formatInvoiceAmount } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
+import {
+  companyContactDetailsHtml,
+  companyLogoMarkHtml,
+  companySignatureBlockHtml,
+} from "@/lib/invoice-company-identity";
 
 function escapeHtml(text: string): string {
   return text
@@ -36,8 +36,6 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const W = pageSpec.contentWidthPx;
   const pad = pageSpec.paddingPx + 8;
-  const logo = getLogoDimensions(resolveLogoHeight(invoice.company.logoHeight));
-  const logoSize = Math.min(logo.height, 44);
 
   const totals = calculateTotals(
     invoice.services,
@@ -64,22 +62,6 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
   const closingLine = invoice.company.companyName
     ? `Have a nice day and thank you! ${escapeHtml(invoice.company.companyName.split(" ")[0])}`
     : "Have a nice day and thank you!";
-
-  const logoMark = invoice.company.logo
-    ? `<img src="${invoice.company.logo}" alt="" style="display:block;width:${logoSize}px;height:${logoSize}px;object-fit:contain;border:0" />`
-    : `<div style="width:${logoSize}px;height:${logoSize}px;background:#111827;color:#fff;font-family:${F};font-size:${Math.round(logoSize * 0.42)}px;text-align:center;line-height:${logoSize}px">${escapeHtml((invoice.company.companyName || "y").charAt(0).toLowerCase())}.</div>`;
-
-  const senderLines = [
-    invoice.company.companyEmail
-      ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:#888888">${escapeHtml(invoice.company.companyEmail)}</div>`
-      : "",
-    invoice.company.companyPhone
-      ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:#888888">${escapeHtml(invoice.company.companyPhone)}</div>`
-      : "",
-    invoice.company.companyAddress
-      ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:#888888">${escapeHtml(invoice.company.companyAddress.split("\n")[0])}</div>`
-      : "",
-  ].join("");
 
   const clientLines = [
     invoice.client.address
@@ -132,10 +114,10 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
 <div style="flex:1;min-height:0">
 
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:48px"><tr>
-  <td valign="top">${logoMark}</td>
+  <td valign="top">${companyLogoMarkHtml(invoice.company, { font: F, variant: "minimal" })}</td>
   <td valign="top" align="right">
     <div style="font-family:${F};font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase">${escapeHtml(invoice.company.companyName || "Your business")}</div>
-    ${senderLines}
+    ${companyContactDetailsHtml(invoice.company, { font: F, color: "#888888", marginTop: 6, fullAddress: true })}
   </td>
 </tr></table>
 
@@ -176,6 +158,8 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
 </div>
 
 </div>
+
+${companySignatureBlockHtml(invoice.company, { font: F, maxHeight: d.signature.maxHeight, maxWidth: d.signature.maxWidth, align: "right" })}
 
 <p style="margin:48px 0 0;text-align:center;font-family:${F};font-size:10px;color:#aaaaaa;letter-spacing:0.02em">${escapeHtml(invoice.company.companyName || "Your business")}. All Rights Reserved © ${footerYear}${invoice.company.companyEmail ? ` · ${escapeHtml(invoice.company.companyEmail)}` : ""}</p>
 

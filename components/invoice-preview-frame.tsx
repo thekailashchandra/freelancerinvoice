@@ -11,6 +11,10 @@ import { cn } from "@/lib/utils";
 type InvoicePreviewFrameProps = {
   pageSize?: InvoicePageSize;
   className?: string;
+  /** Blocks browser print of unpaid premium template previews */
+  exportLocked?: boolean;
+  /** Upper bound for preview scale (1 = full document width). */
+  maxScale?: number;
   children: React.ReactNode;
 };
 
@@ -18,6 +22,8 @@ type InvoicePreviewFrameProps = {
 export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
   pageSize,
   className,
+  exportLocked = false,
+  maxScale = 1,
   children,
 }: InvoicePreviewFrameProps) {
   const spec = getInvoicePageSpec(resolveInvoicePageSize(pageSize));
@@ -29,9 +35,9 @@ export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
   const updateScale = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    const available = viewport.clientWidth - 8;
-    setScale(Math.min(1, available / spec.widthPx));
-  }, [spec.widthPx]);
+    const available = viewport.clientWidth - 4;
+    setScale(Math.min(maxScale, available / spec.widthPx));
+  }, [maxScale, spec.widthPx]);
 
   useEffect(() => {
     updateScale();
@@ -58,7 +64,7 @@ export const InvoicePreviewFrame = memo(function InvoicePreviewFrame({
   return (
     <div
       ref={viewportRef}
-      className={cn("w-full", className)}
+      className={cn("w-full", exportLocked && "template-export-locked", className)}
       style={scaledHeight !== undefined ? { height: scaledHeight } : undefined}
     >
       <div
