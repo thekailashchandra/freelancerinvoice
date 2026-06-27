@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { profileToCompanySettings } from "@/lib/invoice-mapper";
 import { sanitizePaymentForCountry } from "@/lib/country";
 import { isRazorpayEnabled } from "@/lib/razorpay-feature";
+import { isRazorpayOwnerEmail } from "@/lib/razorpay-access";
 import { createClient } from "@/lib/supabase/server";
 import type { CompanySettings } from "@/types/invoice";
 import type { ProfileRow } from "@/types/database";
@@ -9,8 +10,8 @@ import type { ProfileRow } from "@/types/database";
 const PROFILE_SELECT_BASE =
   "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_sort_code, logo_height, hide_invoice_branding, created_at, updated_at";
 
-function profileSelectColumns(): string {
-  if (!isRazorpayEnabled()) return PROFILE_SELECT_BASE;
+function profileSelectColumns(includeRazorpay: boolean): string {
+  if (!includeRazorpay) return PROFILE_SELECT_BASE;
   return `${PROFILE_SELECT_BASE}, razorpay_key_id, razorpay_key_secret`;
 }
 
@@ -22,9 +23,12 @@ export async function fetchProfile(): Promise<CompanySettings | null> {
 
   if (!user) return null;
 
+  const includeRazorpay =
+    isRazorpayEnabled() && isRazorpayOwnerEmail(user.email);
+
   const { data, error } = await supabase
     .from("profiles")
-    .select(profileSelectColumns())
+    .select(profileSelectColumns(includeRazorpay))
     .eq("id", user.id)
     .single();
 
@@ -46,6 +50,9 @@ export async function updateProfile(
   } = await supabase.auth.getUser();
 
   if (!user) throw new Error("Not authenticated");
+
+  const includeRazorpay =
+    isRazorpayEnabled() && isRazorpayOwnerEmail(user.email);
 
   const row: Record<string, string | number | boolean | null> = {};
 
@@ -70,7 +77,7 @@ export async function updateProfile(
     row.hide_invoice_branding = settings.hideInvoiceBranding;
   }
 
-  if (isRazorpayEnabled()) {
+  if (includeRazorpay) {
     if (settings.razorpayKeyId !== undefined) {
       row.razorpay_key_id = settings.razorpayKeyId.trim();
     }

@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
+import { getAuthenticatedRazorpayAccess } from "@/lib/razorpay-access";
 import { isRazorpayEnabled } from "@/lib/razorpay-feature";
-import { isPlatformRazorpayConfigured } from "@/lib/razorpay-server";
 
 export async function GET() {
-  const enabled = isRazorpayEnabled();
+  const access = await getAuthenticatedRazorpayAccess();
+
   return NextResponse.json({
-    enabled,
-    templateCheckout: enabled && isPlatformRazorpayConfigured(),
+    enabled: isRazorpayEnabled(),
+    isOwner: access.isOwner,
+    templateCheckout: access.templateCheckout,
+    invoiceCheckout: access.invoiceCheckout,
   });
 }

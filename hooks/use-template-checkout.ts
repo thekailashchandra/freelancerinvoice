@@ -14,7 +14,6 @@ import {
   buildReceiptData,
   downloadPaymentReceiptPdf,
 } from "@/lib/payment-receipt-pdf";
-import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 
 type UseTemplateCheckoutOptions = {
   market: MarketRegion;
@@ -30,21 +29,19 @@ export function useTemplateCheckout({
     "modern"
   );
   const [payingRazorpay, setPayingRazorpay] = useState(false);
-  const [platformRazorpay, setPlatformRazorpay] = useState(false);
+  const [razorpayEnabled, setRazorpayEnabled] = useState(false);
 
   const pricing = getTemplatePricing(market);
-  const razorpayEnabled = isRazorpayEnabled() && platformRazorpay;
 
   useEffect(() => {
-    if (!isRazorpayEnabled()) return;
     let cancelled = false;
     fetch("/api/razorpay/status", { cache: "no-store" })
       .then((res) => res.json())
       .then((data: { templateCheckout?: boolean }) => {
-        if (!cancelled) setPlatformRazorpay(Boolean(data.templateCheckout));
+        if (!cancelled) setRazorpayEnabled(Boolean(data.templateCheckout));
       })
       .catch(() => {
-        if (!cancelled) setPlatformRazorpay(false);
+        if (!cancelled) setRazorpayEnabled(false);
       });
     return () => {
       cancelled = true;
@@ -59,7 +56,7 @@ export function useTemplateCheckout({
   const payWithRazorpay = useCallback(async () => {
     if (!razorpayEnabled) {
       toast.error("Payments unavailable", {
-        description: "Template checkout is not configured yet.",
+        description: "Premium templates are not available for purchase yet.",
       });
       return;
     }
@@ -79,7 +76,7 @@ export function useTemplateCheckout({
         if (orderRes.status === 401) {
           throw new Error("Sign in to unlock premium templates.");
         }
-        throw new Error(orderData.error ?? "Could not start Razorpay checkout");
+        throw new Error(orderData.error ?? "Could not start checkout");
       }
 
       const template = getInvoiceTemplate(pendingTemplateId);
@@ -117,7 +114,7 @@ export function useTemplateCheckout({
       setUnlockDialogOpen(false);
       onUnlocked?.();
       toast.success(`${template.name} template unlocked`, {
-        description: "Payment verified via Razorpay.",
+        description: "Payment verified.",
         action: {
           label: "Download receipt",
           onClick: () => {
@@ -127,7 +124,7 @@ export function useTemplateCheckout({
       });
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Razorpay checkout failed";
+        err instanceof Error ? err.message : "Checkout failed";
       if (message !== "Payment cancelled") {
         toast.error("Payment failed", { description: message });
       }
@@ -145,8 +142,8 @@ export function useTemplateCheckout({
       }
 
       if (!razorpayEnabled) {
-        toast.error("Payments unavailable", {
-          description: `Premium templates require a ${getTemplatePricing(market).displayAmount} Razorpay payment.`,
+        toast.message(`Premium templates coming soon`, {
+          description: `The free Classic template is available now.`,
         });
         openUnlockDialog(templateId);
         return false;
@@ -155,7 +152,7 @@ export function useTemplateCheckout({
       openUnlockDialog(templateId);
       return false;
     },
-    [market, openUnlockDialog, razorpayEnabled]
+    [openUnlockDialog, razorpayEnabled]
   );
 
   return {

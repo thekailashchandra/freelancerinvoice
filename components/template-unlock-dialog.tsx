@@ -41,8 +41,8 @@ export function TemplateUnlockDialog({
             Unlock {templateName} template
           </DialogTitle>
           <DialogDescription className="text-left leading-relaxed">
-            Premium templates are a one-time {displayAmount} unlock. Payment is
-            verified automatically — no manual confirmation.
+            Premium templates are a one-time {displayAmount} unlock when
+            available. Payment is verified automatically.
           </DialogDescription>
         </DialogHeader>
 
@@ -53,7 +53,7 @@ export function TemplateUnlockDialog({
             onClick={onPayWithRazorpay}
             disabled={payingRazorpay}
           >
-            {payingRazorpay ? "Opening Razorpay…" : `Pay ${displayAmount} with Razorpay`}
+            {payingRazorpay ? "Opening checkout…" : `Pay ${displayAmount}`}
           </Button>
         ) : (
           <p className="rounded-lg border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">

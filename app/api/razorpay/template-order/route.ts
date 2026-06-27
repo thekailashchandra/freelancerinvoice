@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRazorpayOwnerEmail } from "@/lib/razorpay-access";
 import {
   amountToPaise,
   createRazorpayClient,
@@ -22,6 +23,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Sign in to pay with Razorpay.", code: "AUTH_REQUIRED" },
       { status: 401 }
+    );
+  }
+
+  if (!isRazorpayOwnerEmail(user.email)) {
+    return NextResponse.json(
+      { error: "Template payments are not available.", code: "RAZORPAY_DISABLED" },
+      { status: 403 }
     );
   }
 

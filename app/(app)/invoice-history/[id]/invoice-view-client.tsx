@@ -44,7 +44,7 @@ import { invoicePayUrl } from "@/lib/invoice-pay-url";
 import { invoiceReceiptUrl } from "@/lib/invoice-receipt-url";
 import { downloadInvoiceReceiptPdf, shareInvoiceReceipt } from "@/lib/invoice-receipt-pdf";
 import type { InvoiceReceiptData } from "@/lib/invoice-receipt";
-import { isRazorpayEnabled } from "@/lib/razorpay-feature";
+import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
 import { getInvoiceTemplate } from "@/lib/invoice-templates";
 import type { MarketRegion } from "@/lib/geo-market";
 import { requiresTemplatePayment } from "@/lib/template-export-guard";
@@ -84,6 +84,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
   const market: MarketRegion =
     invoice?.company.countryCode === "IN" ? "IN" : "GLOBAL";
+
+  const { isOwner: razorpayOwner, invoiceCheckout } = useRazorpayAccess();
 
   const {
     unlockDialogOpen,
@@ -170,8 +172,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const { canEdit, canMarkPaid, canVoid, isLocked } =
     invoiceActionState(displayStatus);
   const showRazorpayLink =
-    isRazorpayEnabled() &&
-    Boolean(invoice.company.razorpayConfigured) &&
+    razorpayOwner &&
+    invoiceCheckout &&
     canMarkPaid &&
     displayStatus !== "paid";
   const isPaid = displayStatus === "paid";

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateTotals } from "@/lib/calculations";
+import { isRazorpayOwnerUserId } from "@/lib/razorpay-access";
 import {
   amountToPaise,
   createRazorpayClient,
@@ -46,7 +47,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
   }
 
-  const { invoice, company } = loaded;
+  const { invoice, userId, company } = loaded;
+
+  if (!(await isRazorpayOwnerUserId(userId))) {
+    return NextResponse.json(
+      { error: "Invoice payments are not available.", code: "RAZORPAY_DISABLED" },
+      { status: 403 }
+    );
+  }
+
   const owner = await getInvoiceOwnerRazorpayCredentials(invoiceId);
 
   if (!owner) {
@@ -111,6 +120,14 @@ export async function POST(request: NextRequest) {
   }
 
   const { invoice, userId } = loaded;
+
+  if (!(await isRazorpayOwnerUserId(userId))) {
+    return NextResponse.json(
+      { error: "Invoice payments are not available.", code: "RAZORPAY_DISABLED" },
+      { status: 403 }
+    );
+  }
+
   const owner = await getInvoiceOwnerRazorpayCredentials(invoiceId);
   if (!owner) {
     return NextResponse.json(

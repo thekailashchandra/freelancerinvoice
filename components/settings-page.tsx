@@ -23,12 +23,13 @@ import {
 } from "@/lib/country";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
 import { SettingsRazorpayCard } from "@/components/settings-razorpay-card";
-import { isRazorpayEnabled } from "@/lib/razorpay-feature";
+import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
 import type { AssetKind } from "@/lib/supabase/asset-storage";
 import type { CompanySettings } from "@/types/invoice";
 
 export default function SettingsPage() {
   const { settings, loading, update } = useProfile();
+  const { isOwner: razorpayOwner } = useRazorpayAccess();
   const [form, setForm] = useState<CompanySettings>(settings);
   const [defaultPayment, setDefaultPayment] = useState(emptyPaymentDetails());
   const [saving, setSaving] = useState(false);
@@ -227,7 +228,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-      {isRazorpayEnabled() ? (
+      {razorpayOwner ? (
         <SettingsRazorpayCard
           form={form}
           onChange={(next) => setForm((prev) => ({ ...prev, ...next }))}

@@ -35,9 +35,7 @@ export function InvoiceTemplatePicker({
           Invoice template
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Classic is free. Premium layouts unlock with a one-time{" "}
-          <span className="font-medium text-foreground">{pricing.label}</span>{" "}
-          payment via Razorpay.
+          Classic is free. Premium layouts are coming soon for all users.
         </p>
       </div>
 
@@ -110,8 +108,8 @@ export function InvoiceTemplatePicker({
       {getInvoiceTemplate(value).isPremium &&
       !isUnlocked(value) ? (
         <p className="text-xs text-muted-foreground">
-          Preview any premium template before paying. PDF download requires a
-          one-time {pricing.displayAmount} unlock.
+          Preview premium layouts anytime. Full PDF export requires a one-time
+          unlock — coming soon for all users.
         </p>
       ) : null}
     </section>
