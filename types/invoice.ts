@@ -53,6 +53,8 @@ export interface TaxDiscount {
 }
 
 export interface PaymentDetails {
+  /** Name on the bank account (may differ from company name) */
+  accountName: string;
   bankName: string;
   accountNumber: string;
   upiId: string;
@@ -70,6 +72,8 @@ export interface CompanySettings {
   /** Logo height in px on invoice (32–200) */
   logoHeight?: number;
   signature: string | null;
+  /** When true, omit the italic first-name text when no signature image is uploaded */
+  hideSignatureTextFallback?: boolean;
   /** ISO country code — drives currency/tax/payment field defaults */
   countryCode: string;
   currencyCode: string;

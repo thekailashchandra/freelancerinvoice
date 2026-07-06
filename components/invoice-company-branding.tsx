@@ -3,7 +3,9 @@
 import type { CSSProperties } from "react";
 import type { CompanySettings } from "@/types/invoice";
 import {
+  getSignatureFallbackText,
   resolveLogoHeightForTemplate,
+  shouldShowSignatureFallback,
   type CompanyIdentitySource,
   type LogoVariant,
 } from "@/lib/invoice-company-identity";
@@ -137,12 +139,15 @@ export function InvoiceCompanySignature({
   maxWidth,
   align = "right",
 }: {
-  company: Pick<CompanySettings, "signature" | "companyName">;
+  company: Pick<
+    CompanySettings,
+    "signature" | "companyName" | "hideSignatureTextFallback"
+  >;
   maxHeight: number;
   maxWidth: number;
   align?: "left" | "right" | "center";
 }) {
-  if (!company.signature && !company.companyName?.trim()) return null;
+  if (!company.signature && !shouldShowSignatureFallback(company)) return null;
 
   return (
     <div style={{ marginTop: 24, textAlign: align }}>
@@ -167,7 +172,7 @@ export function InvoiceCompanySignature({
             color: "#111827",
           }}
         >
-          {company.companyName?.split(" ")[0] || "Authorized"}
+          {getSignatureFallbackText(company)}
         </span>
       )}
     </div>

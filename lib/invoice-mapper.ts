@@ -15,6 +15,7 @@ import { profileHasRazorpay } from "@/lib/razorpay-server";
 function profileRowToPayment(profile: ProfileRow): PaymentDetails {
   return sanitizePaymentForCountry(
     {
+      accountName: profile.default_account_name ?? "",
       bankName: profile.default_bank_name ?? "",
       accountNumber: profile.default_account_number ?? "",
       upiId: profile.default_upi_id ?? "",
@@ -35,6 +36,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     logo: profile.logo_url,
     logoHeight: profile.logo_height ?? 80,
     signature: profile.signature_url,
+    hideSignatureTextFallback: profile.hide_signature_text_fallback ?? false,
     countryCode: normalizeCountryCode(profile.country_code),
     currencyCode: profile.currency_code,
     taxLabel: profile.tax_label,
@@ -105,6 +107,7 @@ export function dbInvoiceToApp(
         row.gst_supply_type === "inter" ? "inter" : "intra",
     },
     payment: {
+      accountName: row.account_name ?? "",
       bankName: row.bank_name,
       accountNumber: row.account_number,
       upiId: row.upi_id,
@@ -166,6 +169,7 @@ export function appInvoiceToDbPayload(
       gst_supply_type: invoice.taxDiscount.gstSupplyType ?? "intra",
       seller_gstin: invoice.company.gstin ?? "",
       client_gstin: invoice.client.gstin ?? "",
+      account_name: payment.accountName,
       bank_name: payment.bankName,
       account_number: payment.accountNumber,
       upi_id: payment.upiId,
@@ -193,6 +197,7 @@ export function mergeProfileIntoInvoice(
     currencyCode: invoice.currencyCode || profile.currencyCode,
     taxLabel: invoice.taxLabel || profile.taxLabel,
     payment:
+      invoice.payment.accountName ||
       invoice.payment.bankName ||
       invoice.payment.accountNumber ||
       invoice.payment.upiId ||

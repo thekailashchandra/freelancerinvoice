@@ -3,14 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Download, FileText, Loader2, PlusCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  FileText,
+  Loader2,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
 import { InvoiceTable } from "@/components/invoice-table";
 import { PageTransition } from "@/components/page-transition";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { deleteClientClient } from "@/lib/api/app-client";
 import { deleteInvoiceClient } from "@/lib/api/invoices-client";
+import { confirmDeleteCustomer } from "@/lib/customer-delete";
 import { formatMoney } from "@/lib/currency";
 import { downloadClientStatementPdf } from "@/lib/client-statement-pdf";
 import {
@@ -39,6 +48,7 @@ export function CustomerDetailClient({
   const [invoices, setInvoices] = useState(initialInvoices);
   const [downloading, setDownloading] = useState(false);
   const [busyInvoiceId, setBusyInvoiceId] = useState<string | null>(null);
+  const [deletingCustomer, setDeletingCustomer] = useState(false);
 
   const handleDownloadStatement = async () => {
     setDownloading(true);
@@ -67,6 +77,25 @@ export function CustomerDetailClient({
       });
     } finally {
       setBusyInvoiceId(null);
+    }
+  };
+
+  const handleDeleteCustomer = async () => {
+    const label = clientDisplayName(client);
+    if (!confirmDeleteCustomer(label, summary.invoiceCount)) return;
+
+    setDeletingCustomer(true);
+    try {
+      await deleteClientClient(client.id);
+      toast.success("Customer deleted");
+      router.push("/customers");
+      router.refresh();
+    } catch (err) {
+      toast.error("Could not delete customer", {
+        description: err instanceof Error ? err.message : "Unknown error",
+      });
+    } finally {
+      setDeletingCustomer(false);
     }
   };
 
@@ -115,6 +144,19 @@ export function CustomerDetailClient({
               <PlusCircle className="h-4 w-4" />
               New invoice
             </Link>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => void handleDeleteCustomer()}
+            disabled={deletingCustomer}
+            className="gap-2 text-destructive hover:text-destructive"
+          >
+            {deletingCustomer ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              <Trash2 className="h-4 w-4" aria-hidden />
+            )}
+            Delete customer
           </Button>
         </div>
       </div>

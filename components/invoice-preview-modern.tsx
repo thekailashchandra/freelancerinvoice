@@ -20,7 +20,12 @@ import { InvoiceMoney } from "@/components/invoice-money";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
 } from "@/lib/invoice-payment-display";
+import {
+  getSignatureFallbackText,
+  shouldShowSignatureFallback,
+} from "@/lib/invoice-company-identity";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
@@ -139,9 +144,13 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
     [invoice.services, invoice.taxDiscount, invoice.taxLabel]
   );
   const currency = invoice.currencyCode;
+  const paymentOptions = useMemo(
+    () => invoicePaymentDisplayOptions(invoice.company.companyName),
+    [invoice.company.companyName]
+  );
   const paymentLines = useMemo(
-    () => getInvoicePaymentInfo(invoice.payment),
-    [invoice.payment]
+    () => getInvoicePaymentInfo(invoice.payment, paymentOptions),
+    [invoice.payment, paymentOptions]
   );
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
@@ -612,7 +621,7 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
             gap: 14,
           }}
         >
-          {hasInvoicePaymentInfo(invoice.payment) ? (
+          {hasInvoicePaymentInfo(invoice.payment, paymentOptions) ? (
             <InfoCard title="Payment Details">
               {paymentLines.map((line) => (
                 <p
@@ -660,7 +669,7 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                   objectFit: "contain",
                 }}
               />
-            ) : (
+            ) : shouldShowSignatureFallback(invoice.company) ? (
               <span
                 style={{
                   fontFamily: "Georgia, 'Times New Roman', serif",
@@ -669,9 +678,9 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                   color: t.text,
                 }}
               >
-                {invoice.company.companyName?.split(" ")[0] || "Authorized"}
+                {getSignatureFallbackText(invoice.company)}
               </span>
-            )}
+            ) : null}
             <p
               style={{
                 margin: "10px 0 0",

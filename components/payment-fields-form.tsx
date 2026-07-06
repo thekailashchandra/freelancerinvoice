@@ -26,6 +26,15 @@ export function PaymentFieldsForm({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor={`${idPrefix}-accountName`}>Account holder name</Label>
+        <Input
+          id={`${idPrefix}-accountName`}
+          placeholder="Name as it appears on your bank account"
+          value={payment.accountName ?? ""}
+          onChange={(e) => update("accountName", e.target.value)}
+        />
+      </div>
       {fields.map((field) => (
         <div
           key={field.key}

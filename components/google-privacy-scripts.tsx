@@ -2,19 +2,6 @@
 
 import { useLayoutEffect } from "react";
 import { adsenseConfig } from "@/data/adsense";
-import { analyticsConfig } from "@/data/analytics";
-
-const consentDefaultScript = `
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'denied',
-    wait_for_update: 500
-  });
-`.trim();
 
 const fundingChoicesPresentScript = `
   (function () {
@@ -33,11 +20,6 @@ const fundingChoicesPresentScript = `
     }
     signalGooglefcPresent();
   })();
-`.trim();
-
-const gtagConfigScript = `
-  gtag('js', new Date());
-  gtag('config', '${analyticsConfig.measurementId}');
 `.trim();
 
 function injectInlineScript(
@@ -68,20 +50,11 @@ function injectExternalScript(
 }
 
 /**
- * Google Analytics, Privacy & Messaging (Funding Choices CMP), and AdSense.
- * Injected client-side only so React never hydrates <script> tags in <head>
- * (avoids mismatches from extensions or third-party script reordering).
+ * Google Privacy & Messaging (Funding Choices CMP) and AdSense.
+ * Analytics is loaded separately via GoogleAnalytics in the root layout head.
  */
 export function GooglePrivacyScripts() {
   useLayoutEffect(() => {
-    injectInlineScript("google-consent-default", consentDefaultScript, document.head);
-    injectExternalScript(
-      "google-gtag",
-      analyticsConfig.gtagScriptUrl,
-      document.head,
-      { async: true }
-    );
-    injectInlineScript("google-gtag-config", gtagConfigScript, document.head);
     injectExternalScript(
       "google-funding-choices",
       adsenseConfig.fundingChoicesUrl,

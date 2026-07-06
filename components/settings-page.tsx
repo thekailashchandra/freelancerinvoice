@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/use-profile";
@@ -220,6 +221,29 @@ export default function SettingsPage() {
                 imageUrl={form.signature}
                 onUpload={handleAssetUpload}
               />
+              <div className="space-y-2 sm:col-span-2">
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="signature-text-fallback">
+                      Show name when no signature image
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      Displays your first name in italic at the bottom of
+                      invoices when you have not uploaded a signature image.
+                    </p>
+                  </div>
+                  <Switch
+                    id="signature-text-fallback"
+                    checked={!form.hideSignatureTextFallback}
+                    onCheckedChange={(checked) =>
+                      setForm({
+                        ...form,
+                        hideSignatureTextFallback: !checked,
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
             <Button onClick={handleSave} disabled={saving} className="gap-2">
               <Save className="h-4 w-4" />

@@ -15,7 +15,11 @@ import {
   simpleTemplateColors as c,
 } from "@/lib/invoice-simple-theme";
 import { InvoiceMoney } from "@/components/invoice-money";
-import { hasInvoicePaymentInfo } from "@/lib/invoice-payment-display";
+import {
+  getInvoicePaymentInfo,
+  hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
+} from "@/lib/invoice-payment-display";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
@@ -105,11 +109,14 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
     invoice.termsAndConditions?.trim() ||
     "Payment is due by the date shown on this invoice. Late payments may incur additional fees.";
 
-  const swiftLine =
-    invoice.payment.iban?.trim() ||
-    invoice.payment.routingNumber?.trim() ||
-    invoice.payment.sortCode?.trim() ||
-    "";
+  const paymentOptions = useMemo(
+    () => invoicePaymentDisplayOptions(invoice.company.companyName),
+    [invoice.company.companyName]
+  );
+  const paymentLines = useMemo(
+    () => getInvoicePaymentInfo(invoice.payment, paymentOptions),
+    [invoice.payment, paymentOptions]
+  );
 
   return (
     <div
@@ -269,46 +276,16 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
             >
               Payment Details:
             </p>
-            {hasInvoicePaymentInfo(invoice.payment) ? (
+            {hasInvoicePaymentInfo(invoice.payment, paymentOptions) ? (
               <div style={{ fontSize: 12, lineHeight: 1.7, color: c.textMuted }}>
-                {invoice.payment.bankName?.trim() ? (
-                  <p style={{ margin: "0 0 8px" }}>
+                {paymentLines.map((line) => (
+                  <p key={line.label} style={{ margin: "0 0 8px" }}>
                     <span style={{ fontWeight: 600, color: c.text }}>
-                      Bank Name:{" "}
+                      {line.label}:{" "}
                     </span>
-                    {invoice.payment.bankName}
+                    {line.value}
                   </p>
-                ) : null}
-                <p style={{ margin: "0 0 8px" }}>
-                  <span style={{ fontWeight: 600, color: c.text }}>
-                    Account Name:{" "}
-                  </span>
-                  {invoice.company.companyName || "—"}
-                </p>
-                {invoice.payment.accountNumber?.trim() ? (
-                  <p style={{ margin: "0 0 8px" }}>
-                    <span style={{ fontWeight: 600, color: c.text }}>
-                      Account Number:{" "}
-                    </span>
-                    {invoice.payment.accountNumber}
-                  </p>
-                ) : null}
-                {swiftLine ? (
-                  <p style={{ margin: "0 0 8px" }}>
-                    <span style={{ fontWeight: 600, color: c.text }}>
-                      SWIFT Code:{" "}
-                    </span>
-                    {swiftLine}
-                  </p>
-                ) : null}
-                {invoice.payment.upiId?.trim() ? (
-                  <p style={{ margin: 0 }}>
-                    <span style={{ fontWeight: 600, color: c.text }}>
-                      UPI ID:{" "}
-                    </span>
-                    {invoice.payment.upiId}
-                  </p>
-                ) : null}
+                ))}
               </div>
             ) : (
               <p style={{ margin: 0, fontSize: 12, color: c.textMuted }}>

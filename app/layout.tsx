@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Toaster } from "sonner";
 import { geoConsensus, geoEntity, geoEntityStatement, geoTopics } from "@/data/geo";
 import { buildKeywordsString, homeSeo } from "@/data/seo";
+import { GoogleAnalytics } from "@/components/google-analytics";
+import { GoogleAnalyticsPageView } from "@/components/google-analytics-page-view";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
 import { DevEarlyGuards } from "@/components/dev-early-guards";
 import { readDevBuildId } from "@/lib/dev-build";
@@ -112,10 +115,14 @@ export default function RootLayout({
           title="Brand consensus block for directories"
         />
         <DevEarlyGuards buildId={devBuildId} />
+        <GoogleAnalytics />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <Suspense fallback={null}>
+          <GoogleAnalyticsPageView />
+        </Suspense>
         <GooglePrivacyScripts />
         {children}
         <Toaster richColors position="top-center" closeButton />

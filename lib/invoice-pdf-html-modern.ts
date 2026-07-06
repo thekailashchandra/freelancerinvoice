@@ -13,6 +13,7 @@ import { modernTheme as t } from "@/lib/invoice-modern-theme";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
 } from "@/lib/invoice-payment-display";
 import {
   invoicePoweredByHtml,
@@ -83,7 +84,8 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
     })
     .join("");
 
-  const paymentLines = getInvoicePaymentInfo(invoice.payment)
+  const paymentOptions = invoicePaymentDisplayOptions(invoice.company.companyName);
+  const paymentLines = getInvoicePaymentInfo(invoice.payment, paymentOptions)
     .map(
       (line) =>
         `<div style="margin:0 0 6px;font-family:${F};font-size:11px;line-height:16px;color:${t.textSecondary}"><strong style="color:${t.text}">${escapeHtml(line.label)}:</strong> ${escapeHtml(line.value)}</div>`
@@ -215,7 +217,7 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
 
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:24px"><tr>
   <td width="32%" valign="top" style="padding-right:7px">
-    ${hasInvoicePaymentInfo(invoice.payment) ? infoCard("Payment Details", paymentLines, F) : "&nbsp;"}
+    ${hasInvoicePaymentInfo(invoice.payment, paymentOptions) ? infoCard("Payment Details", paymentLines, F) : "&nbsp;"}
   </td>
   <td width="2%"></td>
   <td width="32%" valign="top" style="padding:0 7px">

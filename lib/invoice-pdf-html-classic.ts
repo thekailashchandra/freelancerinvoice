@@ -14,6 +14,7 @@ import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
 } from "@/lib/invoice-payment-display";
 
 import {
@@ -181,10 +182,11 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
 
     .join("");
 
-  const paymentBlock = hasInvoicePaymentInfo(invoice.payment)
+  const paymentOptions = invoicePaymentDisplayOptions(invoice.company.companyName);
+  const paymentBlock = hasInvoicePaymentInfo(invoice.payment, paymentOptions)
     ? `<div style="margin-bottom:20px">
         <div style="font-family:${F};font-size:10px;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;color:${d.colors.textMuted}">Payment Information</div>
-        ${getInvoicePaymentInfo(invoice.payment)
+        ${getInvoicePaymentInfo(invoice.payment, paymentOptions)
           .map(
             (line) =>
               `<div style="margin-top:4px;font-family:${F};font-size:13px;line-height:20px;color:${d.colors.textSecondary}"><strong style="color:${d.colors.text}">${escapeHtml(line.label)}:</strong> ${escapeHtml(line.value)}</div>`

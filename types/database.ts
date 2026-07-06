@@ -25,6 +25,7 @@ export interface ProfileRow {
   currency_code: string;
   tax_label: string;
   country_code: string;
+  default_account_name: string;
   default_bank_name: string;
   default_account_number: string;
   default_upi_id: string;
@@ -33,6 +34,7 @@ export interface ProfileRow {
   default_sort_code: string;
   logo_height?: number;
   hide_invoice_branding?: boolean;
+  hide_signature_text_fallback?: boolean;
   razorpay_key_id?: string;
   razorpay_key_secret?: string;
   created_at: string;
@@ -76,6 +78,7 @@ export interface InvoiceRow {
   gst_supply_type: string;
   seller_gstin: string;
   client_gstin: string;
+  account_name: string;
   bank_name: string;
   account_number: string;
   upi_id: string;

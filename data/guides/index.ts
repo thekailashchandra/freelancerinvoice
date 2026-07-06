@@ -7,6 +7,7 @@ import { freelanceTaxRequirements } from "./freelance-tax-requirements";
 import { form1099Form16FreelancerCompliance } from "./form-1099-form-16-freelancer-compliance";
 import { freelancerInvoiceChecklist } from "./freelancer-invoice-checklist";
 import { gstInvoicingIndiaFreelancers } from "./gst-invoicing-india-freelancers";
+import { howToDeleteCustomersInvoiceForFreelance } from "./how-to-delete-customers-invoice-for-freelance";
 import { howToBillInternationalClients } from "./how-to-bill-international-clients";
 import { latePaymentRecoveryFreelancers } from "./late-payment-recovery-freelancers";
 import { legallyRequiredFreelanceInvoiceInformation } from "./legally-required-freelance-invoice-information";
@@ -18,6 +19,7 @@ import { scopeCreepMitigationFreelancers } from "./scope-creep-mitigation-freela
 import { ultimateGuideFreelanceInvoicingGettingPaid } from "./ultimate-guide-freelance-invoicing-getting-paid";
 
 export const guideArticles: GuideArticle[] = [
+  howToDeleteCustomersInvoiceForFreelance,
   billClientRevisionRoundsOutsideScope,
   ultimateGuideFreelanceInvoicingGettingPaid,
   overdueInvoiceEmailTemplates,

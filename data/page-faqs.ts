@@ -1,4 +1,5 @@
 import { siteConfig } from "@/data/site";
+import { customerFaqs } from "@/data/customer-faqs";
 import type { TemplateFaqItem } from "@/data/template-pages/types";
 
 export const pageFaqs: Record<string, TemplateFaqItem[]> = {
@@ -97,6 +98,7 @@ export const pageFaqs: Record<string, TemplateFaqItem[]> = {
         "Tips are voluntary. Refunds are considered for duplicate or erroneous charges — see this page for details.",
     },
   ],
+  "/support": customerFaqs,
 };
 
 export function getPageFaqs(path: string): TemplateFaqItem[] {

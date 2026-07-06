@@ -187,6 +187,7 @@ export function getPaymentFieldsForCountry(
 
 export function emptyPaymentDetails(): PaymentDetails {
   return {
+    accountName: "",
     bankName: "",
     accountNumber: "",
     upiId: "",
@@ -203,6 +204,7 @@ export function sanitizePaymentForCountry(
   const allowed = new Set(
     getPaymentFieldsForCountry(countryCode).map((f) => f.key)
   );
+  allowed.add("accountName");
   const next = { ...emptyPaymentDetails(), ...payment };
   for (const key of Object.keys(next) as PaymentFieldKey[]) {
     if (!allowed.has(key)) {

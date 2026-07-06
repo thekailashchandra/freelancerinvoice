@@ -15,6 +15,7 @@ export type CompanyIdentitySource = Pick<
   | "logo"
   | "logoHeight"
   | "signature"
+  | "hideSignatureTextFallback"
 >;
 
 export type LogoVariant = "classic" | "modern" | "minimal" | "bold";
@@ -107,6 +108,25 @@ export function companyContactDetailsHtml(
   return lines.join("");
 }
 
+export function shouldShowSignatureFallback(
+  company: Pick<
+    CompanySettings,
+    "signature" | "companyName" | "hideSignatureTextFallback"
+  >
+): boolean {
+  return (
+    !company.signature &&
+    !company.hideSignatureTextFallback &&
+    Boolean(company.companyName?.trim())
+  );
+}
+
+export function getSignatureFallbackText(
+  company: Pick<CompanySettings, "companyName">
+): string {
+  return company.companyName?.split(" ")[0] || "Authorized";
+}
+
 export function companySignatureBlockHtml(
   company: CompanyIdentitySource,
   options: {
@@ -121,9 +141,14 @@ export function companySignatureBlockHtml(
   const align = options.align ?? "right";
   const marginTop = options.marginTop ?? 24;
   const marginBottom = options.marginBottom ?? 0;
+
+  if (!company.signature && !shouldShowSignatureFallback(company)) {
+    return "";
+  }
+
   const img = company.signature
     ? `<img src="${company.signature}" alt="" style="display:inline-block;max-height:${options.maxHeight}px;max-width:${options.maxWidth}px;object-fit:contain;border:0" />`
-    : `<span style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-style:italic;color:#111827">${escapeHtml(company.companyName?.split(" ")[0] || "Authorized")}</span>`;
+    : `<span style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-style:italic;color:#111827">${escapeHtml(getSignatureFallbackText(company))}</span>`;
 
   return `<div style="margin-top:${marginTop}px;margin-bottom:${marginBottom}px;text-align:${align}">${img}</div>`;
 }

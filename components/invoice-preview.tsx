@@ -16,6 +16,7 @@ import { UpiQrCode } from "@/components/upi-qr-code";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
 } from "@/lib/invoice-payment-display";
 import { buildInvoiceUpiLink } from "@/lib/upi";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
@@ -92,9 +93,13 @@ export const InvoicePreview = memo(function InvoicePreview({
     [invoice.services, invoice.taxDiscount, invoice.taxLabel]
   );
   const currency = invoice.currencyCode;
+  const paymentOptions = useMemo(
+    () => invoicePaymentDisplayOptions(invoice.company.companyName),
+    [invoice.company.companyName]
+  );
   const paymentLines = useMemo(
-    () => getInvoicePaymentInfo(invoice.payment),
-    [invoice.payment]
+    () => getInvoicePaymentInfo(invoice.payment, paymentOptions),
+    [invoice.payment, paymentOptions]
   );
   const upiLink = useMemo(
     () => buildInvoiceUpiLink(invoice, totals.total),
@@ -853,7 +858,7 @@ export const InvoicePreview = memo(function InvoicePreview({
           </div>
         )}
 
-        {hasInvoicePaymentInfo(invoice.payment) && (
+        {hasInvoicePaymentInfo(invoice.payment, paymentOptions) && (
           <div style={{ marginBottom: 20 }}>
             <p
               style={{

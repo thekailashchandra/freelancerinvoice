@@ -8,7 +8,7 @@ import type { CompanySettings } from "@/types/invoice";
 import type { ProfileRow } from "@/types/database";
 
 const PROFILE_SELECT_BASE =
-  "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_sort_code, logo_height, hide_invoice_branding, created_at, updated_at";
+  "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_account_name, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_sort_code, logo_height, hide_invoice_branding, hide_signature_text_fallback, created_at, updated_at";
 
 function profileSelectColumns(includeRazorpay: boolean): string {
   if (!includeRazorpay) return PROFILE_SELECT_BASE;
@@ -76,6 +76,9 @@ export async function updateProfile(
   if (settings.hideInvoiceBranding !== undefined) {
     row.hide_invoice_branding = settings.hideInvoiceBranding;
   }
+  if (settings.hideSignatureTextFallback !== undefined) {
+    row.hide_signature_text_fallback = settings.hideSignatureTextFallback;
+  }
 
   if (includeRazorpay) {
     if (settings.razorpayKeyId !== undefined) {
@@ -92,6 +95,7 @@ export async function updateProfile(
   if (settings.defaultPayment !== undefined) {
     const country = settings.countryCode ?? "OTHER";
     const payment = sanitizePaymentForCountry(settings.defaultPayment, country);
+    row.default_account_name = payment.accountName;
     row.default_bank_name = payment.bankName;
     row.default_account_number = payment.accountNumber;
     row.default_upi_id = payment.upiId;

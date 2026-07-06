@@ -94,6 +94,27 @@ export async function updateClient(
   return clientRowToSavedClient(data as ClientRow);
 }
 
+export async function deleteClient(id: string): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("clients")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/create-invoice");
+  revalidatePath("/customers");
+  revalidatePath(`/customers/${id}`);
+}
+
 export async function fetchClientSummaries(): Promise<ClientSummary[]> {
   const [clients, invoices] = await Promise.all([
     fetchClients(),

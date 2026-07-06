@@ -45,6 +45,7 @@ export const demoInvoice: Invoice = {
     discount: 200,
   },
   payment: {
+    accountName: "Pixel & Code Studio",
     bankName: "Chase Bank",
     accountNumber: "•••• •••• 4821",
     upiId: "",
@@ -68,6 +69,7 @@ export const demoInvoice: Invoice = {
     currencyCode: "USD",
     taxLabel: "Sales Tax",
     defaultPayment: {
+      accountName: "Pixel & Code Studio",
       bankName: "Chase Bank",
       accountNumber: "•••• •••• 4821",
       upiId: "",

@@ -28,6 +28,13 @@ export async function createClientClient(
   return parseJson<SavedClient>(res);
 }
 
+export async function deleteClientClient(id: string): Promise<void> {
+  const res = await fetch(`/api/clients/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  await parseJson<{ ok: boolean }>(res);
+}
+
 export async function uploadProfileAssetClient(
   formData: FormData
 ): Promise<AssetUploadResult> {

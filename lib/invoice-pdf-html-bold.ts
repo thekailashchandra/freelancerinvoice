@@ -16,7 +16,11 @@ import {
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
-import { hasInvoicePaymentInfo } from "@/lib/invoice-payment-display";
+import {
+  getInvoicePaymentInfo,
+  hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
+} from "@/lib/invoice-payment-display";
 import {
   companyContactDetailsHtml,
   companyLogoMarkHtml,
@@ -64,18 +68,14 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
       "Payment is due by the date shown on this invoice. Late payments may incur additional fees."
   );
 
-  const swiftLine =
-    invoice.payment.iban?.trim() ||
-    invoice.payment.routingNumber?.trim() ||
-    invoice.payment.sortCode?.trim() ||
-    "";
-
-  const paymentBlock = hasInvoicePaymentInfo(invoice.payment)
-    ? `${invoice.payment.bankName?.trim() ? `<p style="margin:0 0 8px;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">Bank Name:</span> ${escapeHtml(invoice.payment.bankName)}</p>` : ""}
-       <p style="margin:0 0 8px;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">Account Name:</span> ${escapeHtml(invoice.company.companyName || "—")}</p>
-       ${invoice.payment.accountNumber?.trim() ? `<p style="margin:0 0 8px;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">Account Number:</span> ${escapeHtml(invoice.payment.accountNumber)}</p>` : ""}
-       ${swiftLine ? `<p style="margin:0 0 8px;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">SWIFT Code:</span> ${escapeHtml(swiftLine)}</p>` : ""}
-       ${invoice.payment.upiId?.trim() ? `<p style="margin:0;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">UPI ID:</span> ${escapeHtml(invoice.payment.upiId)}</p>` : ""}`
+  const paymentOptions = invoicePaymentDisplayOptions(invoice.company.companyName);
+  const paymentBlock = hasInvoicePaymentInfo(invoice.payment, paymentOptions)
+    ? getInvoicePaymentInfo(invoice.payment, paymentOptions)
+        .map(
+          (line) =>
+            `<p style="margin:0 0 8px;font-family:${F};font-size:12px;color:${c.textMuted}"><span style="font-weight:600;color:${c.text}">${escapeHtml(line.label)}:</span> ${escapeHtml(line.value)}</p>`
+        )
+        .join("")
     : `<p style="margin:0;font-family:${F};font-size:12px;color:${c.textMuted}">Add payment details in the invoice form.</p>`;
 
   const serviceRows = invoice.services
