@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { InvoiceReceiptClient } from "./invoice-receipt-client";
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default async function ReceiptPage({
 
   return (
     <main className="min-h-screen bg-muted/30 px-4 py-10">
-      <InvoiceReceiptClient invoiceId={invoiceId} />
+      <Suspense fallback={null}>
+        <InvoiceReceiptClient invoiceId={invoiceId} />
+      </Suspense>
     </main>
   );
 }

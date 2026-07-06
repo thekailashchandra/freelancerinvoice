@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -12,105 +15,76 @@ import {
   Shield,
   Sparkles,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 import { guideArticles } from "@/data/guides";
 import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
+import { useTranslation } from "@/components/locale-provider";
 import { GeoKeyFacts } from "@/components/geo-key-facts";
 import { HeroInvoiceDemo } from "@/components/hero-invoice-demo";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { Button } from "@/components/ui/button";
+import { formatMessage } from "@/lib/i18n/format-message";
 
-const features = [
-  {
-    icon: FileText,
-    title: "Professional freelancer invoices",
-    description:
-      "Build polished invoices for freelance work with live preview, your logo, itemized line items, and one-click PDF export.",
-  },
-  {
-    icon: Cloud,
-    title: "Cloud-backed invoice storage",
-    description:
-      "Every invoice for freelancers is saved securely in the cloud. Access your billing history from any device.",
-  },
-  {
-    icon: History,
-    title: "Invoice history & filters",
-    description:
-      "Track paid, pending, and overdue freelance invoices with search and status filters built for busy contractors.",
-  },
-  {
-    icon: Shield,
-    title: "Secure, isolated accounts",
-    description:
-      "Row-level security keeps every freelancer account private. Your clients and invoices stay yours alone.",
-  },
-  {
-    icon: Download,
-    title: "PDF export",
-    description:
-      "Download a client-ready PDF invoice for freelancers in seconds, with no manual formatting in Word or Excel.",
-  },
-  {
-    icon: Globe,
-    title: "Multi-currency billing",
-    description:
-      "Invoice international clients with the right currency and country-specific payment fields on every bill.",
-  },
-];
+const FEATURE_IDS = ["f1", "f2", "f3", "f4", "f5", "f6"] as const;
+const FEATURE_ICONS: Record<(typeof FEATURE_IDS)[number], LucideIcon> = {
+  f1: FileText,
+  f2: Cloud,
+  f3: History,
+  f4: Shield,
+  f5: Download,
+  f6: Globe,
+};
 
-const steps = [
-  {
-    step: "1",
-    title: "Create your free account",
-    description:
-      "Sign up in under a minute. Add your freelance business name, logo, and default payment details once.",
-  },
-  {
-    step: "2",
-    title: "Build your invoice",
-    description:
-      "Enter client info, services, rates, and due dates. Watch your freelancer invoice update in real time.",
-  },
-  {
-    step: "3",
-    title: "Send & get paid",
-    description:
-      "Export a professional PDF, email it to your client, and track payment status from your dashboard.",
-  },
-];
-
-const benefits = [
-  "Free invoice generator designed specifically for freelancers",
-  "No spreadsheets, no broken Word templates, no design headaches",
-  "Branded PDF invoices that look professional to every client",
-  "Cloud sync so you never lose a freelance invoice again",
-  "Payment tracking for paid, pending, and overdue bills",
-  "Works for designers, developers, writers, consultants, and agencies",
-];
-
-const useCases = [
-  {
-    title: "Project-based freelance work",
-    body: "Bill clients for fixed-scope deliverables, from websites and branding packages to copywriting and consulting, with clear line items and totals.",
-  },
-  {
-    title: "Hourly & retainer billing",
-    body: "Invoice for freelance hours or monthly retainers with descriptive line items so clients understand exactly what they are paying for.",
-  },
-  {
-    title: "International clients",
-    body: "Send invoices for freelance services worldwide with configurable currency and payment details that match how you actually get paid.",
-  },
-];
+const STEP_IDS = ["s1", "s2", "s3"] as const;
+const BENEFIT_IDS = ["b1", "b2", "b3", "b4", "b5", "b6"] as const;
+const USE_CASE_IDS = ["u1", "u2", "u3"] as const;
 
 const featuredGuides = guideArticles.slice(0, 3);
 const allFaqItems = [...faqItems, ...geoAuthoritativeAnswers];
 
 export function LandingPage() {
+  const { t } = useTranslation();
+  const name = siteConfig.name;
+
+  const features = useMemo(
+    () =>
+      FEATURE_IDS.map((id) => ({
+        id,
+        icon: FEATURE_ICONS[id],
+        title: t(`landing.features.${id}.title`),
+        description: t(`landing.features.${id}.description`),
+      })),
+    [t]
+  );
+
+  const steps = useMemo(
+    () =>
+      STEP_IDS.map((id, index) => ({
+        step: String(index + 1),
+        title: t(`landing.steps.${id}.title`),
+        description: t(`landing.steps.${id}.description`),
+      })),
+    [t]
+  );
+
+  const benefits = useMemo(
+    () => BENEFIT_IDS.map((id) => t(`landing.benefits.${id}`)),
+    [t]
+  );
+
+  const useCases = useMemo(
+    () =>
+      USE_CASE_IDS.map((id) => ({
+        title: t(`landing.useCases.${id}.title`),
+        body: t(`landing.useCases.${id}.body`),
+      })),
+    [t]
+  );
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
@@ -128,42 +102,40 @@ export function LandingPage() {
           <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary">
               <Sparkles className="h-4 w-4" aria-hidden />
-              Built for freelancers & agencies
+              {t("landing.hero.badge")}
             </div>
             <h1
               id="hero-heading"
               className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl"
             >
-              Free{" "}
-              <span className="gradient-text">Invoice for Freelancers</span>
-              : Professional Billing in Minutes
+              {t("landing.hero.titlePrefix")}{" "}
+              <span className="gradient-text">{t("landing.hero.titleHighlight")}</span>
+              {t("landing.hero.titleSuffix")}
             </h1>
             <p className="seo-hero-summary mt-6 text-lg text-muted-foreground">
-              {siteConfig.name} is the fastest way to create an invoice for
-              freelance work. Generate beautiful PDF invoices, track payments,
-              and manage your entire freelance billing workflow in one
-              cloud-backed platform with no spreadsheets or messy templates.
+              {formatMessage(t("landing.hero.description"), { name })}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Button size="lg" asChild className="gap-2 px-8">
                 <Link href="/signup">
-                  Create your first freelancer invoice
+                  {t("landing.hero.ctaPrimary")}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/features">See features</Link>
+                <Link href="/features">{t("landing.hero.ctaFeatures")}</Link>
               </Button>
               <Button size="lg" variant="ghost" asChild>
-                <Link href="/login">Sign in</Link>
+                <Link href="/login">{t("landing.hero.ctaSignIn")}</Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              Free to start ·{" "}
+              {t("landing.hero.metaFree")} ·{" "}
               <Link href="/pricing" className="text-foreground hover:underline">
-                See pricing
+                {t("landing.hero.metaPricing")}
               </Link>
-              {" · "}PDF export · Cloud invoice history
+              {" · "}
+              {t("landing.hero.metaPdf")} · {t("landing.hero.metaCloud")}
             </p>
           </div>
 
@@ -178,16 +150,15 @@ export function LandingPage() {
 
         <section className="py-12" aria-labelledby="features-heading">
           <h2 id="features-heading" className="mb-3 text-center text-3xl font-bold">
-            Everything freelancers need to invoice clients
+            {t("landing.features.title")}
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
-            From your first freelance gig to a full client roster, our invoice
-            generator keeps billing simple, professional, and organized.
+            {t("landing.features.subtitle")}
           </p>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <article
-                key={f.title}
+                key={f.id}
                 className="glass rounded-2xl border border-border/50 p-6 transition-shadow hover:shadow-lg hover:shadow-primary/5"
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
@@ -208,23 +179,13 @@ export function LandingPage() {
               </div>
               <div>
                 <h2 id="about-heading" className="text-2xl font-bold md:text-3xl">
-                  What is an invoice for freelancers?
+                  {t("landing.about.title")}
                 </h2>
                 <p className="mt-4 text-muted-foreground leading-relaxed">
-                  An <strong>invoice for freelancers</strong> is the document you send
-                  after completing work to request payment from a client. Unlike
-                  employees who receive paychecks, freelancers and independent
-                  contractors must bill for each project, hour, or retainer period.
-                  A professional freelancer invoice lists who you are, who the client is,
-                  what you delivered, how much they owe, and when payment is due.
+                  {t("landing.about.p1")}
                 </p>
                 <p className="mt-4 text-muted-foreground leading-relaxed">
-                  Many freelancers still wrestle with Word templates, Google Sheets, or
-                  generic invoicing tools that were not built for solo operators.
-                  {` `}
-                  {siteConfig.name} removes that friction: you get a purpose-built
-                  <strong> invoice for freelance</strong> workflow with live preview,
-                  branded PDFs, and a searchable history of every bill you have ever sent.
+                  {formatMessage(t("landing.about.p2"), { name })}
                 </p>
               </div>
             </div>
@@ -233,11 +194,10 @@ export function LandingPage() {
 
         <section className="py-12" aria-labelledby="how-heading">
           <h2 id="how-heading" className="mb-3 text-center text-3xl font-bold">
-            How to create an invoice for freelance work
+            {t("landing.steps.title")}
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
-            Three steps from signup to a client-ready PDF. Most freelancers finish
-            their first invoice in under five minutes.
+            {t("landing.steps.subtitle")}
           </p>
           <ol className="grid gap-6 md:grid-cols-3">
             {steps.map((s) => (
@@ -259,17 +219,14 @@ export function LandingPage() {
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <h2 id="benefits-heading" className="text-3xl font-bold">
-                Why freelancers choose {siteConfig.name}
+                {formatMessage(t("landing.benefits.title"), { name })}
               </h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
-                Whether you are a designer, developer, writer, marketer, or consultant,
-                getting paid on time starts with a clear, professional invoice. Our
-                free <strong>freelancer invoice generator</strong> helps you look
-                credible, stay organized, and spend less time on admin.
+                {t("landing.benefits.intro")}
               </p>
               <Button className="mt-6 gap-2" asChild>
                 <Link href="/signup">
-                  Start invoicing for free
+                  {t("landing.benefits.cta")}
                   <Zap className="h-4 w-4" />
                 </Link>
               </Button>
@@ -290,7 +247,7 @@ export function LandingPage() {
 
         <section className="py-12" aria-labelledby="usecases-heading">
           <h2 id="usecases-heading" className="mb-10 text-center text-3xl font-bold">
-            Built for every type of freelance billing
+            {t("landing.useCases.title")}
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {useCases.map((uc) => (
@@ -311,16 +268,15 @@ export function LandingPage() {
           <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <h2 id="guide-heading" className="text-3xl font-bold">
-                Freelancer billing guides
+                {t("landing.guideSection.title")}
               </h2>
               <p className="mt-3 max-w-2xl text-muted-foreground">
-                In-depth articles on international invoicing, freelance taxes,
-                payment terms, and invoice best practices.
+                {t("landing.guideSection.subtitle")}
               </p>
             </div>
             <Button variant="outline" asChild>
               <Link href="/guide">
-                View all guides
+                {t("guides.viewAll")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -347,7 +303,7 @@ export function LandingPage() {
                 </p>
                 <p className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground">
                   <Clock className="h-3.5 w-3.5" aria-hidden />
-                  {article.readingTimeMinutes} min read
+                  {article.readingTimeMinutes} {t("guides.minRead")}
                 </p>
               </article>
             ))}
@@ -356,11 +312,10 @@ export function LandingPage() {
 
         <section className="py-12" aria-labelledby="faq-heading">
           <h2 id="faq-heading" className="mb-3 text-center text-3xl font-bold">
-            Frequently asked questions about freelancer invoices
+            {t("landing.faq.title")}
           </h2>
           <p className="mx-auto mb-10 max-w-2xl text-center text-muted-foreground">
-            Answers to common questions about creating an invoice for freelancers,
-            PDF export, security, and getting paid faster.
+            {t("landing.faq.subtitle")}
           </p>
           <div className="mx-auto max-w-3xl space-y-4">
             {allFaqItems.map((item) => (
@@ -382,25 +337,24 @@ export function LandingPage() {
         <section className="py-12 text-center" aria-labelledby="cta-heading">
           <div className="glass rounded-2xl border border-primary/20 bg-primary/5 px-6 py-12 md:px-12">
             <h2 id="cta-heading" className="text-3xl font-bold">
-              Ready to create your invoice for freelancers?
+              {t("landing.cta.title")}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Join thousands of freelancers who bill professionally with{" "}
-              {siteConfig.name}.{" "}
+              {formatMessage(t("landing.cta.descriptionBefore"), { name })}{" "}
               <Link href="/pricing" className="text-foreground hover:underline">
-                Free forever
+                {t("landing.cta.freeLink")}
               </Link>
-              , instant PDF export, cloud-backed invoice history.
+              {t("landing.cta.descriptionAfter")}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button size="lg" className="gap-2 px-8" asChild>
                 <Link href="/signup">
-                  Get started, it&apos;s free
+                  {t("landing.cta.primary")}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/guide">Read freelancer guides</Link>
+                <Link href="/guide">{t("landing.cta.secondary")}</Link>
               </Button>
             </div>
           </div>

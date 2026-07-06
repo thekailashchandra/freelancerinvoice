@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateTotals } from "@/lib/calculations";
 import { isRazorpayOwnerUserId } from "@/lib/razorpay-access";
+import { isFreelancerInvoicePaymentEnabled, isRazorpayEnabled } from "@/lib/razorpay-feature";
 import {
   amountToPaise,
   createRazorpayClient,
@@ -12,6 +13,10 @@ import {
   profileToCompanySettings,
 } from "@/lib/invoice-mapper";
 import type { InvoiceWithItems, ProfileRow } from "@/types/database";
+
+function invoicePaymentsDisabled() {
+  return !isFreelancerInvoicePaymentEnabled() || !isRazorpayEnabled();
+}
 
 async function loadPayableInvoice(invoiceId: string) {
   const admin = createAdminClient();
@@ -37,6 +42,13 @@ async function loadPayableInvoice(invoiceId: string) {
 }
 
 export async function GET(request: NextRequest) {
+  if (invoicePaymentsDisabled()) {
+    return NextResponse.json(
+      { error: "Invoice payments are not available.", code: "INVOICE_PAYMENTS_DISABLED" },
+      { status: 403 }
+    );
+  }
+
   const invoiceId = request.nextUrl.searchParams.get("invoiceId");
   if (!invoiceId) {
     return NextResponse.json({ error: "invoiceId is required" }, { status: 400 });
@@ -102,6 +114,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (invoicePaymentsDisabled()) {
+    return NextResponse.json(
+      { error: "Invoice payments are not available.", code: "INVOICE_PAYMENTS_DISABLED" },
+      { status: 403 }
+    );
+  }
+
   let body: { invoiceId?: string; customerEmail?: string; customerName?: string };
   try {
     body = await request.json();

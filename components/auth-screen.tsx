@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LocaleCountrySwitcher } from "@/components/locale-country-switcher";
 import { SiteLogo } from "@/components/site-logo";
 import { CalmLoader } from "@/components/calm-loader";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,9 @@ export function AuthPageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="auth-page relative flex min-h-screen flex-col items-center justify-center px-4 py-10 sm:py-14">
       <AuthPageBackground />
+      <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
+        <LocaleCountrySwitcher />
+      </div>
       <div className="relative z-10 w-full max-w-[400px] space-y-10">{children}</div>
     </div>
   );

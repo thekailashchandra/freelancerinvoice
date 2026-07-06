@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { useTranslation } from "@/components/locale-provider";
+import { publicNavKeys } from "@/lib/i18n/public-nav-keys";
 import { mobileNavLinks } from "@/data/public-navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +14,8 @@ import {
 } from "@/components/ui/sheet";
 
 export function PublicMobileMenu() {
+  const { t } = useTranslation();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -19,13 +23,13 @@ export function PublicMobileMenu() {
           variant="ghost"
           size="icon"
           className="sm:hidden"
-          aria-label="Open menu"
+          aria-label={t("nav.openMenu")}
         >
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-72 overflow-y-auto">
-        <h2 className="text-lg font-semibold">Menu</h2>
+        <h2 className="text-lg font-semibold">{t("nav.menu")}</h2>
         <nav className="mt-4 flex flex-col gap-1" aria-label="Mobile navigation">
           {mobileNavLinks.map((link) => (
             <SheetClose key={link.href} asChild>
@@ -33,7 +37,7 @@ export function PublicMobileMenu() {
                 href={link.href}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted"
               >
-                {link.label}
+                {t(publicNavKeys[link.href] ?? link.label)}
               </Link>
             </SheetClose>
           ))}
@@ -42,7 +46,7 @@ export function PublicMobileMenu() {
               href="/login"
               className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted"
             >
-              Sign in
+              {t("nav.signIn")}
             </Link>
           </SheetClose>
         </nav>

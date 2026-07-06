@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Copy, Download, Loader2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,8 @@ export function InvoiceReceiptClient({
   invoiceId,
   compact = false,
 }: InvoiceReceiptClientProps) {
+  const searchParams = useSearchParams();
+  const receiptToken = searchParams.get("token");
   const [loading, setLoading] = useState(true);
   const [receipt, setReceipt] = useState<InvoiceReceiptData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,10 @@ export function InvoiceReceiptClient({
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/receipt/${encodeURIComponent(invoiceId)}`);
+        const query = receiptToken
+          ? `?token=${encodeURIComponent(receiptToken)}`
+          : "";
+        const res = await fetch(`/api/receipt/${encodeURIComponent(invoiceId)}${query}`);
         const data = await res.json();
         if (!res.ok) {
           if (!cancelled) setError(data.error ?? "Receipt not found");
@@ -49,9 +55,11 @@ export function InvoiceReceiptClient({
     return () => {
       cancelled = true;
     };
-  }, [invoiceId]);
+  }, [invoiceId, receiptToken]);
 
-  const receiptUrl = invoiceReceiptUrl(invoiceId);
+  const receiptUrl = invoiceReceiptUrl(invoiceId, {
+    token: receiptToken ?? undefined,
+  });
 
   const handleCopyLink = useCallback(async () => {
     try {

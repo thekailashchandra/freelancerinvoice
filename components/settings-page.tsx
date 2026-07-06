@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/use-profile";
+import { useTranslation } from "@/components/locale-provider";
 import { uploadProfileAssetClient } from "@/lib/api/app-client";
 import { AssetFileField } from "@/components/asset-file-field";
 import { CountrySelect } from "@/components/country-select";
@@ -31,6 +32,7 @@ import type { CompanySettings } from "@/types/invoice";
 export default function SettingsPage() {
   const { settings, loading, update } = useProfile();
   const { isOwner: razorpayOwner } = useRazorpayAccess();
+  const { t } = useTranslation();
   const [form, setForm] = useState<CompanySettings>(settings);
   const [defaultPayment, setDefaultPayment] = useState(emptyPaymentDetails());
   const [saving, setSaving] = useState(false);
@@ -79,11 +81,11 @@ export default function SettingsPage() {
       };
       await update(payload);
       setForm((prev) => ({ ...prev, razorpayKeySecret: "" }));
-      toast.success("Settings saved", {
-        description: "Default company info updated for new invoices.",
+      toast.success(t("settings.saved"), {
+        description: t("settings.savedDescription"),
       });
     } catch (err) {
-      toast.error("Save failed", {
+      toast.error(t("settings.saveFailed"), {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
@@ -104,10 +106,10 @@ export default function SettingsPage() {
     <PageTransition className="mx-auto max-w-2xl space-y-5">
       <div>
         <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-          Settings
+          {t("settings.title")}
         </h2>
         <p className="mt-0.5 text-sm text-muted-foreground">
-          Default details for new invoices
+          {t("settings.subtitle")}
         </p>
       </div>
 
@@ -115,7 +117,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Building2 className="h-4 w-4 text-primary" />
-              Profile & billing defaults
+              {t("settings.profileSection")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -154,7 +156,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label>Country / region</Label>
+                <Label>{t("settings.country")}</Label>
                 <CountrySelect
                   value={form.countryCode}
                   onValueChange={(v) => handleCountryChange(v as CountryCode)}
@@ -177,7 +179,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Default currency</Label>
+                <Label>{t("settings.currency")}</Label>
                 <CurrencySelect
                   value={form.currencyCode}
                   onValueChange={(v) =>
@@ -186,7 +188,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="taxLabel">Tax label</Label>
+                <Label htmlFor="taxLabel">{t("settings.taxLabel")}</Label>
                 <Input
                   id="taxLabel"
                   value={form.taxLabel}
@@ -196,9 +198,9 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-3 sm:col-span-2">
-                <Label className="text-base">Default payment details</Label>
+                <Label className="text-base">{t("settings.paymentDetails")}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Shown on new invoices. Fields depend on your country above.
+                  {t("settings.paymentHint")}
                 </p>
                 <PaymentFieldsForm
                   countryCode={form.countryCode}
@@ -225,11 +227,10 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-4">
                   <div className="space-y-1">
                     <Label htmlFor="signature-text-fallback">
-                      Show name when no signature image
+                      {t("settings.signatureFallback")}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Displays your first name in italic at the bottom of
-                      invoices when you have not uploaded a signature image.
+                      {t("settings.signatureFallbackHint")}
                     </p>
                   </div>
                   <Switch
@@ -247,7 +248,7 @@ export default function SettingsPage() {
             </div>
             <Button onClick={handleSave} disabled={saving} className="gap-2">
               <Save className="h-4 w-4" />
-              {saving ? "Saving…" : "Save Settings"}
+              {saving ? t("settings.saving") : t("settings.save")}
             </Button>
           </CardContent>
         </Card>

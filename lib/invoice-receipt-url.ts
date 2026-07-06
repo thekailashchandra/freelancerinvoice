@@ -1,8 +1,15 @@
 import { siteConfig } from "@/data/site";
 
-export function invoiceReceiptUrl(invoiceId: string, origin?: string): string {
+export function invoiceReceiptUrl(
+  invoiceId: string,
+  options?: { origin?: string; token?: string }
+): string {
   const base =
-    origin ??
+    options?.origin?.replace(/\/$/, "") ??
     (typeof window !== "undefined" ? window.location.origin : siteConfig.url);
-  return `${base}/receipt/${encodeURIComponent(invoiceId)}`;
+  const path = `${base}/receipt/${encodeURIComponent(invoiceId)}`;
+  if (!options?.token) return path;
+  const url = new URL(path);
+  url.searchParams.set("token", options.token);
+  return url.toString();
 }

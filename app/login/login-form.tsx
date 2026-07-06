@@ -6,10 +6,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  markEnteringApp,
-  signInClient,
-} from "@/lib/api/auth-client";
+import { markEnteringApp, signInClient } from "@/lib/api/auth-client";
+import { safeAppRedirect } from "@/lib/safe-redirect";
 import type { SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { brand } from "@/data/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,7 +72,7 @@ export function LoginForm({
   googleClientId,
 }: LoginFormProps) {
   const searchParams = useSearchParams();
-  const redirectParam = searchParams.get("redirect") ?? "/dashboard";
+  const redirectParam = safeAppRedirect(searchParams.get("redirect"), "/dashboard");
   const authError = searchParams.get("error");
 
   const [error, setError] = useState<string | null>(null);
@@ -100,10 +98,7 @@ export function LoginForm({
         return;
       }
 
-      const next =
-        redirectParam.startsWith("/") && !redirectParam.startsWith("//")
-          ? redirectParam
-          : result.redirect;
+      const next = safeAppRedirect(redirectParam, result.redirect);
 
       markEnteringApp();
       window.location.href = next;

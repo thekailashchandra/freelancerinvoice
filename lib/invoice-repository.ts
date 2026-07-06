@@ -6,6 +6,7 @@ import {
   profileToCompanySettings,
 } from "@/lib/invoice-mapper";
 import { emptyPaymentDetails } from "@/lib/country";
+import { resolveProfileAssetUrls } from "@/lib/supabase/asset-url";
 import { createClient } from "@/lib/supabase/server";
 import type { CompanySettings, Invoice } from "@/types/invoice";
 import type { InvoiceWithItems, ProfileRow } from "@/types/database";
@@ -35,9 +36,14 @@ async function getCompanyForUser(
     .eq("id", userId)
     .single();
 
-  return profile
-    ? profileToCompanySettings(profile as ProfileRow)
-    : emptyCompanySettings();
+  if (!profile) return emptyCompanySettings();
+
+  const withAssetUrls = await resolveProfileAssetUrls(
+    profile as ProfileRow,
+    supabase
+  );
+
+  return profileToCompanySettings(withAssetUrls);
 }
 
 export async function saveInvoice(invoice: Invoice): Promise<{ id: string }> {

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInvoices } from "@/hooks/use-invoices";
 import { useProfile } from "@/hooks/use-profile";
+import { useTranslation } from "@/components/locale-provider";
 import { updateInvoiceStatusClient } from "@/lib/api/invoices-client";
 import { computeDashboardStats } from "@/lib/dashboard-stats";
 import { getCurrencySymbol } from "@/lib/currency";
@@ -20,6 +21,7 @@ import { getCurrencySymbol } from "@/lib/currency";
 export default function DashboardPage() {
   const { invoices, loading, remove, refresh } = useInvoices();
   const { settings } = useProfile();
+  const { t } = useTranslation();
   const [busyInvoiceId, setBusyInvoiceId] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<"paid" | "void" | "delete" | null>(
     null
@@ -38,9 +40,9 @@ export default function DashboardPage() {
     setBusyAction("delete");
     try {
       await remove(id);
-      toast.success("Invoice deleted");
+      toast.success(t("dashboard.invoiceDeleted"));
     } catch (err) {
-      toast.error("Delete failed", {
+      toast.error(t("dashboard.deleteFailed"), {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
@@ -55,9 +57,9 @@ export default function DashboardPage() {
     try {
       await updateInvoiceStatusClient(id, "paid");
       await refresh();
-      toast.success("Invoice marked as paid");
+      toast.success(t("dashboard.markedPaid"));
     } catch (err) {
-      toast.error("Could not mark as paid", {
+      toast.error(t("dashboard.markPaidFailed"), {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
@@ -72,9 +74,9 @@ export default function DashboardPage() {
     try {
       await updateInvoiceStatusClient(id, "void");
       await refresh();
-      toast.success("Invoice voided");
+      toast.success(t("dashboard.voided"));
     } catch (err) {
-      toast.error("Could not void invoice", {
+      toast.error(t("dashboard.voidFailed"), {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
@@ -88,15 +90,15 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
-            Dashboard
+            {t("dashboard.title")}
           </h2>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Overview of your invoices
+            {t("dashboard.subtitle")}
           </p>
         </div>
         <Button asChild className="w-full shrink-0 sm:w-auto">
           <NavLink href="/create-invoice" showSpinner={false}>
-            New invoice
+            {t("dashboard.newInvoice")}
             <ArrowRight className="h-4 w-4" />
           </NavLink>
         </Button>
@@ -111,20 +113,20 @@ export default function DashboardPage() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <AnalyticsCard
-            title="Total Invoices"
+            title={t("dashboard.totalInvoices")}
             value={stats.totalInvoices}
             icon={FileText}
             gradient="from-primary to-primary/80"
           />
           <AnalyticsCard
-            title="Paid"
+            title={t("dashboard.paid")}
             value={stats.paidInvoices}
             icon={Receipt}
             gradient="from-foreground to-foreground/80"
             iconClassName="text-background"
           />
           <AnalyticsCard
-            title="Pending"
+            title={t("dashboard.pending")}
             value={stats.pendingAmount}
             icon={Wallet}
             prefix={symbol}
@@ -132,7 +134,7 @@ export default function DashboardPage() {
             gradient="from-primary/90 to-primary/70"
           />
           <AnalyticsCard
-            title="Revenue"
+            title={t("dashboard.revenue")}
             value={stats.totalRevenue}
             icon={TrendingUp}
             prefix={symbol}
@@ -144,10 +146,12 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <CardTitle className="text-base font-semibold">Recent</CardTitle>
+          <CardTitle className="text-base font-semibold">
+            {t("dashboard.recentInvoices")}
+          </CardTitle>
           <Button variant="ghost" size="sm" asChild className="h-8 text-muted-foreground">
             <NavLink href="/invoice-history" showSpinner={false}>
-              View all
+              {t("dashboard.viewAll")}
             </NavLink>
           </Button>
         </CardHeader>
@@ -161,9 +165,9 @@ export default function DashboardPage() {
           ) : recent.length === 0 ? (
             <EmptyState
               icon={FileText}
-              title="No invoices yet"
-              description="Create your first invoice to get started."
-              actionLabel="Create invoice"
+              title={t("dashboard.emptyTitle")}
+              description={t("dashboard.emptyDescription")}
+              actionLabel={t("nav.createInvoice")}
               actionHref="/create-invoice"
             />
           ) : (

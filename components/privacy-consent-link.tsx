@@ -1,47 +1,28 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/components/locale-provider";
+import { openCookieConsentPreferences } from "@/lib/cookie-consent";
 
 type PrivacyConsentLinkProps = {
   className?: string;
   label?: string;
 };
 
-/** Re-opens Google's CMP so users can change consent (IAB TCF requirement). */
-export function PrivacyConsentLink({
-  className,
-  label = "Cookie settings",
-}: PrivacyConsentLinkProps) {
-  const openConsent = () => {
-    const googlefc = (
-      window as Window & {
-        googlefc?: {
-          callbackQueue?: Array<Record<string, () => void>>;
-          showRevocationMessage?: () => void;
-        };
-      }
-    ).googlefc;
-
-    if (!googlefc) return;
-
-    googlefc.callbackQueue = googlefc.callbackQueue ?? [];
-    googlefc.callbackQueue.push({
-      INITIAL_CONSENT_DATA_READY: () => {
-        googlefc.showRevocationMessage?.();
-      },
-    });
-  };
+/** Re-opens the site cookie consent banner so users can change their choices. */
+export function PrivacyConsentLink({ className, label }: PrivacyConsentLinkProps) {
+  const { t } = useTranslation();
 
   return (
     <button
       type="button"
-      onClick={openConsent}
+      onClick={openCookieConsentPreferences}
       className={cn(
         "cursor-pointer bg-transparent p-0 text-inherit hover:underline",
         className
       )}
     >
-      {label}
+      {label ?? t("cookie.cookieSettings")}
     </button>
   );
 }

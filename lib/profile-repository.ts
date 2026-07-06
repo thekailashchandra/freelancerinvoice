@@ -3,6 +3,7 @@ import { profileToCompanySettings } from "@/lib/invoice-mapper";
 import { sanitizePaymentForCountry } from "@/lib/country";
 import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 import { isRazorpayOwnerEmail } from "@/lib/razorpay-access";
+import { resolveProfileAssetUrls } from "@/lib/supabase/asset-url";
 import { createClient } from "@/lib/supabase/server";
 import type { CompanySettings } from "@/types/invoice";
 import type { ProfileRow } from "@/types/database";
@@ -34,7 +35,12 @@ export async function fetchProfile(): Promise<CompanySettings | null> {
 
   if (error || !data) return null;
 
-  return profileToCompanySettings(data as unknown as ProfileRow);
+  const withAssetUrls = await resolveProfileAssetUrls(
+    data as unknown as ProfileRow,
+    supabase
+  );
+
+  return profileToCompanySettings(withAssetUrls);
 }
 
 export async function updateProfile(

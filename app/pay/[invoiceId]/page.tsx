@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isRazorpayEnabled } from "@/lib/razorpay-feature";
+import { isFreelancerInvoicePaymentEnabled, isRazorpayEnabled } from "@/lib/razorpay-feature";
 import { InvoicePayClient } from "./invoice-pay-client";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default async function PayInvoicePage({
 }: {
   params: Promise<{ invoiceId: string }>;
 }) {
-  if (!isRazorpayEnabled()) notFound();
+  if (!isRazorpayEnabled() || !isFreelancerInvoicePaymentEnabled()) notFound();
 
   const { invoiceId } = await params;
   return (

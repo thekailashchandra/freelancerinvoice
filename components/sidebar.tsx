@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { navItems } from "@/data/navigation";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
+import { useTranslation } from "@/components/locale-provider";
 import { NavLink } from "@/components/nav-link";
 import { SiteLogo } from "@/components/site-logo";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const mounted = useMounted();
+  const { t } = useTranslation();
 
   return (
     <aside className="flex h-full flex-col">
@@ -55,7 +57,7 @@ export function Sidebar({
               "h-7 w-7 shrink-0",
               collapsed ? "order-1" : "order-2"
             )}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? t("sidebar.expand") : t("sidebar.collapse")}
           >
             {collapsed ? (
               <ChevronRight className="h-3.5 w-3.5" />
@@ -84,7 +86,7 @@ export function Sidebar({
                   key={item.href}
                   href={item.href}
                   onClick={onNavigate}
-                  title={collapsed ? item.title : undefined}
+                  title={collapsed ? t(item.titleKey) : undefined}
                   className={cn(
                     "flex items-center rounded-lg text-sm font-medium transition-all duration-200",
                     collapsed
@@ -96,7 +98,7 @@ export function Sidebar({
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && <span>{item.title}</span>}
+                  {!collapsed && <span>{t(item.titleKey)}</span>}
                 </NavLink>
               );
             })
@@ -106,7 +108,7 @@ export function Sidebar({
       {!collapsed && (
         <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 px-1 pt-4 text-xs text-muted-foreground">
           <NavLink href="/privacy" className="hover:text-foreground" showSpinner={false}>
-            Privacy
+            {t("sidebar.privacy")}
           </NavLink>
           <PrivacyConsentLink className="hover:text-foreground" />
         </div>

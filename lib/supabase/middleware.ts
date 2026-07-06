@@ -108,6 +108,19 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   } catch (err) {
     console.error("middleware session update failed:", err);
+
+    const isProtected = PROTECTED_PREFIXES.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`)
+    );
+
+    if (isProtected) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/login";
+      redirectUrl.searchParams.set("redirect", pathname);
+      redirectUrl.searchParams.set("error", "session");
+      return NextResponse.redirect(redirectUrl);
+    }
+
     return NextResponse.next({ request });
   }
 }

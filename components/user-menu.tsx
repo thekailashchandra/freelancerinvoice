@@ -6,6 +6,7 @@ import { LogOut, MessageSquarePlus, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { signOutClient } from "@/lib/api/app-client";
 import { useProfile } from "@/hooks/use-profile";
+import { useTranslation } from "@/components/locale-provider";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,13 +36,14 @@ function getInitials(companyName: string, email: string): string {
 export function UserMenu() {
   const router = useRouter();
   const { settings, loading } = useProfile();
+  const { t } = useTranslation();
 
   const initials = getInitials(
     settings.companyName,
     settings.companyEmail
   );
   const displayName =
-    settings.companyName.trim() || settings.companyEmail || "Account";
+    settings.companyName.trim() || settings.companyEmail || t("userMenu.account");
 
   const handleSignOut = async () => {
     try {
@@ -81,13 +83,13 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href="/settings" className="cursor-pointer">
             <Settings />
-            Settings
+            {t("userMenu.settings")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/support" className="cursor-pointer">
             <MessageSquarePlus />
-            Raise request
+            {t("userMenu.support")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -95,12 +97,12 @@ export function UserMenu() {
           className="cursor-pointer text-destructive focus:text-destructive"
           onClick={() => {
             void handleSignOut().catch(() => {
-              toast.error("Sign out failed");
+              toast.error(t("userMenu.signOutFailed"));
             });
           }}
         >
           <LogOut />
-          Sign out
+          {t("userMenu.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

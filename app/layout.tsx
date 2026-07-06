@@ -5,6 +5,8 @@ import { geoConsensus, geoEntity, geoEntityStatement, geoTopics } from "@/data/g
 import { buildKeywordsString, homeSeo } from "@/data/seo";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { GoogleAnalyticsPageView } from "@/components/google-analytics-page-view";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
+import { LocaleProvider } from "@/components/locale-provider";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
 import { DevEarlyGuards } from "@/components/dev-early-guards";
 import { readDevBuildId } from "@/lib/dev-build";
@@ -120,12 +122,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <Suspense fallback={null}>
-          <GoogleAnalyticsPageView />
-        </Suspense>
-        <GooglePrivacyScripts />
-        {children}
-        <Toaster richColors position="top-center" closeButton />
+        <LocaleProvider>
+          <Suspense fallback={null}>
+            <GoogleAnalyticsPageView />
+          </Suspense>
+          <GooglePrivacyScripts />
+          <CookieConsentBanner />
+          {children}
+          <Toaster richColors position="top-center" closeButton />
+        </LocaleProvider>
       </body>
     </html>
   );

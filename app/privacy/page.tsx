@@ -49,15 +49,28 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold">Advertising & cookies</h2>
+          <h2 className="text-lg font-semibold">Advertising &amp; cookies</h2>
           <p className="mt-2">
-            We use Google AdSense to display ads. In the European Economic Area,
-            the United Kingdom, and Switzerland, we use Google&apos;s certified
-            consent management platform to ask for your consent before personalized
-            advertising cookies are used. You can change your choices at any time.
+            {siteConfig.name} is free to use. To help cover hosting and ongoing
+            development, we may show ads through Google AdSense when you accept
+            advertising cookies. We also use Google Analytics to measure anonymous
+            traffic and improve the product.
           </p>
-          <p className="mt-2">
-            <PrivacyConsentLink className="text-primary" />
+          <p className="mt-3">
+            <strong>Essential cookies</strong> are always active for sign-in,
+            security, and preferences such as your language.{" "}
+            <strong>Analytics cookies</strong> help us understand which pages and
+            features freelancers use. <strong>Advertising cookies</strong> are
+            optional and only enabled if you choose{" "}
+            <strong>Accept all cookies</strong>.
+          </p>
+          <p className="mt-3">
+            We do not use cookies to access the invoices, clients, or payment
+            details stored in your account. When you first visit, a consent banner
+            lets you choose <strong>Essential &amp; analytics</strong> (no
+            personalised ads) or <strong>Accept all cookies</strong>. You can
+            change your choice anytime via{" "}
+            <PrivacyConsentLink className="text-primary" /> in the footer.
           </p>
         </section>
 

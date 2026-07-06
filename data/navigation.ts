@@ -10,27 +10,27 @@ import { siteConfig } from "@/data/site";
 
 export const navItems = [
   {
-    title: "Dashboard",
+    titleKey: "nav.dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Create Invoice",
+    titleKey: "nav.createInvoice",
     href: "/create-invoice",
     icon: PlusCircle,
   },
   {
-    title: "Invoice History",
+    titleKey: "nav.invoiceHistory",
     href: "/invoice-history",
     icon: History,
   },
   {
-    title: "Customers",
+    titleKey: "nav.customers",
     href: "/customers",
     icon: Users,
   },
   {
-    title: "Settings",
+    titleKey: "nav.settings",
     href: "/settings",
     icon: Settings,
   },

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { securityHeaders } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
   // Local dev uses `.next-dev` to avoid stale locked `.next` on Windows; Vercel/production uses `.next`
@@ -15,6 +16,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/sign/**",
       },
     ],
     dangerouslyAllowSVG: true,
@@ -42,7 +48,15 @@ const nextConfig: NextConfig = {
         ? "public, max-age=31536000, immutable"
         : "no-store, no-cache, must-revalidate";
 
+    const globalSecurityHeaders = Object.entries(securityHeaders()).map(
+      ([key, value]) => ({ key, value })
+    );
+
     return [
+      {
+        source: "/:path*",
+        headers: globalSecurityHeaders,
+      },
       {
         source: "/brand/:path*",
         headers: [

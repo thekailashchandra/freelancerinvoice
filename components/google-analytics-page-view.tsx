@@ -2,26 +2,59 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { analyticsConfig } from "@/data/analytics";
+import {
+  COOKIE_CONSENT_SET_EVENT,
+} from "@/lib/cookie-consent";
+import {
+  hasAnalyticsConsent,
+  sendGtagPageViewFromRouter,
+} from "@/lib/gtag-analytics";
 
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
+function trackWhenGtagReady(
+  track: () => void,
+  maxAttempts = 50,
+  intervalMs = 100
+): () => void {
+  if (typeof window.gtag === "function") {
+    track();
+    return () => {};
   }
+
+  let attempts = 0;
+  const interval = window.setInterval(() => {
+    attempts += 1;
+    if (typeof window.gtag === "function") {
+      track();
+      window.clearInterval(interval);
+      return;
+    }
+    if (attempts >= maxAttempts) window.clearInterval(interval);
+  }, intervalMs);
+
+  return () => window.clearInterval(interval);
 }
 
-/** Sends GA4 page_view on App Router client navigations. */
+/** Sends GA4 page_view on load (after consent) and App Router client navigations. */
 export function GoogleAnalyticsPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!pathname || typeof window.gtag !== "function") return;
+    const onConsentSaved = () => {
+      if (!hasAnalyticsConsent()) return;
+      const query = searchParams.toString();
+      trackWhenGtagReady(() => sendGtagPageViewFromRouter(pathname, query));
+    };
+
+    window.addEventListener(COOKIE_CONSENT_SET_EVENT, onConsentSaved);
+    return () => window.removeEventListener(COOKIE_CONSENT_SET_EVENT, onConsentSaved);
+  }, [pathname, searchParams]);
+
+  useEffect(() => {
+    if (!pathname || !hasAnalyticsConsent()) return;
+
     const query = searchParams.toString();
-    const pagePath = query ? `${pathname}?${query}` : pathname;
-    window.gtag("config", analyticsConfig.measurementId, {
-      page_path: pagePath,
-    });
+    return trackWhenGtagReady(() => sendGtagPageViewFromRouter(pathname, query));
   }, [pathname, searchParams]);
 
   return null;

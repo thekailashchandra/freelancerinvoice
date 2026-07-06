@@ -2,37 +2,11 @@
 
 import { useLayoutEffect } from "react";
 import { adsenseConfig } from "@/data/adsense";
-
-const fundingChoicesPresentScript = `
-  (function () {
-    function signalGooglefcPresent() {
-      if (!window.frames['googlefcPresent']) {
-        if (document.body) {
-          const iframe = document.createElement('iframe');
-          iframe.style.cssText =
-            'width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;display:none';
-          iframe.name = 'googlefcPresent';
-          document.body.appendChild(iframe);
-        } else {
-          setTimeout(signalGooglefcPresent, 0);
-        }
-      }
-    }
-    signalGooglefcPresent();
-  })();
-`.trim();
-
-function injectInlineScript(
-  id: string,
-  code: string,
-  parent: HTMLElement
-): void {
-  if (document.getElementById(id)) return;
-  const script = document.createElement("script");
-  script.id = id;
-  script.textContent = code;
-  parent.appendChild(script);
-}
+import {
+  COOKIE_CONSENT_SET_EVENT,
+  readConsentCookie,
+  type CookieConsentChoice,
+} from "@/lib/cookie-consent";
 
 function injectExternalScript(
   id: string,
@@ -49,24 +23,38 @@ function injectExternalScript(
   parent.appendChild(script);
 }
 
+function shouldLoadAds(choice: CookieConsentChoice | null): boolean {
+  return choice === "all";
+}
+
+function loadAdSenseScripts(): void {
+  injectExternalScript(
+    "google-adsense",
+    adsenseConfig.adsScriptUrl,
+    document.head,
+    { crossOrigin: "anonymous" }
+  );
+}
+
 /**
- * Google Privacy & Messaging (Funding Choices CMP) and AdSense.
- * Analytics is loaded separately via GoogleAnalytics in the root layout head.
+ * Loads Google AdSense after the user accepts advertising cookies.
+ * Consent is managed by CookieConsentBanner (no duplicate Funding Choices banner).
  */
 export function GooglePrivacyScripts() {
   useLayoutEffect(() => {
-    injectExternalScript(
-      "google-funding-choices",
-      adsenseConfig.fundingChoicesUrl,
-      document.head
-    );
-    injectExternalScript(
-      "google-adsense",
-      adsenseConfig.adsScriptUrl,
-      document.head,
-      { crossOrigin: "anonymous" }
-    );
-    injectInlineScript("google-fc-present", fundingChoicesPresentScript, document.body);
+    if (shouldLoadAds(readConsentCookie())) {
+      loadAdSenseScripts();
+    }
+
+    const handleConsent = (event: Event) => {
+      const choice = (event as CustomEvent<CookieConsentChoice>).detail;
+      if (shouldLoadAds(choice)) {
+        loadAdSenseScripts();
+      }
+    };
+
+    window.addEventListener(COOKIE_CONSENT_SET_EVENT, handleConsent);
+    return () => window.removeEventListener(COOKIE_CONSENT_SET_EVENT, handleConsent);
   }, []);
 
   return null;

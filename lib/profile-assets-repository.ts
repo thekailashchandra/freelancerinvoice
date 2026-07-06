@@ -10,6 +10,18 @@ export type AssetUploadResult =
   | { ok: true; url: string }
   | { ok: false; error: string };
 
+const MAX_ASSET_BYTES = 2 * 1024 * 1024;
+
+function validateImageFile(file: File): string | null {
+  if (file.size > MAX_ASSET_BYTES) {
+    return "Image must be 2 MB or smaller.";
+  }
+  if (!file.type.startsWith("image/")) {
+    return "Only image files are allowed.";
+  }
+  return null;
+}
+
 function parseKind(value: FormDataEntryValue | null): AssetKind | null {
   if (value === "logo" || value === "signature") return value;
   return null;
@@ -30,9 +42,8 @@ export async function uploadProfileAsset(
       return { ok: false, error: "Please choose an image file." };
     }
 
-    if (!file.type.startsWith("image/")) {
-      return { ok: false, error: "Only image files are allowed." };
-    }
+    const fileError = validateImageFile(file);
+    if (fileError) return { ok: false, error: fileError };
 
     const url = await uploadAndSaveProfileAsset(kind, file);
 
@@ -60,9 +71,8 @@ export async function uploadInvoiceAsset(
       return { ok: false, error: "Please choose an image file." };
     }
 
-    if (!file.type.startsWith("image/")) {
-      return { ok: false, error: "Only image files are allowed." };
-    }
+    const fileError = validateImageFile(file);
+    if (fileError) return { ok: false, error: fileError };
 
     const url = await uploadUserAsset(kind, file);
     return { ok: true, url };

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCustomers } from "@/hooks/use-customers";
 import { useProfile } from "@/hooks/use-profile";
+import { useTranslation } from "@/components/locale-provider";
 import { deleteClientClient } from "@/lib/api/app-client";
 import { confirmDeleteCustomer } from "@/lib/customer-delete";
 import { customerFaqs } from "@/data/customer-faqs";
@@ -32,6 +33,7 @@ export function CustomersPageClient({
   const router = useRouter();
   const { summaries, loading, error, refresh } = useCustomers();
   const { settings } = useProfile();
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -62,11 +64,11 @@ export function CustomersPageClient({
     setDeletingId(client.id);
     try {
       await deleteClientClient(client.id);
-      toast.success("Customer deleted");
+      toast.success(t("customers.deleted"));
       await refresh();
       router.refresh();
     } catch (err) {
-      toast.error("Could not delete customer", {
+      toast.error(t("customers.deleteFailed"), {
         description: err instanceof Error ? err.message : "Unknown error",
       });
     } finally {
@@ -92,13 +94,13 @@ export function CustomersPageClient({
     <PageTransition className="mx-auto max-w-6xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Customers</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("customers.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            View saved customers, their invoices, and download statements.
+            {t("customers.subtitle")}
           </p>
         </div>
         <Button asChild>
-          <Link href="/create-invoice">Create invoice</Link>
+          <Link href="/create-invoice">{t("customers.createInvoice")}</Link>
         </Button>
       </div>
 
@@ -121,7 +123,7 @@ export function CustomersPageClient({
           aria-hidden
         />
         <Input
-          placeholder="Search customers…"
+          placeholder={t("customers.search")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9"
@@ -131,13 +133,19 @@ export function CustomersPageClient({
       {filtered.length === 0 ? (
         <EmptyState
           icon={Users}
-          title={initialSummariesList.length === 0 ? "No customers yet" : "No matches"}
+          title={
+            initialSummariesList.length === 0
+              ? t("customers.emptyTitle")
+              : t("customers.emptyMatches")
+          }
           description={
             initialSummariesList.length === 0
-              ? "Add customers while creating an invoice, then manage them here."
-              : "Try a different name, email, or company."
+              ? t("customers.emptyDescription")
+              : t("customers.emptySearch")
           }
-          actionLabel={initialSummariesList.length === 0 ? "Create invoice" : undefined}
+          actionLabel={
+            initialSummariesList.length === 0 ? t("customers.createInvoice") : undefined
+          }
           actionHref={initialSummariesList.length === 0 ? "/create-invoice" : undefined}
         />
       ) : (
@@ -156,7 +164,7 @@ export function CustomersPageClient({
 
       <PageFaqSection
         faqItems={customerFaqs}
-        heading="Customer help"
+        heading={t("customers.helpTitle")}
         includeSchema={false}
       />
     </PageTransition>
@@ -174,6 +182,8 @@ function CustomerCard({
   deleting: boolean;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="group rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-muted/20">
       <div className="flex items-start justify-between gap-3">
@@ -215,17 +225,17 @@ function CustomerCard({
       <Link href={`/customers/${client.id}`} className="block">
         <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div>
-            <dt className="text-muted-foreground">Invoices</dt>
+            <dt className="text-muted-foreground">{t("customers.invoices")}</dt>
             <dd className="font-medium">{client.invoiceCount}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Balance due</dt>
+            <dt className="text-muted-foreground">{t("customers.balanceDue")}</dt>
             <dd className="font-medium tabular-nums">
               {formatMoney(client.totalOutstanding, currencyCode)}
             </dd>
           </div>
           <div className="col-span-2">
-            <dt className="text-muted-foreground">Last invoice</dt>
+            <dt className="text-muted-foreground">{t("customers.lastInvoice")}</dt>
             <dd className="font-medium">
               {client.lastInvoiceDate
                 ? formatDate(client.lastInvoiceDate)

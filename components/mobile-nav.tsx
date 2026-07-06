@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { navItems } from "@/data/navigation";
 import { NavLink } from "@/components/nav-link";
+import { useTranslation } from "@/components/locale-provider";
 import { useNavPending } from "@/components/navigation-provider";
 import { useMounted } from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,7 @@ function MobileNavItem({
 export function MobileNav() {
   const pathname = usePathname();
   const mounted = useMounted();
+  const { t } = useTranslation();
 
   return (
     <nav
@@ -60,12 +62,12 @@ export function MobileNav() {
             icon={item.icon}
             label={
               item.href === "/create-invoice"
-                ? "Create"
+                ? t("mobileNav.create")
                 : item.href === "/invoice-history"
-                  ? "History"
+                  ? t("mobileNav.history")
                   : item.href === "/customers"
-                    ? "Customers"
-                    : item.title
+                    ? t("nav.customers")
+                    : t(item.titleKey)
             }
           />
           ))}

@@ -1,10 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
 import { SupportTipLink } from "@/components/support-tip-link";
+import { useTranslation } from "@/components/locale-provider";
+import { publicNavKeys } from "@/lib/i18n/public-nav-keys";
 import { footerNavLinks } from "@/data/public-navigation";
 import { siteConfig } from "@/data/site";
 
 export function PublicSiteFooter() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-border/50 py-10">
       <div className="mx-auto w-full max-w-7xl px-6 text-center text-sm text-muted-foreground lg:px-10 xl:px-12">
@@ -14,7 +20,7 @@ export function PublicSiteFooter() {
             {siteConfig.name}
           </a>
           {" · "}
-          Free invoice generator for freelancers
+          {t("footer.tagline")}
         </p>
         <nav
           className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
@@ -26,7 +32,7 @@ export function PublicSiteFooter() {
               href={link.href}
               className="hover:text-foreground hover:underline"
             >
-              {link.label}
+              {t(publicNavKeys[link.href] ?? link.label)}
             </Link>
           ))}
           <SupportTipLink className="text-primary hover:text-primary" />
@@ -34,13 +40,13 @@ export function PublicSiteFooter() {
             href={`${siteConfig.url}/sitemap.xml`}
             className="hover:text-foreground hover:underline"
           >
-            Sitemap
+            {t("footer.sitemap")}
           </a>
           <a
             href={`${siteConfig.url}/llms.txt`}
             className="hover:text-foreground hover:underline"
           >
-            LLMs.txt
+            {t("footer.llmsTxt")}
           </a>
           <PrivacyConsentLink className="hover:text-foreground" />
         </nav>

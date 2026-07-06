@@ -42,6 +42,7 @@ import { deriveInvoiceStatus } from "@/lib/calculations";
 import { printInvoice } from "@/lib/invoice-print";
 import { invoicePayUrl } from "@/lib/invoice-pay-url";
 import { invoiceReceiptUrl } from "@/lib/invoice-receipt-url";
+import { isFreelancerInvoicePaymentEnabled } from "@/lib/razorpay-feature";
 import { downloadInvoiceReceiptPdf, shareInvoiceReceipt } from "@/lib/invoice-receipt-pdf";
 import type { InvoiceReceiptData } from "@/lib/invoice-receipt";
 import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
@@ -172,21 +173,30 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   const { canEdit, canMarkPaid, canVoid, isLocked } =
     invoiceActionState(displayStatus);
   const showRazorpayLink =
+    isFreelancerInvoicePaymentEnabled() &&
     razorpayOwner &&
     invoiceCheckout &&
     canMarkPaid &&
     displayStatus !== "paid";
   const isPaid = displayStatus === "paid";
-  const receiptUrl = invoiceReceiptUrl(invoice.id);
+
+  async function fetchShareReceiptUrl(id: string): Promise<string | null> {
+    const res = await fetch(`/api/receipt/${encodeURIComponent(id)}/share-url`);
+    if (!res.ok) return null;
+    const data = (await res.json()) as { url?: string };
+    return data.url ?? null;
+  }
 
   const handleCopyReceiptLink = async () => {
+    const url =
+      (await fetchShareReceiptUrl(invoice.id)) ?? invoiceReceiptUrl(invoice.id);
     try {
-      await navigator.clipboard.writeText(receiptUrl);
+      await navigator.clipboard.writeText(url);
       toast.success("Receipt link copied", {
-        description: "Share this link with your client as proof of payment.",
+        description: "Share this signed link with your client as proof of payment.",
       });
     } catch {
-      toast.error("Could not copy link", { description: receiptUrl });
+      toast.error("Could not copy link", { description: url });
     }
   };
 
@@ -213,7 +223,9 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
       await handleCopyReceiptLink();
       return;
     }
-    const shared = await shareInvoiceReceipt(receiptData, receiptUrl);
+    const shareUrl =
+      (await fetchShareReceiptUrl(invoice.id)) ?? invoiceReceiptUrl(invoice.id);
+    const shared = await shareInvoiceReceipt(receiptData, shareUrl);
     if (!shared) await handleCopyReceiptLink();
   };
 
