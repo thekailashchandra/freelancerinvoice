@@ -44,6 +44,7 @@ import { invoicePayUrl } from "@/lib/invoice-pay-url";
 import { invoiceReceiptUrl } from "@/lib/invoice-receipt-url";
 import { isFreelancerInvoicePaymentEnabled } from "@/lib/razorpay-feature";
 import { downloadInvoiceReceiptPdf, shareInvoiceReceipt } from "@/lib/invoice-receipt-pdf";
+import { trackActivity } from "@/lib/activity-client";
 import type { InvoiceReceiptData } from "@/lib/invoice-receipt";
 import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
 import { getInvoiceTemplate } from "@/lib/invoice-templates";
@@ -208,6 +209,11 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     setReceiptBusy(true);
     try {
       await downloadInvoiceReceiptPdf(receiptData);
+      trackActivity({
+        action: "invoice.receipt_downloaded",
+        resourceType: "invoice",
+        resourceId: invoice.id,
+      });
       toast.success("Receipt downloaded");
     } catch (err) {
       toast.error("Could not download receipt", {
@@ -269,6 +275,12 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
       const { downloadInvoicePdf } = await import("@/lib/pdf");
       await downloadInvoicePdf(invoice, `${invoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
+      });
+      trackActivity({
+        action: "invoice.pdf_downloaded",
+        resourceType: "invoice",
+        resourceId: invoice.id,
+        metadata: { invoiceNumber: invoice.invoice.invoiceNumber },
       });
       setPdfDialogPhase("success");
     } catch (err) {

@@ -60,24 +60,12 @@ const esCore: MessageTree = {
     subtitle: "Envía tu solicitud a nuestro correo de soporte.",
   },
   cookie: {
-    title: "Usamos cookies para mantener este sitio gratis",
-    intro:
-      "{name} es una herramienta de facturación gratuita para autónomos. Las cookies nos ayudan a ejecutar la app, entender su uso y — si aceptas — mostrar anuncios que ayudan a cubrir el alojamiento y el desarrollo.",
-    pointEssential:
-      "Las cookies esenciales permiten el inicio de sesión, la seguridad y tu idioma. Siempre están activas.",
-    pointAnalytics:
-      "Las cookies de analítica (Google Analytics) recopilan estadísticas anónimas para mejorar el producto.",
-    pointAds:
-      "Las cookies de publicidad (Google AdSense) pueden mostrar anuncios relevantes si aceptas — esto ayuda a mantener la facturación gratis.",
-    pointData:
-      "No usamos cookies para leer las facturas, clientes o datos de pago de tu cuenta.",
-    privacyLead: "Lee nuestra",
+    message:
+      "Usamos cookies de analítica y publicidad opcional para mantener este sitio gratis. Consulta nuestra",
     privacyPolicy: "Política de privacidad",
     cookieSettings: "Configuración de cookies",
-    essentialOnly: "Esenciales y analítica",
-    essentialHint: "Sin anuncios personalizados",
-    accept: "Aceptar todas las cookies",
-    acceptHint: "Anuncios + analítica · apoya el acceso gratis",
+    essentialOnly: "Solo esenciales",
+    accept: "Aceptar todo",
   },
 };
 

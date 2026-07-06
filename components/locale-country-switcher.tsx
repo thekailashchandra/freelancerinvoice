@@ -17,6 +17,7 @@ import { COUNTRY_OPTIONS } from "@/lib/country";
 import {
   countryFlagEmoji,
   defaultLocaleForCountry,
+  localeChoicesForCountry,
   LOCALE_LABELS,
 } from "@/lib/i18n/country-locale";
 import { limitCountryOptions } from "@/lib/select-limits";
@@ -77,6 +78,7 @@ export function LocaleCountrySwitcher({
   );
 
   const displayCountries = search.trim() ? filtered : popularOptions;
+  const languageChoices = localeChoicesForCountry(countryCode);
 
   const handleSelect = (code: string, selectedLocale?: LocaleCode) => {
     startTransition(async () => {
@@ -146,6 +148,30 @@ export function LocaleCountrySwitcher({
             {t("locale.commonCountries")}
           </p>
         ) : null}
+        {languageChoices.length > 1 ? (
+          <div className="px-3 py-2">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">
+              {t("locale.languageLabel")}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {languageChoices.map((choice) => (
+                <button
+                  key={choice}
+                  type="button"
+                  className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                    locale === choice
+                      ? "border-primary bg-primary/15 text-primary"
+                      : "border-border bg-background hover:bg-accent"
+                  )}
+                  onClick={() => handleSelect(countryCode, choice)}
+                >
+                  {LOCALE_LABELS[choice]}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <DropdownMenuSeparator className="m-0" />
         <div className="max-h-[min(20rem,50vh)] overflow-y-auto p-1">
           {displayCountries.length === 0 ? (
@@ -155,8 +181,10 @@ export function LocaleCountrySwitcher({
           ) : (
             displayCountries.map((country) => {
               const countryLocale = defaultLocaleForCountry(country.code);
+              const choices = localeChoicesForCountry(country.code);
               const selected =
-                country.code === countryCode && countryLocale === locale;
+                country.code === countryCode &&
+                (choices.length > 1 ? choices.includes(locale) : countryLocale === locale);
               return (
                 <button
                   key={country.code}
@@ -175,7 +203,9 @@ export function LocaleCountrySwitcher({
                       {country.label}
                     </span>
                     <span className="block truncate text-xs text-muted-foreground">
-                      {LOCALE_LABELS[countryLocale]}
+                      {country.code === "IN"
+                        ? `${LOCALE_LABELS.en} · ${LOCALE_LABELS.hi}`
+                        : LOCALE_LABELS[countryLocale]}
                     </span>
                   </span>
                   {selected ? (

@@ -6,6 +6,10 @@ function resolveMeasurementId(): string {
 
 const measurementId = resolveMeasurementId();
 
+export function gaMeasurementId(): string {
+  return measurementId;
+}
+
 export const analyticsConfig = {
   measurementId,
   gtagScriptUrl: `https://www.googletagmanager.com/gtag/js?id=${measurementId}`,

@@ -70,7 +70,7 @@ export default function PrivacyPage() {
             lets you choose <strong>Essential &amp; analytics</strong> (no
             personalised ads) or <strong>Accept all cookies</strong>. You can
             change your choice anytime via{" "}
-            <PrivacyConsentLink className="text-primary" /> in the footer.
+            <PrivacyConsentLink /> in the footer.
           </p>
         </section>
 

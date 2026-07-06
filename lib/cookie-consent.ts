@@ -62,7 +62,11 @@ export function applyGtagConsent(choice: CookieConsentChoice): void {
 }
 
 export function openCookieConsentPreferences(): void {
+  if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent(OPEN_COOKIE_CONSENT_EVENT));
+  if (window.location.hash !== "#cookie-preferences") {
+    window.history.replaceState(null, "", "#cookie-preferences");
+  }
 }
 
 export function notifyConsentSaved(choice: CookieConsentChoice): void {

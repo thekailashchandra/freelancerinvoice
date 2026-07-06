@@ -37,24 +37,12 @@ const zhCore: MessageTree = {
   settings: { title: "设置", save: "保存设置" },
   customers: { title: "客户", search: "搜索客户…" },
   cookie: {
-    title: "我们使用 Cookie 以保持本网站免费",
-    intro:
-      "{name} 是面向自由职业者的免费发票工具。Cookie 帮助我们运行应用、了解使用情况，并在您同意时展示广告以分担托管和开发成本。",
-    pointEssential:
-      "必要 Cookie 用于登录、安全和语言偏好，始终启用。",
-    pointAnalytics:
-      "分析 Cookie（Google Analytics）收集匿名访问数据以改进产品。",
-    pointAds:
-      "广告 Cookie（Google AdSense）在您接受后可能展示相关广告，有助于保持发票功能免费。",
-    pointData:
-      "我们不会使用 Cookie 读取您账户中的发票、客户或付款详情。",
-    privacyLead: "阅读我们的",
+    message:
+      "我们使用 Cookie 进行分析和可选广告，以保持本网站免费。请参阅",
     privacyPolicy: "隐私政策",
     cookieSettings: "Cookie 设置",
-    essentialOnly: "必要与分析",
-    essentialHint: "无个性化广告",
-    accept: "接受所有 Cookie",
-    acceptHint: "广告 + 分析 · 支持免费使用",
+    essentialOnly: "仅必要",
+    accept: "全部接受",
   },
 };
 

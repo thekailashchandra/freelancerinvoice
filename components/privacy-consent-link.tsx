@@ -14,15 +14,18 @@ export function PrivacyConsentLink({ className, label }: PrivacyConsentLinkProps
   const { t } = useTranslation();
 
   return (
-    <button
-      type="button"
-      onClick={openCookieConsentPreferences}
+    <a
+      href="#cookie-preferences"
+      onClick={(event) => {
+        event.preventDefault();
+        openCookieConsentPreferences();
+      }}
       className={cn(
-        "cursor-pointer bg-transparent p-0 text-inherit hover:underline",
+        "not-prose cursor-pointer font-medium text-primary underline underline-offset-4 hover:opacity-90",
         className
       )}
     >
       {label ?? t("cookie.cookieSettings")}
-    </button>
+    </a>
   );
 }

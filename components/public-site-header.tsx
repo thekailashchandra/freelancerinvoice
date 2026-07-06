@@ -19,7 +19,7 @@ export function PublicSiteHeader() {
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-10 xl:px-12">
         <SiteLogo variant="full" href="/" priority />
         <nav

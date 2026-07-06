@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CalmLoader } from "@/components/calm-loader";
 import { createClient, type SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
+import { safeAppRedirect } from "@/lib/safe-redirect";
 import { getGoogleClientId } from "@/lib/supabase/client-env";
 
 type GoogleCredentialResponse = {
@@ -56,8 +57,7 @@ export function GoogleSignInButton({
           return;
         }
 
-        const next = redirectTo.startsWith("/") ? redirectTo : "/dashboard";
-        let destination = next;
+        let destination = safeAppRedirect(redirectTo, "/dashboard");
 
         if (data.user) {
           const { data: profile } = await supabase

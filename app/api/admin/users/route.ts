@@ -1,0 +1,19 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireSuperadmin } from "@/lib/superadmin-access";
+import { fetchAdminUsers } from "@/lib/superadmin-repository";
+
+export async function GET(request: NextRequest) {
+  try {
+    await requireSuperadmin();
+    const { searchParams } = request.nextUrl;
+    const page = Number(searchParams.get("page") ?? "1");
+    const search = searchParams.get("search") ?? undefined;
+
+    const result = await fetchAdminUsers({ page, search });
+    return NextResponse.json(result);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to load users";
+    const status = message === "Forbidden" ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
+  }
+}

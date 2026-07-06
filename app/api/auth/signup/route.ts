@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logActivity } from "@/lib/activity-log";
 import { getSupabasePublishableEnv } from "@/lib/supabase/env";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
@@ -82,6 +83,11 @@ export async function POST(request: NextRequest) {
 
     if (data.user) {
       await ensureProfile(supabase, data.user);
+      void logActivity({
+        actorId: data.user.id,
+        action: "user.signup",
+        metadata: { email: trimmedEmail },
+      });
     }
 
     const response = NextResponse.json({

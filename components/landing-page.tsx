@@ -13,7 +13,6 @@ import {
   History,
   Receipt,
   Shield,
-  Sparkles,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -23,7 +22,7 @@ import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { useTranslation } from "@/components/locale-provider";
 import { GeoKeyFacts } from "@/components/geo-key-facts";
-import { HeroInvoiceDemo } from "@/components/hero-invoice-demo";
+import { LandingHero } from "@/components/landing-hero";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { Button } from "@/components/ui/button";
@@ -86,63 +85,11 @@ export function LandingPage() {
   );
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background">
-      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
-        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-primary/25 blur-3xl" />
-      </div>
-
+    <div className="relative min-h-screen bg-background">
       <PublicSiteHeader />
 
-      <main className="mx-auto w-full max-w-7xl px-6 pb-24 lg:px-10 xl:px-12">
-        <section
-          className="py-12 md:py-16 lg:py-20"
-          aria-labelledby="hero-heading"
-        >
-          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary">
-              <Sparkles className="h-4 w-4" aria-hidden />
-              {t("landing.hero.badge")}
-            </div>
-            <h1
-              id="hero-heading"
-              className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl"
-            >
-              {t("landing.hero.titlePrefix")}{" "}
-              <span className="gradient-text">{t("landing.hero.titleHighlight")}</span>
-              {t("landing.hero.titleSuffix")}
-            </h1>
-            <p className="seo-hero-summary mt-6 text-lg text-muted-foreground">
-              {formatMessage(t("landing.hero.description"), { name })}
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Button size="lg" asChild className="gap-2 px-8">
-                <Link href="/signup">
-                  {t("landing.hero.ctaPrimary")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/features">{t("landing.hero.ctaFeatures")}</Link>
-              </Button>
-              <Button size="lg" variant="ghost" asChild>
-                <Link href="/login">{t("landing.hero.ctaSignIn")}</Link>
-              </Button>
-            </div>
-            <p className="mt-4 text-sm text-muted-foreground">
-              {t("landing.hero.metaFree")} ·{" "}
-              <Link href="/pricing" className="text-foreground hover:underline">
-                {t("landing.hero.metaPricing")}
-              </Link>
-              {" · "}
-              {t("landing.hero.metaPdf")} · {t("landing.hero.metaCloud")}
-            </p>
-          </div>
-
-          <div className="mt-12 md:mt-14 lg:mt-16">
-            <HeroInvoiceDemo />
-          </div>
-        </section>
+      <main className="mx-auto w-full max-w-7xl overflow-x-clip px-6 pb-24 lg:px-10 xl:px-12">
+        <LandingHero />
 
         <section className="py-12" aria-label="Product summary">
           <GeoKeyFacts />

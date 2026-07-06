@@ -3,6 +3,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublishableEnv, isSupabaseConfigured } from "@/lib/supabase/env";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
+import { isSuperadminEmail } from "@/lib/superadmin-emails";
+
+// Reference env var in this file so Next.js Edge middleware bundles it.
+void process.env.SUPERADMIN_EMAILS;
 
 const PROTECTED_PREFIXES = [
   "/dashboard",
@@ -13,6 +17,7 @@ const PROTECTED_PREFIXES = [
   "/onboarding",
   "/create",
   "/history",
+  "/admin",
 ];
 
 const AUTH_ROUTES = ["/login", "/signup"];
@@ -78,7 +83,35 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
 
-    if (user && isProtected && pathname !== "/onboarding") {
+    const isAdminRoute =
+      pathname === "/admin" || pathname.startsWith("/admin/");
+
+    if (user && isAdminRoute) {
+      let allowed = isSuperadminEmail(user.email);
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role, email")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!allowed && profile?.email) {
+        allowed = isSuperadminEmail(profile.email);
+      }
+
+      if (!allowed && !profileError && profile?.role === "superadmin") {
+        allowed = true;
+      }
+
+      if (!allowed) {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = "/dashboard";
+        redirectUrl.searchParams.set("admin", "denied");
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
+
+    if (user && isProtected && pathname !== "/onboarding" && !isAdminRoute) {
       const profile = await ensureProfile(supabase, user);
 
       if (!profile?.company_name) {

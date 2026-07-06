@@ -60,24 +60,12 @@ const ptCore: MessageTree = {
     subtitle: "Sua solicitação será enviada ao nosso e-mail de suporte.",
   },
   cookie: {
-    title: "Usamos cookies para manter este site gratuito",
-    intro:
-      "{name} é uma ferramenta de faturação gratuita para freelancers. Os cookies ajudam a executar a app, entender o uso e — se concordar — mostrar anúncios que ajudam a cobrir alojamento e desenvolvimento.",
-    pointEssential:
-      "Cookies essenciais permitem login, segurança e o seu idioma. Estão sempre ativos.",
-    pointAnalytics:
-      "Cookies de análise (Google Analytics) recolhem estatísticas anónimas para melhorar o produto.",
-    pointAds:
-      "Cookies de publicidade (Google AdSense) podem mostrar anúncios relevantes se aceitar — isso mantém a faturação gratuita.",
-    pointData:
-      "Não usamos cookies para ler faturas, clientes ou dados de pagamento da sua conta.",
-    privacyLead: "Leia a nossa",
+    message:
+      "Usamos cookies de análise e publicidade opcional para manter este site gratuito. Veja a nossa",
     privacyPolicy: "Política de privacidade",
     cookieSettings: "Definições de cookies",
-    essentialOnly: "Essenciais e análise",
-    essentialHint: "Sem anúncios personalizados",
-    accept: "Aceitar todos os cookies",
-    acceptHint: "Anúncios + análise · apoia o acesso gratuito",
+    essentialOnly: "Só essenciais",
+    accept: "Aceitar tudo",
   },
 };
 

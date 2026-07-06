@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { geoConsensus, geoEntity, geoEntityStatement, geoTopics } from "@/data/geo";
 import { buildKeywordsString, homeSeo } from "@/data/seo";
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { UmamiAnalytics } from "@/components/umami-analytics";
 import { GoogleAnalyticsPageView } from "@/components/google-analytics-page-view";
 import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { LocaleProvider } from "@/components/locale-provider";
@@ -118,6 +119,7 @@ export default function RootLayout({
         />
         <DevEarlyGuards buildId={devBuildId} />
         <GoogleAnalytics />
+        <UmamiAnalytics />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

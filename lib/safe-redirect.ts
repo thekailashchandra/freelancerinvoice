@@ -1,18 +1,38 @@
 /** Reject open redirects and non-app paths (//evil.com, \\, javascript:, etc.). */
 export function isSafeAppRedirect(path: string | null | undefined): path is string {
-  if (!path?.trim()) return false;
-  const value = path.trim();
-  if (!value.startsWith("/")) return false;
-  if (value.startsWith("//")) return false;
-  if (value.startsWith("/\\")) return false;
-  if (value.includes("\\")) return false;
-  if (/^\/[a-z]+:/i.test(value)) return false;
-  return true;
+  const normalized = normalizeRedirectPath(path);
+  return normalized !== null;
 }
 
 export function safeAppRedirect(
   path: string | null | undefined,
   fallback = "/dashboard"
 ): string {
-  return isSafeAppRedirect(path) ? path : fallback;
+  return normalizeRedirectPath(path) ?? fallback;
+}
+
+function normalizeRedirectPath(path: string | null | undefined): string | null {
+  if (!path?.trim()) return null;
+
+  let value = path.trim();
+
+  for (let i = 0; i < 2; i++) {
+    try {
+      const decoded = decodeURIComponent(value);
+      if (decoded === value) break;
+      value = decoded;
+    } catch {
+      return null;
+    }
+  }
+
+  if (!value.startsWith("/")) return null;
+  if (value.startsWith("//")) return null;
+  if (value.startsWith("/\\")) return null;
+  if (value.includes("\\")) return null;
+  if (/[\u0000-\u001F\u007F]/.test(value)) return null;
+  if (/^\/[a-z][a-z0-9+.-]*:/i.test(value)) return null;
+  if (value.startsWith("/@")) return null;
+
+  return value;
 }

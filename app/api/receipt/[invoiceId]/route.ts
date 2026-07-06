@@ -9,6 +9,7 @@ async function canAccessReceipt(
   invoiceId: string,
   token: string | null
 ): Promise<boolean> {
+  if (!/^[0-9a-f-]{36}$/i.test(invoiceId)) return false;
   if (verifyReceiptToken(invoiceId, token)) return true;
 
   const supabase = await createClient();

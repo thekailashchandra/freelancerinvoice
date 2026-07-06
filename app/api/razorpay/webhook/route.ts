@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logActivity } from "@/lib/activity-log";
 import { verifyRazorpayWebhookSignature } from "@/lib/razorpay-server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -7,18 +8,19 @@ export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
   if (!webhookSecret) {
-    if (process.env.NODE_ENV === "production") {
-      console.error("RAZORPAY_WEBHOOK_SECRET is not set — rejecting webhook");
-      return NextResponse.json(
-        { error: "Webhook verification is not configured." },
-        { status: 503 }
-      );
-    }
-  } else {
-    const signature = request.headers.get("x-razorpay-signature") ?? "";
-    if (!verifyRazorpayWebhookSignature(rawBody, signature, webhookSecret)) {
-      return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
-    }
+    console.error("RAZORPAY_WEBHOOK_SECRET is not set — rejecting webhook");
+    return NextResponse.json(
+      { error: "Webhook verification is not configured." },
+      { status: 503 }
+    );
+  }
+
+  const signature = request.headers.get("x-razorpay-signature") ?? "";
+  if (
+    !signature ||
+    !verifyRazorpayWebhookSignature(rawBody, signature, webhookSecret)
+  ) {
+    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
   }
 
   let event: {
@@ -65,6 +67,51 @@ export async function POST(request: NextRequest) {
           .eq("id", row.invoice_id)
           .eq("user_id", row.user_id);
       }
+
+      void logActivity({
+        actorId: row?.user_id ?? null,
+        action: "payment.completed",
+        resourceType: "payment",
+        resourceId: paymentId,
+        metadata: {
+          orderId,
+          purpose: row?.purpose,
+          invoiceId: row?.invoice_id,
+        },
+      });
+    }
+  }
+
+  if (eventName === "payment.failed") {
+    const payment = event.payload?.payment?.entity;
+    const orderId = payment?.order_id;
+    const paymentId = payment?.id;
+    if (orderId) {
+      await admin
+        .from("razorpay_payments")
+        .update({
+          status: "failed",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("razorpay_order_id", orderId);
+
+      const { data: row } = await admin
+        .from("razorpay_payments")
+        .select("user_id, purpose, invoice_id")
+        .eq("razorpay_order_id", orderId)
+        .maybeSingle();
+
+      void logActivity({
+        actorId: row?.user_id ?? null,
+        action: "payment.failed",
+        resourceType: "payment",
+        resourceId: paymentId ?? orderId,
+        metadata: {
+          orderId,
+          purpose: row?.purpose,
+          invoiceId: row?.invoice_id,
+        },
+      });
     }
   }
 

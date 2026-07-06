@@ -4,6 +4,7 @@ import {
   getUserRazorpayCredentials,
   verifyRazorpayPaymentSignature,
 } from "@/lib/razorpay-server";
+import { createReceiptToken } from "@/lib/receipt-token";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
@@ -87,5 +88,9 @@ export async function POST(request: NextRequest) {
     templateId: paymentRow.template_id,
     paymentId,
     orderId,
+    receiptToken:
+      paymentRow.purpose === "invoice" && paymentRow.invoice_id
+        ? createReceiptToken(paymentRow.invoice_id)
+        : null,
   });
 }

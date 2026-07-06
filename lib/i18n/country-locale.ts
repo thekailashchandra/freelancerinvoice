@@ -2,7 +2,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 
 /** Default UI locale when a user picks a billing country. */
 const COUNTRY_LOCALE: Record<string, LocaleCode> = {
-  IN: "hi",
+  IN: "en",
   US: "en",
   GB: "en",
   AU: "en",
@@ -51,6 +51,14 @@ const COUNTRY_LOCALE: Record<string, LocaleCode> = {
 
 export function defaultLocaleForCountry(countryCode: string): LocaleCode {
   return COUNTRY_LOCALE[countryCode.toUpperCase()] ?? "en";
+}
+
+/** Optional UI languages per country (default is always first). */
+export function localeChoicesForCountry(countryCode: string): LocaleCode[] {
+  const code = countryCode.toUpperCase();
+  if (code === "IN") return ["en", "hi"];
+  const defaultLocale = defaultLocaleForCountry(code);
+  return defaultLocale === "en" ? ["en"] : [defaultLocale, "en"];
 }
 
 export const LOCALE_LABELS: Record<LocaleCode, string> = {

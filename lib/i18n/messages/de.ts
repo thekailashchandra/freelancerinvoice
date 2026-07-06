@@ -60,24 +60,12 @@ const deCore: MessageTree = {
     subtitle: "Ihre Anfrage wird an unsere Support-E-Mail gesendet.",
   },
   cookie: {
-    title: "Wir nutzen Cookies, um diese Seite kostenlos zu halten",
-    intro:
-      "{name} ist ein kostenloses Rechnungstool für Freelancer. Cookies helfen uns, die App zu betreiben, die Nutzung zu verstehen und — wenn Sie zustimmen — Werbung anzuzeigen, die Hosting und Entwicklung finanziert.",
-    pointEssential:
-      "Essenzielle Cookies ermöglichen Anmeldung, Sicherheit und Ihre Spracheinstellung. Sie sind immer aktiv.",
-    pointAnalytics:
-      "Analyse-Cookies (Google Analytics) erfassen anonyme Besuchsstatistiken zur Produktverbesserung.",
-    pointAds:
-      "Werbe-Cookies (Google AdSense) können relevante Anzeigen zeigen, wenn Sie zustimmen — das hält die Rechnungsstellung kostenlos.",
-    pointData:
-      "Wir nutzen Cookies nicht, um Rechnungen, Kunden oder Zahlungsdaten in Ihrem Konto zu lesen.",
-    privacyLead: "Lesen Sie unsere",
+    message:
+      "Wir nutzen Cookies für Analyse und optionale Werbung, um diese Seite kostenlos zu halten. Siehe unsere",
     privacyPolicy: "Datenschutzerklärung",
     cookieSettings: "Cookie-Einstellungen",
-    essentialOnly: "Essenziell & Analyse",
-    essentialHint: "Keine personalisierte Werbung",
-    accept: "Alle Cookies akzeptieren",
-    acceptHint: "Werbung + Analyse · unterstützt freien Zugang",
+    essentialOnly: "Nur essenziell",
+    accept: "Alle akzeptieren",
   },
 };
 

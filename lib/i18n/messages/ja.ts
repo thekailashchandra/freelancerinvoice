@@ -37,24 +37,12 @@ const jaCore: MessageTree = {
   settings: { title: "設定", save: "設定を保存" },
   customers: { title: "顧客", search: "顧客を検索…" },
   cookie: {
-    title: "このサイトを無料で維持するためにCookieを使用しています",
-    intro:
-      "{name}はフリーランサー向けの無料請求書ツールです。Cookieはアプリの運用、利用状況の把握、そして同意いただいた場合のホスティングや開発費用のための広告表示に役立ちます。",
-    pointEssential:
-      "必須Cookieはログイン、セキュリティ、言語設定に使用されます。常に有効です。",
-    pointAnalytics:
-      "分析Cookie（Google Analytics）は匿名の訪問統計を収集し、製品改善に役立てます。",
-    pointAds:
-      "広告Cookie（Google AdSense）は同意時に関連広告を表示し、無料提供の維持に役立ちます。",
-    pointData:
-      "アカウント内の請求書、顧客、支払い情報をCookieで読み取ることはありません。",
-    privacyLead: "詳細は",
+    message:
+      "分析と任意の広告のためにCookieを使用し、このサイトを無料で維持しています。詳細は",
     privacyPolicy: "プライバシーポリシー",
     cookieSettings: "Cookie設定",
-    essentialOnly: "必須と分析のみ",
-    essentialHint: "パーソナライズ広告なし",
-    accept: "すべてのCookieを受け入れる",
-    acceptHint: "広告＋分析 · 無料提供を支援",
+    essentialOnly: "必須のみ",
+    accept: "すべて受け入れる",
   },
 };
 

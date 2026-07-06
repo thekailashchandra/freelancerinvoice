@@ -60,24 +60,12 @@ const frCore: MessageTree = {
     subtitle: "Votre demande sera envoyée à notre e-mail d'assistance.",
   },
   cookie: {
-    title: "Nous utilisons des cookies pour garder ce site gratuit",
-    intro:
-      "{name} est un outil de facturation gratuit pour les freelances. Les cookies nous aident à faire fonctionner l'application, comprendre son utilisation et — si vous acceptez — afficher des publicités qui contribuent à l'hébergement et au développement.",
-    pointEssential:
-      "Les cookies essentiels gèrent la connexion, la sécurité et votre langue. Ils sont toujours actifs.",
-    pointAnalytics:
-      "Les cookies d'analyse (Google Analytics) collectent des statistiques anonymes pour améliorer le produit.",
-    pointAds:
-      "Les cookies publicitaires (Google AdSense) peuvent afficher des annonces pertinentes si vous acceptez — cela aide à garder la facturation gratuite.",
-    pointData:
-      "Nous n'utilisons pas de cookies pour lire les factures, clients ou données de paiement de votre compte.",
-    privacyLead: "Consultez notre",
+    message:
+      "Nous utilisons des cookies d'analyse et de publicité optionnelle pour garder ce site gratuit. Voir notre",
     privacyPolicy: "Politique de confidentialité",
     cookieSettings: "Paramètres des cookies",
-    essentialOnly: "Essentiels et analyse",
-    essentialHint: "Pas de publicités personnalisées",
-    accept: "Accepter tous les cookies",
-    acceptHint: "Publicités + analyse · soutient l'accès gratuit",
+    essentialOnly: "Essentiels seulement",
+    accept: "Tout accepter",
   },
 };
 

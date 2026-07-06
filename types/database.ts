@@ -37,6 +37,7 @@ export interface ProfileRow {
   hide_signature_text_fallback?: boolean;
   razorpay_key_id?: string;
   razorpay_key_secret?: string;
+  role?: string;
   created_at: string;
   updated_at: string;
 }

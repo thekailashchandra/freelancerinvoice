@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, MessageSquarePlus, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LogOut, MessageSquarePlus, Settings, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { signOutClient } from "@/lib/api/app-client";
 import { useProfile } from "@/hooks/use-profile";
@@ -37,6 +38,22 @@ export function UserMenu() {
   const router = useRouter();
   const { settings, loading } = useProfile();
   const { t } = useTranslation();
+  const [isSuperadmin, setIsSuperadmin] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/admin/me", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data: { isSuperadmin?: boolean }) => {
+        if (!cancelled) setIsSuperadmin(Boolean(data.isSuperadmin));
+      })
+      .catch(() => {
+        if (!cancelled) setIsSuperadmin(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const initials = getInitials(
     settings.companyName,
@@ -92,6 +109,14 @@ export function UserMenu() {
             {t("userMenu.support")}
           </Link>
         </DropdownMenuItem>
+        {isSuperadmin ? (
+          <DropdownMenuItem asChild>
+            <Link href="/admin" className="cursor-pointer">
+              <Shield />
+              Admin
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer text-destructive focus:text-destructive"

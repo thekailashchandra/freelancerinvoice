@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDefaultInvoice } from "@/data/defaults";
 import { saveInvoiceClient } from "@/lib/api/invoices-client";
+import { trackActivity } from "@/lib/activity-client";
 import { updateProfileClient } from "@/lib/api/profile-client";
 import { mergeProfileIntoInvoice } from "@/lib/invoice-mapper";
 import { invoiceActionState } from "@/lib/invoice-actions";
@@ -181,6 +182,12 @@ export function CreateInvoiceClient({
       await downloadInvoicePdf(exportInvoice, `${exportInvoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
         skipTemplateGuard: forceClassic,
+      });
+      trackActivity({
+        action: "invoice.pdf_downloaded",
+        resourceType: "invoice",
+        resourceId: exportInvoice.id,
+        metadata: { invoiceNumber: exportInvoice.invoice.invoiceNumber },
       });
       setPdfDialogPhase("success");
     } catch (err) {

@@ -30,6 +30,7 @@ export function InvoicePayClient({ invoiceId }: { invoiceId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<PaySummary | null>(null);
   const [paid, setPaid] = useState(false);
+  const [receiptHref, setReceiptHref] = useState(`/receipt/${invoiceId}`);
   const [payerEmail, setPayerEmail] = useState("");
   const [payerName, setPayerName] = useState("");
 
@@ -105,12 +106,24 @@ export function InvoicePayClient({ invoiceId }: { invoiceId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payment),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = (await verifyRes.json()) as {
+        error?: string;
+        receiptToken?: string | null;
+      };
       if (!verifyRes.ok) {
         throw new Error(verifyData.error ?? "Payment verification failed");
       }
 
       setPaid(true);
+      const receiptToken =
+        typeof verifyData.receiptToken === "string"
+          ? verifyData.receiptToken
+          : null;
+      setReceiptHref(
+        receiptToken
+          ? `/receipt/${invoiceId}?token=${encodeURIComponent(receiptToken)}`
+          : `/receipt/${invoiceId}`
+      );
       toast.success("Payment successful", {
         description: `Invoice ${summary.invoice.number} is marked as paid.`,
       });
@@ -154,7 +167,7 @@ export function InvoicePayClient({ invoiceId }: { invoiceId: string }) {
           </p>
         </div>
         <Button asChild className="w-full gap-2">
-          <Link href={`/receipt/${invoiceId}`}>
+          <Link href={receiptHref}>
             <Receipt className="h-4 w-4" />
             View &amp; download receipt
           </Link>

@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity-log";
 import {
   appInvoiceToDbPayload,
   dbInvoiceToApp,
@@ -98,6 +99,14 @@ export async function saveInvoice(invoice: Invoice): Promise<{ id: string }> {
 
       if (itemsError) throw new Error(itemsError.message);
 
+      void logActivity({
+        actorId: user.id,
+        action: "invoice.updated",
+        resourceType: "invoice",
+        resourceId: invoiceId,
+        metadata: { invoiceNumber: invoice.invoice.invoiceNumber },
+      });
+
       revalidatePath("/dashboard");
       revalidatePath("/invoice-history");
       revalidatePath("/customers");
@@ -124,6 +133,14 @@ export async function saveInvoice(invoice: Invoice): Promise<{ id: string }> {
     await supabase.from("invoices").delete().eq("id", savedInvoiceId);
     throw new Error(itemsError.message);
   }
+
+  void logActivity({
+    actorId: user.id,
+    action: "invoice.created",
+    resourceType: "invoice",
+    resourceId: savedInvoiceId,
+    metadata: { invoiceNumber: invoice.invoice.invoiceNumber },
+  });
 
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");
@@ -193,6 +210,14 @@ export async function updateInvoiceStatus(
 
   if (error) throw new Error(error.message);
 
+  void logActivity({
+    actorId: user.id,
+    action: "invoice.status_changed",
+    resourceType: "invoice",
+    resourceId: id,
+    metadata: { status },
+  });
+
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");
   revalidatePath("/customers");
@@ -213,6 +238,13 @@ export async function deleteInvoice(id: string): Promise<void> {
     .eq("user_id", user.id);
 
   if (error) throw new Error(error.message);
+
+  void logActivity({
+    actorId: user.id,
+    action: "invoice.deleted",
+    resourceType: "invoice",
+    resourceId: id,
+  });
 
   revalidatePath("/dashboard");
   revalidatePath("/invoice-history");

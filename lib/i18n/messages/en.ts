@@ -60,6 +60,22 @@ export const en = {
       metaPricing: "See pricing",
       metaPdf: "PDF export",
       metaCloud: "Cloud invoice history",
+      statFree: "Free",
+      statFreeLabel: "Forever plan",
+      statSpeed: "< 5 min",
+      statSpeedLabel: "First invoice",
+      statExport: "PDF",
+      statExportLabel: "One-click export",
+      demoLabel: "Live invoice preview",
+      demoCaption: "Professional PDF export · Updates as you type",
+      floatPaid: "Payment tracked",
+      floatPdf: "PDF exported",
+      marqueePdf: "PDF export",
+      marqueeCloud: "Cloud sync",
+      marqueeCurrency: "Multi-currency",
+      marqueeBranding: "Your branding",
+      marqueeGst: "GST ready",
+      marqueeHistory: "Invoice history",
     },
     features: {
       title: "Everything freelancers need to invoice clients",
@@ -259,24 +275,12 @@ export const en = {
     password: "Password",
   },
   cookie: {
-    title: "We use cookies to keep this site free",
-    intro:
-      "{name} is a free invoice tool for freelancers. Cookies help us run the app, understand how it is used, and — if you agree — show ads that help cover hosting and development.",
-    pointEssential:
-      "Essential cookies power sign-in, security, and your language preference. These are always on.",
-    pointAnalytics:
-      "Analytics cookies (Google Analytics) collect anonymous visit statistics so we can improve pages and features.",
-    pointAds:
-      "Advertising cookies (Google AdSense) may show relevant ads when you accept — this helps keep invoicing free for everyone.",
-    pointData:
-      "We do not use cookies to read your invoices, clients, or payment details stored in your account.",
-    privacyLead: "Read our",
+    message:
+      "We use cookies for analytics and optional ads to keep this site free. See our",
     privacyPolicy: "Privacy Policy",
     cookieSettings: "Cookie settings",
-    essentialOnly: "Essential & analytics",
-    essentialHint: "No personalised ads",
-    accept: "Accept all cookies",
-    acceptHint: "Ads + analytics · supports free access",
+    essentialOnly: "Essential only",
+    accept: "Accept all",
   },
 } as const;
 
