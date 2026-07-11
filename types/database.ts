@@ -31,6 +31,8 @@ export interface ProfileRow {
   default_upi_id: string;
   default_routing_number: string;
   default_iban: string;
+  default_swift_code: string;
+  default_bank_address: string;
   default_sort_code: string;
   logo_height?: number;
   hide_invoice_branding?: boolean;
@@ -85,6 +87,8 @@ export interface InvoiceRow {
   upi_id: string;
   routing_number: string;
   iban: string;
+  swift_code: string;
+  bank_address: string;
   sort_code: string;
   page_size?: string;
   created_at: string;
@@ -126,6 +130,8 @@ export interface Database {
           default_upi_id?: string;
           default_routing_number?: string;
           default_iban?: string;
+          default_swift_code?: string;
+          default_bank_address?: string;
           default_sort_code?: string;
           created_at?: string;
           updated_at?: string;
@@ -173,6 +179,8 @@ export interface Database {
           upi_id?: string;
           routing_number?: string;
           iban?: string;
+          swift_code?: string;
+          bank_address?: string;
           sort_code?: string;
           created_at?: string;
           updated_at?: string;

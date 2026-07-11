@@ -225,6 +225,11 @@ export function InvoiceForm({
     }
   };
 
+  const handleLogoDelete = () => {
+    updateCompany("logo", null);
+    toast.success("Logo removed");
+  };
+
   const lineItemsBlock = (
     <div
       className={cn(
@@ -500,7 +505,21 @@ export function InvoiceForm({
 
         {!isLoggedInCreate && (
         <div className="space-y-2">
-          <Label>Logo</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label>Logo</Label>
+            {invoice.company.logo ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 gap-1.5 text-destructive hover:text-destructive"
+                onClick={handleLogoDelete}
+              >
+                <X className="h-3.5 w-3.5" />
+                Remove
+              </Button>
+            ) : null}
+          </div>
           <button
             type="button"
             onClick={() => logoInputRef.current?.click()}

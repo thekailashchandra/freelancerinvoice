@@ -9,7 +9,7 @@ import type { CompanySettings } from "@/types/invoice";
 import type { ProfileRow } from "@/types/database";
 
 const PROFILE_SELECT_BASE =
-  "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_account_name, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_sort_code, logo_height, hide_invoice_branding, hide_signature_text_fallback, created_at, updated_at";
+  "id, company_name, email, phone, address, logo_url, signature_url, country_code, currency_code, tax_label, default_account_name, default_bank_name, default_account_number, default_upi_id, default_routing_number, default_iban, default_swift_code, default_bank_address, default_sort_code, logo_height, hide_invoice_branding, hide_signature_text_fallback, created_at, updated_at";
 
 function profileSelectColumns(includeRazorpay: boolean): string {
   if (!includeRazorpay) return PROFILE_SELECT_BASE;
@@ -107,6 +107,8 @@ export async function updateProfile(
     row.default_upi_id = payment.upiId;
     row.default_routing_number = payment.routingNumber;
     row.default_iban = payment.iban;
+    row.default_swift_code = payment.swiftCode;
+    row.default_bank_address = payment.bankAddress;
     row.default_sort_code = payment.sortCode;
   }
 

@@ -33,7 +33,17 @@ const EURO_ZONE = new Set([
 const OTHER_PAYMENT_FIELDS: PaymentFieldConfig[] = [
   { key: "bankName", label: "Bank name", placeholder: "Your bank" },
   { key: "accountNumber", label: "Account number", placeholder: "XXXXXXXXXX" },
-  { key: "iban", label: "IBAN / SWIFT reference (optional)", placeholder: "" },
+  { key: "iban", label: "IBAN (optional)", placeholder: "DE89 3704 0044 0532 0130 00" },
+  {
+    key: "swiftCode",
+    label: "SWIFT / BIC code (optional)",
+    placeholder: "DEUTDEFF",
+  },
+  {
+    key: "bankAddress",
+    label: "Bank address",
+    placeholder: "Street, city, country",
+  },
 ];
 
 const PROFILE_COUNTRY_CONFIGS: Record<string, CountryConfig> = {
@@ -72,6 +82,16 @@ const PROFILE_COUNTRY_CONFIGS: Record<string, CountryConfig> = {
       { key: "sortCode", label: "Sort code", placeholder: "12-34-56" },
       { key: "accountNumber", label: "Account number", placeholder: "12345678" },
       { key: "iban", label: "IBAN (optional)", placeholder: "GB00 XXXX …" },
+      {
+        key: "swiftCode",
+        label: "SWIFT / BIC code (optional)",
+        placeholder: "BARCGB22",
+      },
+      {
+        key: "bankAddress",
+        label: "Bank address",
+        placeholder: "Street, city, country",
+      },
     ],
   },
   AU: {
@@ -107,6 +127,16 @@ const PROFILE_COUNTRY_CONFIGS: Record<string, CountryConfig> = {
     paymentFields: [
       { key: "bankName", label: "Bank name", placeholder: "Deutsche Bank" },
       { key: "iban", label: "IBAN", placeholder: "DE89 3704 0044 0532 0130 00" },
+      {
+        key: "swiftCode",
+        label: "SWIFT / BIC code",
+        placeholder: "DEUTDEFF",
+      },
+      {
+        key: "bankAddress",
+        label: "Bank address",
+        placeholder: "Street, city, country",
+      },
       { key: "accountNumber", label: "Account number (if needed)", placeholder: "" },
     ],
   },
@@ -193,6 +223,8 @@ export function emptyPaymentDetails(): PaymentDetails {
     upiId: "",
     routingNumber: "",
     iban: "",
+    swiftCode: "",
+    bankAddress: "",
     sortCode: "",
   };
 }

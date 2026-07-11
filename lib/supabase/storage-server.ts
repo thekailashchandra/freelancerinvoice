@@ -74,3 +74,37 @@ export async function uploadAndSaveProfileAsset(
   await saveProfileAssetUrl(kind, publicUrl);
   return publicUrl;
 }
+
+export async function clearProfileAsset(kind: AssetKind): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Not authenticated");
+  }
+
+  const column = getAssetColumn(kind);
+  const { error } = await supabase
+    .from("profiles")
+    .update({ [column]: null })
+    .eq("id", user.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const { data: files } = await supabase.storage
+    .from(INVOICE_ASSETS_BUCKET)
+    .list(user.id, { search: `${kind}.` });
+
+  if (files?.length) {
+    const paths = files
+      .filter((f) => f.name.startsWith(`${kind}.`))
+      .map((f) => `${user.id}/${f.name}`);
+    if (paths.length) {
+      await supabase.storage.from(INVOICE_ASSETS_BUCKET).remove(paths);
+    }
+  }
+}

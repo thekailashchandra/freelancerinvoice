@@ -21,6 +21,8 @@ function profileRowToPayment(profile: ProfileRow): PaymentDetails {
       upiId: profile.default_upi_id ?? "",
       routingNumber: profile.default_routing_number ?? "",
       iban: profile.default_iban ?? "",
+      swiftCode: profile.default_swift_code ?? "",
+      bankAddress: profile.default_bank_address ?? "",
       sortCode: profile.default_sort_code ?? "",
     },
     profile.country_code
@@ -113,6 +115,8 @@ export function dbInvoiceToApp(
       upiId: row.upi_id,
       routingNumber: row.routing_number ?? "",
       iban: row.iban ?? "",
+      swiftCode: row.swift_code ?? "",
+      bankAddress: row.bank_address ?? "",
       sortCode: row.sort_code ?? "",
     },
     notes: row.notes,
@@ -175,6 +179,8 @@ export function appInvoiceToDbPayload(
       upi_id: payment.upiId,
       routing_number: payment.routingNumber,
       iban: payment.iban,
+      swift_code: payment.swiftCode,
+      bank_address: payment.bankAddress,
       sort_code: payment.sortCode,
       page_size: resolveInvoicePageSize(invoice.pageSize),
     },
@@ -203,6 +209,8 @@ export function mergeProfileIntoInvoice(
       invoice.payment.upiId ||
       invoice.payment.routingNumber ||
       invoice.payment.iban ||
+      invoice.payment.swiftCode ||
+      invoice.payment.bankAddress ||
       invoice.payment.sortCode
         ? invoice.payment
         : { ...profile.defaultPayment },

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { AssetKind } from "@/lib/supabase/asset-storage";
@@ -12,6 +13,7 @@ type AssetFileFieldProps = {
   kind: AssetKind;
   imageUrl: string | null;
   onUpload: (kind: AssetKind, file: File) => Promise<string | null>;
+  onDelete?: (kind: AssetKind) => Promise<void>;
 };
 
 export function AssetFileField({
@@ -20,9 +22,11 @@ export function AssetFileField({
   kind,
   imageUrl,
   onUpload,
+  onDelete,
 }: AssetFileFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,6 +38,17 @@ export function AssetFileField({
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!onDelete || !imageUrl) return;
+
+    setDeleting(true);
+    try {
+      await onDelete(kind);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -50,9 +65,28 @@ export function AssetFileField({
               className="max-h-full max-w-full object-contain"
             />
           </div>
-          <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
-            Saved to your profile. Choose a new file to replace.
+          <p className="min-w-0 flex-1 text-xs text-muted-foreground">
+            {onDelete
+              ? "Choose a new file to replace, or remove it."
+              : "Saved to your profile. Choose a new file to replace."}
           </p>
+          {onDelete ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0 gap-1.5 text-destructive hover:text-destructive"
+              disabled={deleting || uploading}
+              onClick={() => void handleDelete()}
+            >
+              {deleting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
+              Remove
+            </Button>
+          ) : null}
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">No {label.toLowerCase()} yet.</p>
@@ -63,7 +97,7 @@ export function AssetFileField({
           id={id}
           type="file"
           accept="image/*"
-          disabled={uploading}
+          disabled={uploading || deleting}
           onChange={handleChange}
         />
         {uploading && (

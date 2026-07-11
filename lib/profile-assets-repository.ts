@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import {
+  clearProfileAsset,
   uploadAndSaveProfileAsset,
   uploadUserAsset,
 } from "@/lib/supabase/storage-server";
@@ -9,6 +10,8 @@ import type { AssetKind } from "@/lib/supabase/asset-storage";
 export type AssetUploadResult =
   | { ok: true; url: string }
   | { ok: false; error: string };
+
+export type AssetDeleteResult = { ok: true } | { ok: false; error: string };
 
 const MAX_ASSET_BYTES = 2 * 1024 * 1024;
 
@@ -76,6 +79,22 @@ export async function uploadInvoiceAsset(
 
     const url = await uploadUserAsset(kind, file);
     return { ok: true, url };
+  } catch (err) {
+    return { ok: false, error: formatAuthError(err) };
+  }
+}
+
+export async function deleteProfileAsset(
+  kind: AssetKind
+): Promise<AssetDeleteResult> {
+  try {
+    await clearProfileAsset(kind);
+
+    revalidatePath("/settings");
+    revalidatePath("/create-invoice");
+    revalidatePath("/onboarding");
+
+    return { ok: true };
   } catch (err) {
     return { ok: false, error: formatAuthError(err) };
   }

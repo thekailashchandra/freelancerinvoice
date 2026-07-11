@@ -11,7 +11,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { uploadProfileAssetClient } from "@/lib/api/app-client";
+import { uploadProfileAssetClient, deleteProfileAssetClient } from "@/lib/api/app-client";
 import { updateProfileClient } from "@/lib/api/profile-client";
 import { AssetFileField } from "@/components/asset-file-field";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
@@ -94,6 +94,20 @@ export function OnboardingForm({
 
     toast.success(`${kind === "logo" ? "Logo" : "Signature"} uploaded`);
     return result.url;
+  };
+
+  const handleAssetDelete = async (kind: AssetKind) => {
+    const result = await deleteProfileAssetClient(kind);
+
+    if (!result.ok) {
+      toast.error("Remove failed", { description: result.error });
+      return;
+    }
+
+    if (kind === "logo") setLogo(null);
+    else setSignature(null);
+
+    toast.success(`${kind === "logo" ? "Logo" : "Signature"} removed`);
   };
 
   const validateStep = (current: number): boolean => {
@@ -369,6 +383,7 @@ export function OnboardingForm({
                 kind="logo"
                 imageUrl={logo}
                 onUpload={handleAssetUpload}
+                onDelete={handleAssetDelete}
               />
               <AssetFileField
                 id="onboard-signature"
@@ -376,6 +391,7 @@ export function OnboardingForm({
                 kind="signature"
                 imageUrl={signature}
                 onUpload={handleAssetUpload}
+                onDelete={handleAssetDelete}
               />
             </div>
           </div>

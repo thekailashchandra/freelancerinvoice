@@ -1,6 +1,7 @@
 import type { ClientDetails } from "@/types/invoice";
 import type { SavedClient } from "@/lib/client-mapper";
-import type { AssetUploadResult } from "@/lib/profile-assets-repository";
+import type { AssetUploadResult, AssetDeleteResult } from "@/lib/profile-assets-repository";
+import type { AssetKind } from "@/lib/supabase/asset-storage";
 
 async function parseJson<T>(res: Response): Promise<T> {
   const data = await res.json();
@@ -55,6 +56,16 @@ export async function uploadInvoiceAssetClient(
     body: formData,
   });
   return parseJson<AssetUploadResult>(res);
+}
+
+export async function deleteProfileAssetClient(
+  kind: AssetKind
+): Promise<AssetDeleteResult> {
+  const res = await fetch(
+    `/api/profile/assets?kind=${encodeURIComponent(kind)}`,
+    { method: "DELETE" }
+  );
+  return parseJson<AssetDeleteResult>(res);
 }
 
 export async function signOutClient(): Promise<void> {

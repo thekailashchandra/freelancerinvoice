@@ -24,6 +24,13 @@ export function PaymentFieldsForm({
     onChange({ ...payment, [key]: value });
   };
 
+  const fullWidthKeys = new Set<keyof PaymentDetails>([
+    "iban",
+    "swiftCode",
+    "bankAddress",
+    "upiId",
+  ]);
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2 sm:col-span-2">
@@ -39,9 +46,7 @@ export function PaymentFieldsForm({
         <div
           key={field.key}
           className={
-            field.key === "iban" || field.key === "upiId"
-              ? "space-y-2 sm:col-span-2"
-              : "space-y-2"
+            fullWidthKeys.has(field.key) ? "space-y-2 sm:col-span-2" : "space-y-2"
           }
         >
           <Label htmlFor={`${idPrefix}-${field.key}`}>{field.label}</Label>

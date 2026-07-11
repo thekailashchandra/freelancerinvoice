@@ -43,6 +43,12 @@ export function getInvoicePaymentInfo(
   if (payment.iban?.trim()) {
     lines.push({ label: "IBAN", value: payment.iban.trim() });
   }
+  if (payment.swiftCode?.trim()) {
+    lines.push({ label: "SWIFT / BIC", value: payment.swiftCode.trim() });
+  }
+  if (payment.bankAddress?.trim()) {
+    lines.push({ label: "Bank address", value: payment.bankAddress.trim() });
+  }
 
   return lines;
 }

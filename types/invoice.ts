@@ -60,6 +60,8 @@ export interface PaymentDetails {
   upiId: string;
   routingNumber: string;
   iban: string;
+  swiftCode: string;
+  bankAddress: string;
   sortCode: string;
 }
 

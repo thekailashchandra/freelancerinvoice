@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/use-profile";
 import { useTranslation } from "@/components/locale-provider";
-import { uploadProfileAssetClient } from "@/lib/api/app-client";
+import { uploadProfileAssetClient, deleteProfileAssetClient } from "@/lib/api/app-client";
 import { AssetFileField } from "@/components/asset-file-field";
 import { CountrySelect } from "@/components/country-select";
 import { CurrencySelect } from "@/components/currency-select";
@@ -70,6 +70,18 @@ export default function SettingsPage() {
     setForm((prev) => ({ ...prev, [kind]: result.url }));
     toast.success(`${kind === "logo" ? "Logo" : "Signature"} uploaded`);
     return result.url;
+  };
+
+  const handleAssetDelete = async (kind: AssetKind) => {
+    const result = await deleteProfileAssetClient(kind);
+
+    if (!result.ok) {
+      toast.error("Remove failed", { description: result.error });
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, [kind]: null }));
+    toast.success(`${kind === "logo" ? "Logo" : "Signature"} removed`);
   };
 
   const handleSave = async () => {
@@ -215,6 +227,7 @@ export default function SettingsPage() {
                 kind="logo"
                 imageUrl={form.logo}
                 onUpload={handleAssetUpload}
+                onDelete={handleAssetDelete}
               />
               <AssetFileField
                 id="default-signature"
@@ -222,6 +235,7 @@ export default function SettingsPage() {
                 kind="signature"
                 imageUrl={form.signature}
                 onUpload={handleAssetUpload}
+                onDelete={handleAssetDelete}
               />
               <div className="space-y-2 sm:col-span-2">
                 <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-4">
