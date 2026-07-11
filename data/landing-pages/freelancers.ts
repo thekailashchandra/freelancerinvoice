@@ -70,6 +70,7 @@ export const invoiceGeneratorForFreelancers: SeoLandingPage = {
     },
   ],
   relatedSlugs: [
+    "invoice-for-freelance",
     "invoice-software-for-designers",
     "gst-invoice-generator-india",
     "invoice-template-for-agencies",

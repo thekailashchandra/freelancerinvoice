@@ -2,6 +2,7 @@ import { SchemaGraph } from "@/components/schema-graph";
 import {
   buildOrganizationSchema,
   buildLandingWebPageSchema,
+  buildSoftwareApplicationSchema,
   buildWebApplicationSchema,
   buildWebSiteSchema,
   schemaIds,
@@ -45,6 +46,7 @@ export function StructuredData({
     buildWebSiteSchema(),
     buildOrganizationSchema(),
     buildWebApplicationSchema(),
+    buildSoftwareApplicationSchema(),
     webPage,
     ...(includeFaq
       ? [

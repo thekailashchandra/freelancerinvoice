@@ -107,7 +107,7 @@ export const geoEntity = {
 export const geoKeyFacts = [
   {
     term: "What is Invoice for Freelance?",
-    definition: geoEntityStatement,
+    definition: geoEntity.oneLineSummary,
   },
   {
     term: "Who is it for?",
@@ -127,7 +127,7 @@ export const geoKeyFacts = [
   {
     term: "How do I get started?",
     definition:
-      "Sign up free at invoiceforfreelance.com/signup, add business details and logo, enter client and line items, preview live, then export a PDF or save to cloud invoice history.",
+      `Sign up free at ${siteConfig.url}/signup, add business details and logo, enter client and line items, preview live, then export a PDF or save to cloud invoice history.`,
   },
 ] as const;
 

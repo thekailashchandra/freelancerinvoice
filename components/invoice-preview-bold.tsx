@@ -15,6 +15,7 @@ import {
   simpleTemplateColors as c,
 } from "@/lib/invoice-simple-theme";
 import { InvoiceMoney } from "@/components/invoice-money";
+import { InvoiceSummaryTaxRows } from "@/components/invoice-summary-tax-rows";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
@@ -105,9 +106,12 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
 
   const headerMessage = getSimpleHeaderMessage(invoice);
   const footerTagline = getSimpleFooterTagline(invoice);
+  const notesText = invoice.notes?.trim();
   const termsText =
     invoice.termsAndConditions?.trim() ||
     "Payment is due by the date shown on this invoice. Late payments may incur additional fees.";
+  const paymentTerms =
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
   const paymentOptions = useMemo(
     () => invoicePaymentDisplayOptions(invoice.company.companyName),
@@ -225,10 +229,10 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 40,
-            marginBottom: 36,
+            marginBottom: 24,
           }}
         >
-          <div style={{ display: "flex", gap: 48 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "24px 48px" }}>
             <div>
               <FieldLabel>Date</FieldLabel>
               <FieldValue>{formatDate(invoice.invoice.invoiceDate)}</FieldValue>
@@ -237,15 +241,40 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
               <FieldLabel>Due Date</FieldLabel>
               <FieldValue>{formatDate(invoice.invoice.dueDate)}</FieldValue>
             </div>
+            <div>
+              <FieldLabel>Payment Terms</FieldLabel>
+              <FieldValue>{paymentTerms}</FieldValue>
+            </div>
+            {invoice.invoice.purchaseOrder?.trim() ? (
+              <div>
+                <FieldLabel>P.O.#</FieldLabel>
+                <FieldValue>{invoice.invoice.purchaseOrder.trim()}</FieldValue>
+              </div>
+            ) : null}
+            {invoice.invoice.projectName?.trim() ? (
+              <div>
+                <FieldLabel>Project</FieldLabel>
+                <FieldValue>{invoice.invoice.projectName.trim()}</FieldValue>
+              </div>
+            ) : null}
           </div>
           <div>
             <FieldLabel>Billed To</FieldLabel>
             <FieldValue bold>{invoice.client.name || "Client name"}</FieldValue>
+            {invoice.client.company ? (
+              <FieldValue>{invoice.client.company}</FieldValue>
+            ) : null}
             {invoice.client.address ? (
               <FieldValue>{invoice.client.address}</FieldValue>
             ) : null}
             {invoice.client.email ? (
               <FieldValue>{invoice.client.email}</FieldValue>
+            ) : null}
+            {invoice.client.phone ? (
+              <FieldValue>{invoice.client.phone}</FieldValue>
+            ) : null}
+            {invoice.client.gstin?.trim() ? (
+              <FieldValue>GSTIN: {invoice.client.gstin.trim()}</FieldValue>
             ) : null}
           </div>
         </div>
@@ -307,7 +336,7 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
               <p
                 style={{
                   margin: 0,
-                  fontSize: 10,
+                  fontSize: 11,
                   lineHeight: 1.65,
                   color: c.textMuted,
                   whiteSpace: "pre-wrap",
@@ -316,6 +345,32 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
                 {termsText}
               </p>
             </div>
+
+            {notesText ? (
+              <div style={{ marginTop: 24 }}>
+                <p
+                  style={{
+                    margin: "0 0 10px",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    color: c.text,
+                  }}
+                >
+                  Notes
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 11,
+                    lineHeight: 1.65,
+                    color: c.textMuted,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {notesText}
+                </p>
+              </div>
+            ) : null}
           </div>
 
           {/* Right column — table */}
@@ -479,20 +534,19 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
                   </div>
                 ) : null}
                 {taxOn ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                  <InvoiceSummaryTaxRows
+                    totals={totals}
+                    currency={currency}
+                    taxOn={taxOn}
+                    taxLabel={invoice.taxLabel}
+                    taxAmt={taxAmt}
+                    taxPct={taxPct}
+                    rowStyle={{
                       padding: "6px 0",
                       fontSize: 12,
                       color: c.textMuted,
                     }}
-                  >
-                    <span>
-                      {invoice.taxLabel || "Vat"} ({taxPct.toFixed(0)}%)
-                    </span>
-                    <InvoiceMoney amount={taxAmt} currencyCode={currency} />
-                  </div>
+                  />
                 ) : null}
                 {shipping > 0 ? (
                   <div

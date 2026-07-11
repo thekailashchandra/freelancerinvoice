@@ -34,7 +34,7 @@ export function AuthPageLayout({ children }: { children: React.ReactNode }) {
       <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
         <LocaleCountrySwitcher />
       </div>
-      <div className="relative z-10 w-full max-w-[400px] space-y-10">{children}</div>
+      <div className="relative z-10 w-full max-w-[400px] space-y-8">{children}</div>
     </div>
   );
 }
@@ -46,6 +46,7 @@ type AuthScreenProps = {
   footer: React.ReactNode;
   loading?: boolean;
   loadingMessage?: string;
+  compact?: boolean;
 };
 
 export function AuthScreen({
@@ -55,12 +56,13 @@ export function AuthScreen({
   footer,
   loading = false,
   loadingMessage = "Please wait…",
+  compact = false,
 }: AuthScreenProps) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border/60 bg-card/90 p-8 shadow-2xl shadow-black/20 backdrop-blur-md sm:p-9",
-        "ring-1 ring-white/5"
+        "relative overflow-hidden rounded-xl border border-border/60 bg-card/90 shadow-2xl shadow-black/20 backdrop-blur-md ring-1 ring-white/5",
+        compact ? "p-6 sm:p-7" : "p-8 sm:p-9"
       )}
     >
       {loading && (
@@ -69,28 +71,45 @@ export function AuthScreen({
         </div>
       )}
 
-      <div className="mb-8 flex flex-col items-center text-center">
+      <div
+        className={cn(
+          "flex flex-col items-center text-center",
+          compact ? "mb-5" : "mb-8"
+        )}
+      >
         <SiteLogo
           variant="compact"
           href="/"
-          className="mb-6 scale-90 opacity-95"
+          className={cn("scale-90 opacity-95", compact ? "mb-4" : "mb-6")}
         />
-        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-[1.35rem]">
+        <h1
+          className={cn(
+            "font-semibold tracking-tight text-foreground",
+            compact ? "text-lg sm:text-xl" : "text-xl sm:text-[1.35rem]"
+          )}
+        >
           {title}
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">{description}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <div className="space-y-5">{children}</div>
+      <div className={compact ? "space-y-3.5" : "space-y-5"}>{children}</div>
 
-      <div className="mt-8 border-t border-border/50 pt-6">{footer}</div>
+      <div
+        className={cn(
+          "border-t border-border/50",
+          compact ? "mt-5 pt-4" : "mt-8 pt-6"
+        )}
+      >
+        {footer}
+      </div>
     </div>
   );
 }
 
 export function AuthDivider({ label }: { label: string }) {
   return (
-    <div className="relative py-1">
+    <div className="relative py-0.5">
       <div className="absolute inset-0 flex items-center" aria-hidden>
         <div className="w-full border-t border-border/60" />
       </div>

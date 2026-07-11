@@ -47,13 +47,14 @@ export const en = {
   },
   landing: {
     hero: {
-      badge: "Built for freelancers & agencies",
+      badge: "Built for freelancers & agencies worldwide",
       titlePrefix: "Free",
-      titleHighlight: "Invoice for Freelancers",
-      titleSuffix: ": Professional Billing in Minutes",
+      titleHighlight: "Invoice for Freelance",
+      titleSuffix: ": Generate Invoices for Freelancers in Minutes",
       description:
-        "{name} is the fastest way to create an invoice for freelance work. Generate beautiful PDF invoices, track payments, and manage your entire freelance billing workflow in one cloud-backed platform with no spreadsheets or messy templates.",
+        "{name} helps you generate invoice for freelance work without spreadsheets or broken Word templates. Create a professional invoice for freelancers, export PDFs, track payments, and manage your entire billing workflow in one cloud-backed platform.",
       ctaPrimary: "Create your first freelancer invoice",
+      ctaSample: "See a sample invoice",
       ctaFeatures: "See features",
       ctaSignIn: "Sign in",
       metaFree: "Free to start",
@@ -76,6 +77,15 @@ export const en = {
       marqueeBranding: "Your branding",
       marqueeGst: "GST ready",
       marqueeHistory: "Invoice history",
+    },
+    homeSummary: {
+      title: "Why freelancers use this invoice generator",
+      p1: "Send polished bills in minutes — with live preview, branded PDF export, and a searchable history of every invoice you have sent. No Word templates, no formula errors, no reformatting before every client email.",
+      p2: "{name} is purpose-built for independent contractors: designers, developers, writers, consultants, and agencies who bill per project, hourly, or on retainer.",
+      b1: "Free Classic template with PDF export and print at no charge",
+      b2: "Cloud-backed invoice history with paid, pending, and overdue filters",
+      b3: "Multi-currency fields and GST-ready details for Indian freelancers",
+      b4: "Optional premium layouts — preview free, pay only when you export or print them",
     },
     features: {
       title: "Everything freelancers need to invoice clients",
@@ -177,11 +187,108 @@ export const en = {
     cta: {
       title: "Ready to create your invoice for freelancers?",
       descriptionBefore:
-        "Join thousands of freelancers who bill professionally with {name}.",
+        "Join freelancers who bill professionally with {name}.",
       descriptionAfter: ", instant PDF export, cloud-backed invoice history.",
       freeLink: "Free forever",
       primary: "Get started, it's free",
       secondary: "Read freelancer guides",
+    },
+    rich: {
+      templates: {
+        title: "Freelance invoice templates that actually fit your work",
+        subtitle:
+          "Preview professional layouts built for self-employed billing — not generic spreadsheets with empty columns you'll never use.",
+        classic: {
+          name: "Classic",
+          tag: "Free forever",
+          description:
+            "Clean professional layout with your logo, line items, and payment block. PDF export and print included at no cost.",
+        },
+        modern: {
+          name: "Modern",
+          tag: "Premium",
+          description:
+            "Minimal monochrome design with bold totals — ideal when you want a sharp, agency-grade look on every bill.",
+        },
+        minimal: {
+          name: "Minimal",
+          tag: "Premium",
+          description:
+            "Airy whitespace and understated typography for consultants who prefer a quiet, confident invoice.",
+        },
+        simple: {
+          name: "Simple",
+          tag: "Premium",
+          description:
+            "Editorial cream layout with a payment sidebar — great for creative freelancers billing project milestones.",
+        },
+        cta: "Try templates free",
+      },
+      whyTemplate: {
+        title: "Why a self-employed invoice template beats Word or Excel",
+        intro:
+          "Freelancers lose hours fighting generic downloads that were never designed for how you actually bill. A dedicated invoice for freelance workflow saves that time every month.",
+        points: {
+          w1: "Reuse your branding, payment details, and tax labels — stop retyping the same header on every bill.",
+          w2: "Stay organized for taxes and year-end accounting with searchable cloud history.",
+          w3: "Look as professional as your deliverables so clients take payment seriously.",
+          w4: "Outline services and deliverables clearly so scope disputes are rare.",
+          w5: "Grow from your first side gig into a full freelance business on one consistent system.",
+        },
+      },
+      whoNeeds: {
+        title: "Who needs to generate invoice for freelance work?",
+        intro:
+          "If you are paid by clients rather than an employer, you need a proper bill — even for a small side project. Sending only a PayPal link or a vague email slows payment and looks amateur.",
+        roles: {
+          r1: { title: "Designers & creatives", body: "Brand, UI, illustration, and video deliverables with licensing notes on each line." },
+          r2: { title: "Developers & engineers", body: "Hourly, sprint, and milestone billing with technical descriptions finance teams understand." },
+          r3: { title: "Writers & marketers", body: "Retainers, content packages, and campaign work with clear period dates." },
+          r4: { title: "Consultants & coaches", body: "Session blocks, strategy projects, and advisory retainers with professional terms." },
+        },
+      },
+      getPaid: {
+        title: "How to get paid after you send your freelance invoice",
+        subtitle:
+          "A polished PDF is only half the job. Make it easy for clients to pay you the first time.",
+        steps: {
+          g1: {
+            title: "List payment methods on the invoice",
+            body: "Include bank transfer, UPI, Wise, PayPal, or wire details directly on the PDF so accounts teams do not email you for routing numbers.",
+          },
+          g2: {
+            title: "Set clear due dates",
+            body: "Use Net 7, Net 15, or Net 30 terms clients expect. Track overdue status from your dashboard instead of guessing.",
+          },
+          g3: {
+            title: "Follow up professionally",
+            body: "Resend the PDF, confirm receipt, and note late-fee policy if you have one. Organized freelancers get paid faster.",
+          },
+        },
+      },
+      compare: {
+        title: "Generate invoice for freelancers online — not in a spreadsheet",
+        body:
+          "Unlike static Excel or Word downloads, {name} is a live invoice generator: you type, preview updates instantly, and export a client-ready PDF. Your logo, signature, currency, and country-specific payment fields stay saved for the next bill.",
+        cta: "Generate your first invoice",
+      },
+      countries: {
+        title: "Invoice for freelance work — by country",
+        subtitle:
+          "Currency defaults, tax labels, and payment fields adapt to where you bill from. Pick your market or change country anytime from the header.",
+        us: { label: "United States", hint: "USD · routing & ACH" },
+        uk: { label: "United Kingdom", hint: "GBP · sort code & IBAN" },
+        india: { label: "India", hint: "INR · GST · UPI" },
+        global: { label: "International", hint: "Multi-currency · SWIFT" },
+      },
+      resources: {
+        title: "More freelancer billing resources",
+        freelancers: "Invoice generator for freelancers",
+        india: "GST invoice generator — India",
+        designers: "Invoice software for designers",
+        agencies: "Invoice template for agencies",
+        guides: "Freelancer billing guides",
+      },
     },
   },
   locale: {

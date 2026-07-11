@@ -42,6 +42,16 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "invoiceforfreelance.com" }],
+        destination: "https://www.invoiceforfreelance.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     const staticCacheControl =
       process.env.NODE_ENV === "production"

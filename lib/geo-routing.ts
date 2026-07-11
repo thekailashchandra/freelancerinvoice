@@ -1,11 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 import {
   GEO_COUNTRY_COOKIE,
+  GEO_IP_COUNTRY_COOKIE,
   GEO_MARKET_COOKIE,
   readCountryFromHeaders,
   resolveDefaultCountryCode,
   resolveMarketFromCountry,
 } from "@/lib/geo-market";
+import { resolveConsentCountryCode } from "@/lib/consent-country";
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
@@ -30,6 +32,20 @@ export function applyGeoCookies(
   }
 
   const market = resolveMarketFromCountry(countryCode);
+
+  const ipCountry =
+    resolveConsentCountryCode({
+      ipCookie: request.cookies.get(GEO_IP_COUNTRY_COOKIE)?.value ?? null,
+      requestHeaders: request.headers,
+    }) ?? null;
+
+  if (ipCountry) {
+    response.cookies.set(GEO_IP_COUNTRY_COOKIE, ipCountry, {
+      maxAge: COOKIE_MAX_AGE,
+      path: "/",
+      sameSite: "lax",
+    });
+  }
 
   response.cookies.set(GEO_COUNTRY_COOKIE, countryCode, {
     maxAge: COOKIE_MAX_AGE,

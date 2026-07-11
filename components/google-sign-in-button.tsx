@@ -4,33 +4,48 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { toast } from "sonner";
 import { CalmLoader } from "@/components/calm-loader";
+import { consentRequiredToastMessage } from "@/components/data-protection-law-reference";
 import { createClient, type SupabaseBrowserConfig } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
 import { safeAppRedirect } from "@/lib/safe-redirect";
 import { getGoogleClientId } from "@/lib/supabase/client-env";
+import { recordPrivacyConsentClient } from "@/lib/privacy-consent";
 
 type GoogleCredentialResponse = {
   credential: string;
 };
 
 type GoogleSignInButtonProps = {
+  /** When true, the Google button is not rendered (e.g. Supabase not configured). */
   disabled?: boolean;
+  /** Faded look until consent checkbox is checked — button stays visible. */
+  fadedUntilConsent?: boolean;
   redirectTo?: string;
   supabaseConfig?: SupabaseBrowserConfig | null;
   googleClientId?: string | null;
+  recordPrivacyConsentOnSuccess?: boolean;
+  privacyConsentGranted?: boolean;
+  countryCode?: string | null;
+  onPrivacyConsentRecorded?: () => void;
 };
 
 export function GoogleSignInButton({
   disabled = false,
+  fadedUntilConsent = false,
   redirectTo = "/dashboard",
   supabaseConfig = null,
   googleClientId = null,
+  recordPrivacyConsentOnSuccess = false,
+  privacyConsentGranted = true,
+  countryCode = null,
+  onPrivacyConsentRecorded,
 }: GoogleSignInButtonProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [gsiReady, setGsiReady] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const resolvedClientId = googleClientId ?? getGoogleClientId() ?? null;
+  const waitingForConsent = fadedUntilConsent && !privacyConsentGranted;
 
   const handleCredential = useCallback(
     async (response: GoogleCredentialResponse) => {
@@ -57,12 +72,34 @@ export function GoogleSignInButton({
           return;
         }
 
+        if (recordPrivacyConsentOnSuccess) {
+          if (!privacyConsentGranted) {
+            toast.error("Consent required", {
+              description: consentRequiredToastMessage(countryCode),
+            });
+            setLoading(false);
+            return;
+          }
+
+          const consentResult = await recordPrivacyConsentClient();
+          if (!consentResult.ok) {
+            toast.error("Could not save consent", {
+              description: consentResult.error,
+            });
+            setLoading(false);
+            return;
+          }
+          onPrivacyConsentRecorded?.();
+        }
+
         let destination = safeAppRedirect(redirectTo, "/dashboard");
 
         if (data.user) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("company_name")
+            .select(
+              "company_name, privacy_policy_accepted_at, privacy_policy_version, terms_accepted_at, terms_version"
+            )
             .eq("id", data.user.id)
             .maybeSingle();
 
@@ -80,7 +117,14 @@ export function GoogleSignInButton({
         setLoading(false);
       }
     },
-    [redirectTo, supabaseConfig]
+    [
+      redirectTo,
+      supabaseConfig,
+      recordPrivacyConsentOnSuccess,
+      privacyConsentGranted,
+      countryCode,
+      onPrivacyConsentRecorded,
+    ]
   );
 
   useEffect(() => {
@@ -117,6 +161,12 @@ export function GoogleSignInButton({
     });
   }, [disabled, resolvedClientId, gsiReady, handleCredential]);
 
+  const showConsentHint = useCallback(() => {
+    toast.error("Consent required", {
+      description: consentRequiredToastMessage(countryCode),
+    });
+  }, [countryCode]);
+
   if (!resolvedClientId) {
     return (
       <p className="rounded-lg border border-primary/40 bg-primary/15 p-3 text-sm text-foreground">
@@ -142,11 +192,20 @@ export function GoogleSignInButton({
         <div
           ref={containerRef}
           className={[
-            "flex min-h-11 w-full justify-center overflow-hidden rounded-lg [&>div]:!w-full [&_iframe]:!rounded-lg",
-            disabled || loading ? "pointer-events-none opacity-50" : "",
+            "flex min-h-11 w-full justify-center overflow-hidden rounded-lg transition-opacity [&>div]:!w-full [&_iframe]:!rounded-lg",
+            waitingForConsent ? "opacity-45" : "",
+            loading ? "pointer-events-none opacity-50" : "",
           ].join(" ")}
-          aria-hidden={disabled || loading}
+          aria-hidden={loading}
         />
+        {waitingForConsent && !loading && !disabled ? (
+          <button
+            type="button"
+            className="absolute inset-0 z-[1] cursor-pointer rounded-lg bg-transparent"
+            aria-label="Accept Terms and Privacy Policy before Google sign-in"
+            onClick={showConsentHint}
+          />
+        ) : null}
       </div>
     </>
   );

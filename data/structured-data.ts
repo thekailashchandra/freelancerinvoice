@@ -7,7 +7,7 @@ import { geoConsensus, geoEntity, geoTopics } from "@/data/geo";
 import { homeSeo } from "@/data/home-seo";
 import { faqItems } from "@/data/seo";
 import { getCanonicalUrl } from "@/data/urls";
-import { siteConfig } from "@/data/site";
+import { absoluteSiteUrl, siteConfig } from "@/data/site";
 
 export const schemaIds = {
   website: `${siteConfig.url}/#website`,
@@ -15,6 +15,26 @@ export const schemaIds = {
   software: `${siteConfig.url}/#software`,
   webApp: `${siteConfig.url}/#webapplication`,
 } as const;
+
+/** Square site icon for Organization logo and WebApplication image (Google favicon guidelines). */
+export function buildSiteIconImageObject(size: 48 | 96 | 192 | 512 = 96) {
+  const path =
+    size === 48
+      ? siteConfig.icons.favicon48
+      : size === 96
+        ? siteConfig.icons.favicon96
+        : size === 192
+          ? siteConfig.icons.app192
+          : siteConfig.icons.app512;
+
+  return {
+    "@type": "ImageObject",
+    url: absoluteSiteUrl(path),
+    width: size,
+    height: size,
+    contentUrl: absoluteSiteUrl(path),
+  };
+}
 
 /** Comma-separated featureList string for WebApplication schema (Google rich results). */
 export const webApplicationFeatureList =
@@ -48,7 +68,7 @@ export function buildWebApplicationSchema(
     operatingSystem: "All",
     browserRequirements: "Requires HTML5 support",
     description: options.description ?? geoEntity.entityStatement,
-    image: `${siteConfig.url}${siteConfig.logos.light}`,
+    image: buildSiteIconImageObject(192),
     screenshot: `${siteConfig.url}/opengraph-image`,
     offers: {
       "@type": "Offer",
@@ -112,10 +132,8 @@ export function buildOrganizationSchema() {
     name: siteConfig.name,
     url: siteConfig.url,
     slogan: geoEntity.tagline,
-    logo: {
-      "@type": "ImageObject",
-      url: `${siteConfig.url}${siteConfig.logos.light}`,
-    },
+    logo: buildSiteIconImageObject(96),
+    image: buildSiteIconImageObject(192),
     description: geoEntity.entityStatement,
     knowsAbout: [...geoTopics],
     areaServed: "Worldwide",
@@ -135,6 +153,7 @@ export function buildWebSiteSchema() {
     url: siteConfig.url,
     description: homeSeo.description,
     publisher: { "@id": schemaIds.organization },
+    image: buildSiteIconImageObject(192),
     inLanguage: "en-US",
   };
 }

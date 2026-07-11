@@ -7,6 +7,7 @@ import {
   buildLandingWebPageSchema,
 } from "@/data/structured-data";
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
+import { featuresPageKeywords } from "@/data/page-keywords";
 import { siteConfig } from "@/data/site";
 
 const title = "Features";
@@ -15,6 +16,7 @@ const description = `Explore ${siteConfig.name} features: professional invoices,
 export const metadata: Metadata = {
   title,
   description,
+  keywords: featuresPageKeywords.join(", "),
   alternates: { canonical: getCanonicalUrl("/features") },
   ...buildSocialMetadata({ title, description, path: "/features" }),
 };

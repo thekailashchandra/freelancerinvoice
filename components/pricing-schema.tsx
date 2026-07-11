@@ -7,7 +7,7 @@ import {
 import { getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
-const description = `${siteConfig.name} is free for freelancers. Create invoices, export PDFs, and manage billing at $0.`;
+const description = `${siteConfig.name} is free for freelancers. Classic template PDF export and print are $0. Optional one-time unlocks apply to premium templates.`;
 
 export function PricingSchema() {
   return (
@@ -40,7 +40,7 @@ export function PricingSchema() {
             availability: "https://schema.org/InStock",
             url: getCanonicalUrl("/signup"),
             description:
-              "Free freelancer invoice generator with PDF export and cloud storage",
+              "Free freelancer invoice generator with Classic template PDF export, print, and cloud storage",
           },
         },
       ]}

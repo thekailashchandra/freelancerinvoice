@@ -21,8 +21,9 @@ import { geoAuthoritativeAnswers } from "@/data/geo";
 import { faqItems } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { useTranslation } from "@/components/locale-provider";
-import { GeoKeyFacts } from "@/components/geo-key-facts";
+import { HomePageSummary } from "@/components/home-page-summary";
 import { LandingHero } from "@/components/landing-hero";
+import { LandingRichContent } from "@/components/landing-rich-content";
 import { PublicSiteFooter } from "@/components/public-site-footer";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { Button } from "@/components/ui/button";
@@ -91,8 +92,10 @@ export function LandingPage() {
       <main className="mx-auto w-full max-w-7xl overflow-x-clip px-6 pb-24 lg:px-10 xl:px-12">
         <LandingHero />
 
+        <LandingRichContent />
+
         <section className="py-12" aria-label="Product summary">
-          <GeoKeyFacts />
+          <HomePageSummary />
         </section>
 
         <section className="py-12" aria-labelledby="features-heading">

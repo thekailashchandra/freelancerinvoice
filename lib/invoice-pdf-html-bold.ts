@@ -14,6 +14,10 @@ import {
   shouldShowInvoiceBranding,
 } from "@/lib/invoice-branding";
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
+import {
+  buildInvoiceSummaryTaxLinesHtml,
+  getInvoiceSummaryTaxLines,
+} from "@/lib/invoice-tax-display";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
 import {
@@ -60,6 +64,9 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
   const shipping = totals.shippingFee ?? 0;
+  const paymentTerms =
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
+  const notesText = invoice.notes?.trim();
 
   const headerMessage = escapeHtml(getSimpleHeaderMessage(invoice));
   const footerTagline = escapeHtml(getSimpleFooterTagline(invoice));
@@ -94,9 +101,19 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
     totals.discountAmount > 0
       ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>Discount</span><span>− ${invoiceMoneyHtml(totals.discountAmount, currency)}</span></div>`
       : "";
-  const taxRow = taxOn
-    ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>${escapeHtml(invoice.taxLabel || "Vat")} (${taxPct.toFixed(0)}%)</span>${invoiceMoneyHtml(taxAmt, currency)}</div>`
-    : "";
+  const taxRowStyle = `display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}`;
+  const taxRow = buildInvoiceSummaryTaxLinesHtml(
+    getInvoiceSummaryTaxLines({
+      totals,
+      taxOn,
+      taxLabel: invoice.taxLabel,
+      taxAmt,
+      taxPct,
+    }),
+    currency,
+    taxRowStyle,
+    escapeHtml
+  );
   const shippingRow =
     shipping > 0
       ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
@@ -145,24 +162,34 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
   </tr></table>
 </div>
 
-<table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:36px"><tr>
+<table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:24px"><tr>
   <td width="50%" valign="top">
     <table cellpadding="0" cellspacing="0"><tr>
-      <td style="padding-right:48px" valign="top">
+      <td style="padding-right:32px;padding-bottom:12px" valign="top">
         <div style="font-family:${F};font-size:11px;color:${c.textMuted}">Date</div>
         <div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(formatDate(invoice.invoice.invoiceDate))}</div>
       </td>
-      <td valign="top">
+      <td style="padding-right:32px;padding-bottom:12px" valign="top">
         <div style="font-family:${F};font-size:11px;color:${c.textMuted}">Due Date</div>
         <div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(formatDate(invoice.invoice.dueDate))}</div>
       </td>
+      <td style="padding-bottom:12px" valign="top">
+        <div style="font-family:${F};font-size:11px;color:${c.textMuted}">Payment Terms</div>
+        <div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(paymentTerms)}</div>
+      </td>
+    </tr><tr>
+      ${invoice.invoice.purchaseOrder?.trim() ? `<td style="padding-right:32px;padding-top:4px" valign="top"><div style="font-family:${F};font-size:11px;color:${c.textMuted}">P.O.#</div><div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(invoice.invoice.purchaseOrder.trim())}</div></td>` : ""}
+      ${invoice.invoice.projectName?.trim() ? `<td style="padding-top:4px" valign="top" colspan="2"><div style="font-family:${F};font-size:11px;color:${c.textMuted}">Project</div><div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(invoice.invoice.projectName.trim())}</div></td>` : ""}
     </tr></table>
   </td>
   <td width="50%" valign="top">
     <div style="font-family:${F};font-size:11px;color:${c.textMuted}">Billed To</div>
     <div style="margin-top:6px;font-family:${F};font-size:13px;font-weight:700">${escapeHtml(invoice.client.name || "Client name")}</div>
+    ${invoice.client.company ? `<div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(invoice.client.company)}</div>` : ""}
     ${invoice.client.address ? `<div style="margin-top:6px;font-family:${F};font-size:13px;white-space:pre-wrap">${escapeHtml(invoice.client.address)}</div>` : ""}
     ${invoice.client.email ? `<div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(invoice.client.email)}</div>` : ""}
+    ${invoice.client.phone ? `<div style="margin-top:6px;font-family:${F};font-size:13px">${escapeHtml(invoice.client.phone)}</div>` : ""}
+    ${invoice.client.gstin?.trim() ? `<div style="margin-top:6px;font-family:${F};font-size:13px">GSTIN: ${escapeHtml(invoice.client.gstin.trim())}</div>` : ""}
   </td>
 </tr></table>
 
@@ -172,8 +199,9 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
     ${paymentBlock}
     <div style="margin-top:32px">
       <div style="font-family:${F};font-size:13px;font-weight:800;margin-bottom:10px">Terms &amp; Conditions</div>
-      <div style="font-family:${F};font-size:10px;line-height:16px;color:${c.textMuted};white-space:pre-wrap">${termsText}</div>
+      <div style="font-family:${F};font-size:11px;line-height:18px;color:${c.textMuted};white-space:pre-wrap">${termsText}</div>
     </div>
+    ${notesText ? `<div style="margin-top:24px"><div style="font-family:${F};font-size:13px;font-weight:800;margin-bottom:10px">Notes</div><div style="font-family:${F};font-size:11px;line-height:18px;color:${c.textMuted};white-space:pre-wrap">${escapeHtml(notesText)}</div></div>` : ""}
   </td>
   <td width="68%" valign="top" style="padding:24px 0 0 24px">
     <table width="100%" style="table-layout:fixed">

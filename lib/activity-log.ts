@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ActivityAction =
   | "user.signup"
+  | "user.privacy_consent"
+  | "user.legal_consent"
   | "invoice.created"
   | "invoice.updated"
   | "invoice.deleted"

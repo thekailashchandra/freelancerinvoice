@@ -49,6 +49,12 @@ export const geoDirectAnswers: Record<string, string> = {
     "A GST-compliant contractor invoice in India includes GSTIN, SAC code, taxable value, and CGST/SGST or IGST lines on every bill. Independent contractors must also document TDS under Section 194J when clients deduct tax at source.",
   "global-freelance-invoicing-compliance":
     "Global freelance invoicing compliance means matching each invoice to local rules — US routing numbers, EU IBAN, UK sort codes, and correct tax withholding references. Currency should default to the client's settlement region: USD, EUR, or GBP.",
+  "invoice-for-freelance":
+    "An invoice for freelance work is the bill you send after completing client deliverables — it lists services, amounts, due dates, and payment instructions. Invoice for Freelance lets you generate that invoice online with live preview and free PDF export instead of wrestling with Word or Excel templates.",
+  "invoice-for-freelance-us":
+    "US freelancers generate invoices with USD totals, routing and account numbers, and clear Net payment terms for corporate AP teams. Invoice for Freelance defaults to US payment fields and exports print-ready PDFs for 1099 contractors and consultants.",
+  "invoice-for-freelance-uk":
+    "UK freelancers invoice with GBP amounts, sort codes, optional IBAN, and VAT labels when registered. Invoice for Freelance formats bills the way British sole traders and limited-company contractors need for domestic and international clients.",
 };
 
 /** Returns the GEO direct-answer block for an article slug, if defined. */

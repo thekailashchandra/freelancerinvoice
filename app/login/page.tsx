@@ -12,7 +12,10 @@ import {
   isSupabaseConfigured,
 } from "@/lib/supabase/env";
 import { AuthPageLayout } from "@/components/auth-screen";
+import { readConsentCountryFromServerCookies } from "@/lib/consent-country-server";
 import { LoginForm } from "./login-form";
+
+export const dynamic = "force-dynamic";
 
 const title = "Sign In";
 const description = `Sign in to ${siteConfig.name} to access your freelancer invoices, PDF exports, and billing history.`;
@@ -25,10 +28,11 @@ export const metadata: Metadata = {
   ...buildSocialMetadata({ title, description, path: "/login" }),
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
   const configured = isSupabaseConfigured();
   const supabaseConfig = configured ? getSupabasePublishableEnv() : null;
   const googleClientId = getGoogleClientId() ?? null;
+  const initialCountryCode = await readConsentCountryFromServerCookies();
 
   return (
     <>
@@ -45,6 +49,7 @@ export default function LoginPage() {
             configured={configured}
             supabaseConfig={supabaseConfig}
             googleClientId={googleClientId}
+            initialCountryCode={initialCountryCode ?? undefined}
           />
           <PageFaqSection
             faqItems={getPageFaqs("/login")}

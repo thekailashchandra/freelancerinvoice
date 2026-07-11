@@ -20,6 +20,10 @@ import {
   shouldShowInvoiceBranding,
 } from "@/lib/invoice-branding";
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
+import {
+  buildInvoiceSummaryTaxLinesHtml,
+  getInvoiceSummaryTaxLines,
+} from "@/lib/invoice-tax-display";
 import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import type { Invoice } from "@/types/invoice";
 import {
@@ -69,6 +73,14 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
+  const shipping = totals.shippingFee ?? 0;
+  const taxPct =
+    invoice.taxDiscount.taxPercentage ??
+    invoice.taxDiscount.gstPercentage ??
+    0;
+  const paymentTerms =
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
+  const notesText = invoice.notes?.trim();
 
   const serviceRows = invoice.services
     .map((item, index) => {
@@ -94,7 +106,6 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
 
   const termsText =
     invoice.termsAndConditions?.trim() ||
-    invoice.notes?.trim() ||
     "Payment is due by the date shown above. Thank you for your business.";
 
   const metaChips = [
@@ -102,6 +113,7 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
     invoice.invoice.dueDate
       ? metaChip("Due Date", formatDate(invoice.invoice.dueDate), F)
       : "",
+    metaChip("Payment Terms", paymentTerms, F),
     invoice.invoice.purchaseOrder?.trim()
       ? metaChip("P.O. Number", invoice.invoice.purchaseOrder.trim(), F)
       : "",
@@ -114,9 +126,23 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
     totals.discountAmount > 0
       ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:#059669"><span>Discount</span>${invoiceMoneyHtml(totals.discountAmount, currency)}</div>`
       : "";
-  const taxRow = taxOn
-    ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>${escapeHtml(invoice.taxLabel || "Tax")}</span>${invoiceMoneyHtml(taxAmt, currency)}</div>`
-    : "";
+  const taxRowStyle = `display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}`;
+  const taxRow = buildInvoiceSummaryTaxLinesHtml(
+    getInvoiceSummaryTaxLines({
+      totals,
+      taxOn,
+      taxLabel: invoice.taxLabel,
+      taxAmt,
+      taxPct,
+    }),
+    currency,
+    taxRowStyle,
+    escapeHtml
+  );
+  const shippingRow =
+    shipping > 0
+      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
+      : "";
 
   const contactFooter = [
     invoice.company.companyEmail?.trim(),
@@ -169,7 +195,8 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
       ${invoice.client.company ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${t.textSecondary}">${escapeHtml(invoice.client.company)}</div>` : ""}
       ${invoice.client.address ? `<div style="margin-top:8px;font-family:${F};font-size:12px;line-height:18px;color:${t.textMuted};white-space:pre-wrap">${escapeHtml(invoice.client.address)}</div>` : ""}
       ${invoice.client.email ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${t.textMuted}">${escapeHtml(invoice.client.email)}</div>` : ""}
-      ${invoice.client.phone ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:${t.textMuted}">${escapeHtml(invoice.client.phone)}</div>` : ""}`,
+      ${invoice.client.phone ? `<div style="margin-top:4px;font-family:${F};font-size:12px;color:${t.textMuted}">${escapeHtml(invoice.client.phone)}</div>` : ""}
+      ${invoice.client.gstin?.trim() ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${t.textMuted}">GSTIN: ${escapeHtml(invoice.client.gstin.trim())}</div>` : ""}`,
       F
     )}
   </td>
@@ -210,21 +237,23 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>Subtotal</span>${invoiceMoneyHtml(totals.subtotal, currency)}</div>
       ${discountRow}
       ${taxRow}
+      ${shippingRow}
       <div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:2px solid ${t.text};font-family:${F};font-size:14px;font-weight:800"><span>Total</span>${invoiceMoneyHtml(totals.total, currency)}</div>
     </div>
   </td>
 </tr></table>
 
 <table width="${W}" cellpadding="0" cellspacing="0" style="margin-bottom:24px"><tr>
-  <td width="32%" valign="top" style="padding-right:7px">
+  <td width="${notesText ? "24%" : "32%"}" valign="top" style="padding-right:7px">
     ${hasInvoicePaymentInfo(invoice.payment, paymentOptions) ? infoCard("Payment Details", paymentLines, F) : "&nbsp;"}
   </td>
   <td width="2%"></td>
-  <td width="32%" valign="top" style="padding:0 7px">
+  ${notesText ? `<td width="24%" valign="top" style="padding:0 7px">${infoCard("Notes", `<div style="font-family:${F};font-size:11px;line-height:18px;color:${t.textMuted};white-space:pre-wrap">${escapeHtml(notesText)}</div>`, F)}</td><td width="2%"></td>` : ""}
+  <td width="${notesText ? "24%" : "32%"}" valign="top" style="padding:0 7px">
     ${infoCard("Terms", `<div style="font-family:${F};font-size:11px;line-height:18px;color:${t.textMuted};white-space:pre-wrap">${escapeHtml(termsText)}</div>`, F)}
   </td>
   <td width="2%"></td>
-  <td width="32%" valign="top" style="padding-left:7px">
+  <td width="${notesText ? "24%" : "32%"}" valign="top" style="padding-left:7px">
     ${infoCard(
       "Authorized By",
       `${companySignatureBlockHtml(invoice.company, { font: F, maxHeight: d.signature.maxHeight, maxWidth: d.signature.maxWidth, align: "left", marginTop: 0, marginBottom: 10 })}

@@ -110,7 +110,7 @@ export function HubClusterContent({ cluster }: HubClusterContentProps) {
         </Button>
       </div>
 
-      <PageFaqSection faqItems={cluster.faqItems} />
+      <PageFaqSection faqItems={cluster.faqItems} includeSchema={false} />
 
       <nav className="mt-10 flex flex-wrap gap-4 text-sm">
         <Link href="/blog" className="text-primary hover:underline">

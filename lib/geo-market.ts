@@ -11,6 +11,8 @@ export type MarketRegion = "IN" | "GLOBAL";
 
 export const GEO_COUNTRY_COOKIE = "iff-geo-country";
 export const GEO_MARKET_COOKIE = "iff-geo-market";
+/** IP-detected country for legal consent — not changed by locale switcher. */
+export const GEO_IP_COUNTRY_COOKIE = "iff-geo-ip-country";
 
 const NORTH_AMERICA = new Set(["US", "CA", "MX"]);
 

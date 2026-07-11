@@ -1,4 +1,7 @@
 import type { SeoLandingPage } from "./types";
+import { invoiceForFreelance } from "./invoice-for-freelance";
+import { invoiceForFreelanceUs } from "./invoice-for-freelance-us";
+import { invoiceForFreelanceUk } from "./invoice-for-freelance-uk";
 import { freeDynamicInvoiceGeneratorDevelopersNoSignup } from "./developers-no-signup";
 import { freelanceContractorInvoiceFormatInrUsClients } from "./inr-us-clients";
 import { gstInvoiceGeneratorIndia } from "./gst-india";
@@ -9,6 +12,9 @@ import { gstCompliantInvoiceTemplateIndependentContractorsIndia } from "./gst-co
 import { globalFreelanceInvoicingCompliance } from "./global-compliance";
 
 export const landingPages: SeoLandingPage[] = [
+  invoiceForFreelance,
+  invoiceForFreelanceUs,
+  invoiceForFreelanceUk,
   invoiceGeneratorForFreelancers,
   gstInvoiceGeneratorIndia,
   gstCompliantInvoiceTemplateIndependentContractorsIndia,

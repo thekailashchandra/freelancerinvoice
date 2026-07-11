@@ -16,6 +16,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { useTranslation } from "@/components/locale-provider";
 import { uploadProfileAssetClient, deleteProfileAssetClient } from "@/lib/api/app-client";
 import { AssetFileField } from "@/components/asset-file-field";
+import { LogoSizeControl } from "@/components/logo-size-control";
 import { CountrySelect } from "@/components/country-select";
 import { CurrencySelect } from "@/components/currency-select";
 import {
@@ -229,6 +230,15 @@ export default function SettingsPage() {
                 onUpload={handleAssetUpload}
                 onDelete={handleAssetDelete}
               />
+              {form.logo ? (
+                <LogoSizeControl
+                  value={form.logoHeight}
+                  onChange={(height) =>
+                    setForm((prev) => ({ ...prev, logoHeight: height }))
+                  }
+                  id="settings-logoHeight"
+                />
+              ) : null}
               <AssetFileField
                 id="default-signature"
                 label="Default Signature"

@@ -51,6 +51,7 @@ const publicAllow = [
   "/icon.png",
   "/favicon-48.png",
   "/favicon-96.png",
+  "/icon-512.png",
   "/icon",
   "/apple-icon",
   "/manifest.webmanifest",

@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import { LandingPage } from "@/components/landing-page";
 import { StructuredData } from "@/components/structured-data";
 import {
-  buildKeywordsString,
   buildSocialMetadata,
   getCanonicalUrl,
   homeSeo,
 } from "@/data/seo";
+import { homePageKeywords } from "@/data/page-keywords";
 /** SSG + ISR — auth redirects run in middleware, not here. */
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: homeSeo.title,
   description: homeSeo.description,
-  keywords: buildKeywordsString(),
+  keywords: homePageKeywords.join(", "),
   alternates: {
     canonical: getCanonicalUrl("/"),
   },
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <StructuredData includeGeoAnswers />
+      <StructuredData includeFaq includeGeoAnswers />
       <LandingPage />
     </>
   );

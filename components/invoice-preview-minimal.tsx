@@ -12,11 +12,16 @@ import {
 import { resolveTemplateDesign } from "@/lib/invoice-templates";
 import {
   formatMinimalFooterYear,
-  formatMinimalTableDate,
 } from "@/lib/invoice-minimal-dates";
 import { InvoiceMoney } from "@/components/invoice-money";
+import { InvoiceSummaryTaxRows } from "@/components/invoice-summary-tax-rows";
 import { shouldShowInvoiceBranding } from "@/lib/invoice-branding";
-import { formatInvoiceAmount } from "@/lib/utils";
+import {
+  getInvoicePaymentInfo,
+  hasInvoicePaymentInfo,
+  invoicePaymentDisplayOptions,
+} from "@/lib/invoice-payment-display";
+import { formatDate, formatInvoiceAmount } from "@/lib/utils";
 import { InvoicePoweredBy } from "@/components/invoice-powered-by";
 import {
   InvoiceCompanyContactDetails,
@@ -31,20 +36,23 @@ type InvoicePreviewMinimalProps = {
   onRemoveBranding?: () => void;
 };
 
+const labelColor = "#6b7280";
+const bodyColor = "#4b5563";
+
 const labelStyle: React.CSSProperties = {
   margin: 0,
   fontSize: 10,
   fontWeight: 600,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
-  color: "#888888",
+  color: labelColor,
 };
 
 const bodyMuted: React.CSSProperties = {
   margin: "4px 0 0",
   fontSize: 12,
   lineHeight: 1.55,
-  color: "#888888",
+  color: bodyColor,
 };
 
 export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
@@ -76,18 +84,41 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
+  const shipping = totals.shippingFee ?? 0;
+  const paymentTerms =
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
-  const notesText =
-    invoice.notes?.trim() ||
-    invoice.termsAndConditions?.trim() ||
-    "Payment should be paid in full within the due date shown on this invoice.";
+  const paymentOptions = useMemo(
+    () => invoicePaymentDisplayOptions(invoice.company.companyName),
+    [invoice.company.companyName]
+  );
+  const paymentLines = useMemo(
+    () => getInvoicePaymentInfo(invoice.payment, paymentOptions),
+    [invoice.payment, paymentOptions]
+  );
+
+  const notesText = invoice.notes?.trim();
+  const termsText = invoice.termsAndConditions?.trim();
 
   const closingLine = invoice.company.companyName
     ? `Have a nice day and thank you! ${invoice.company.companyName.split(" ")[0]}`
     : "Have a nice day and thank you!";
 
-  const tableDate = formatMinimalTableDate(invoice.invoice.invoiceDate);
   const footerYear = formatMinimalFooterYear(invoice.invoice.invoiceDate);
+
+  const metaItems = [
+    { label: "Issue Date", value: formatDate(invoice.invoice.invoiceDate) },
+    invoice.invoice.dueDate
+      ? { label: "Due Date", value: formatDate(invoice.invoice.dueDate) }
+      : null,
+    { label: "Terms", value: paymentTerms },
+    invoice.invoice.purchaseOrder?.trim()
+      ? { label: "P.O.#", value: invoice.invoice.purchaseOrder.trim() }
+      : null,
+    invoice.invoice.projectName?.trim()
+      ? { label: "Project", value: invoice.invoice.projectName.trim() }
+      : null,
+  ].filter((item): item is { label: string; value: string } => Boolean(item));
 
   return (
     <div
@@ -158,6 +189,11 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
             >
               {invoice.client.name || "Client name"}
             </p>
+            {invoice.client.company ? (
+              <p style={{ ...bodyMuted, marginTop: 6, fontWeight: 500 }}>
+                {invoice.client.company}
+              </p>
+            ) : null}
             {invoice.client.address ? (
               <p
                 style={{
@@ -174,6 +210,9 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
             ) : null}
             {invoice.client.phone ? (
               <p style={bodyMuted}>{invoice.client.phone}</p>
+            ) : null}
+            {invoice.client.gstin?.trim() ? (
+              <p style={bodyMuted}>GSTIN: {invoice.client.gstin.trim()}</p>
             ) : null}
           </div>
 
@@ -201,6 +240,34 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
             >
               {invoice.invoice.invoiceNumber}
             </p>
+            <div
+              style={{
+                marginTop: 20,
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+                alignItems: "flex-end",
+              }}
+            >
+              {metaItems.map((item) => (
+                <div
+                  key={item.label}
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    fontSize: 11,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  <span style={{ color: labelColor, letterSpacing: "0.06em" }}>
+                    {item.label}
+                  </span>
+                  <span style={{ color: "#111827", fontWeight: 500 }}>
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -213,7 +280,6 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           }}
         >
           <colgroup>
-            <col style={{ width: 108 }} />
             <col />
             <col style={{ width: 72 }} />
             <col style={{ width: 56 }} />
@@ -221,13 +287,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           </colgroup>
           <thead>
             <tr>
-              {[
-                "Invoice Date",
-                "Task Description",
-                "Rate",
-                "Qty",
-                "Amount",
-              ].map((col, i) => (
+              {["Description", "Rate", "Qty", "Amount"].map((col, i) => (
                 <th
                   key={col}
                   style={{
@@ -236,9 +296,9 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                     fontWeight: 600,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    textAlign: i >= 2 ? "right" : "left",
-                    color: "#888888",
-                    borderBottom: "none",
+                    textAlign: i >= 1 ? "right" : "left",
+                    color: labelColor,
+                    borderBottom: "1px solid #e5e7eb",
                   }}
                 >
                   {col}
@@ -247,33 +307,24 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
             </tr>
           </thead>
           <tbody>
-            {invoice.services.map((item, index) => {
+            {invoice.services.map((item) => {
               const lineAmount = item.quantity * item.price;
               return (
                 <tr key={item.id}>
                   <td
                     style={{
-                      padding: "12px 0",
-                      fontSize: 11,
-                      fontWeight: 600,
-                      letterSpacing: "0.04em",
-                      color: "#888888",
-                      verticalAlign: "top",
-                    }}
-                  >
-                    {index === 0 ? tableDate : ""}
-                  </td>
-                  <td
-                    style={{
                       padding: "12px 8px 12px 0",
                       fontSize: 13,
-                      color: "#374151",
+                      color: bodyColor,
                       verticalAlign: "top",
+                      borderBottom: "1px solid #f3f4f6",
                     }}
                   >
-                    {item.name || "Service"}
+                    <span style={{ fontWeight: 600, color: "#111827" }}>
+                      {item.name || "Service"}
+                    </span>
                     {item.description ? (
-                      <span style={{ color: "#888888" }}>
+                      <span style={{ color: labelColor }}>
                         {" "}
                         — {item.description}
                       </span>
@@ -284,8 +335,9 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                       padding: "12px 0",
                       textAlign: "right",
                       fontSize: 13,
-                      color: "#374151",
+                      color: bodyColor,
                       verticalAlign: "top",
+                      borderBottom: "1px solid #f3f4f6",
                     }}
                   >
                     <InvoiceMoney amount={item.price} currencyCode={currency} />
@@ -295,8 +347,9 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                       padding: "12px 0",
                       textAlign: "right",
                       fontSize: 13,
-                      color: "#374151",
+                      color: bodyColor,
                       verticalAlign: "top",
+                      borderBottom: "1px solid #f3f4f6",
                     }}
                   >
                     {formatInvoiceAmount(item.quantity)}
@@ -306,8 +359,10 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                       padding: "12px 0",
                       textAlign: "right",
                       fontSize: 13,
+                      fontWeight: 600,
                       color: "#111827",
                       verticalAlign: "top",
+                      borderBottom: "1px solid #f3f4f6",
                     }}
                   >
                     <InvoiceMoney amount={lineAmount} currencyCode={currency} />
@@ -335,7 +390,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                 justifyContent: "space-between",
                 padding: "4px 0",
                 fontSize: 12,
-                color: "#888888",
+                color: bodyColor,
               }}
             >
               <span>Subtotal</span>
@@ -348,7 +403,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                   justifyContent: "space-between",
                   padding: "4px 0",
                   fontSize: 12,
-                  color: "#888888",
+                  color: "#059669",
                 }}
               >
                 <span>Discount</span>
@@ -361,20 +416,27 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                 </span>
               </div>
             ) : null}
-            {taxOn ? (
+            <InvoiceSummaryTaxRows
+              totals={totals}
+              currency={currency}
+              taxOn={taxOn}
+              taxLabel={invoice.taxLabel}
+              taxAmt={taxAmt}
+              taxPct={taxPct}
+              rowStyle={{ fontSize: 12, color: bodyColor }}
+            />
+            {shipping > 0 ? (
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
                   padding: "4px 0",
                   fontSize: 12,
-                  color: "#888888",
+                  color: bodyColor,
                 }}
               >
-                <span>
-                  {invoice.taxLabel || "Tax"} {taxPct.toFixed(2)}%
-                </span>
-                <InvoiceMoney amount={taxAmt} currencyCode={currency} />
+                <span>Shipping</span>
+                <InvoiceMoney amount={shipping} currencyCode={currency} />
               </div>
             ) : null}
             <div
@@ -394,26 +456,73 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           </div>
         </div>
 
-        {/* Notes */}
-        <div style={{ marginTop: 48 }}>
-          <p style={labelStyle}>Notes</p>
+        {/* Notes, payment, terms */}
+        <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 28 }}>
+          {notesText ? (
+            <div>
+              <p style={labelStyle}>Notes</p>
+              <p
+                style={{
+                  margin: "12px 0 0",
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  color: bodyColor,
+                  maxWidth: 520,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {notesText}
+              </p>
+            </div>
+          ) : null}
+
+          {hasInvoicePaymentInfo(invoice.payment, paymentOptions) ? (
+            <div>
+              <p style={labelStyle}>Payment Information</p>
+              <div style={{ marginTop: 12, maxWidth: 520 }}>
+                {paymentLines.map((line) => (
+                  <p
+                    key={line.label}
+                    style={{
+                      margin: "0 0 6px",
+                      fontSize: 12,
+                      lineHeight: 1.6,
+                      color: bodyColor,
+                    }}
+                  >
+                    <span style={{ fontWeight: 600, color: "#111827" }}>
+                      {line.label}:{" "}
+                    </span>
+                    {line.value}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {termsText ? (
+            <div>
+              <p style={labelStyle}>Terms &amp; Conditions</p>
+              <p
+                style={{
+                  margin: "12px 0 0",
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  color: bodyColor,
+                  maxWidth: 520,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {termsText}
+              </p>
+            </div>
+          ) : null}
+
           <p
             style={{
-              margin: "12px 0 0",
+              margin: 0,
               fontSize: 12,
-              lineHeight: 1.7,
-              color: "#888888",
-              maxWidth: 480,
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {notesText}
-          </p>
-          <p
-            style={{
-              margin: "16px 0 0",
-              fontSize: 12,
-              color: "#888888",
+              color: labelColor,
             }}
           >
             {closingLine}
@@ -434,7 +543,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           margin: "48px 0 0",
           textAlign: "center",
           fontSize: 10,
-          color: "#aaaaaa",
+          color: "#9ca3af",
           letterSpacing: "0.02em",
         }}
       >

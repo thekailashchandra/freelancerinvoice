@@ -52,22 +52,14 @@ const guideIndexLastModified = new Date(
   Math.max(...guideArticles.map((a) => new Date(a.publishedAt).getTime()))
 );
 
-/** Primary and secondary keywords for organic search (Google, Gemini, Bing). */
+/** Primary and secondary keywords for the homepage (other pages use data/page-keywords.ts). */
 export const seoKeywords = [
-  "invoice for freelancers",
   "invoice for freelance",
-  "freelancer invoice",
+  "generate invoice for freelancers",
+  "generate invoice for freelance work",
   "freelancer invoice generator",
   "free invoice for freelancers",
   "freelance invoicing software",
-  "create invoice for freelance work",
-  "professional freelancer invoice",
-  "online invoice for freelancers",
-  "freelance invoice template",
-  "invoice tool for freelancers",
-  "freelancer billing",
-  "freelance invoice maker",
-  "PDF invoice for freelancers",
 ] as const;
 
 export const faqItems = [
@@ -110,6 +102,36 @@ export const faqItems = [
     question: "Is my freelance invoice data secure?",
     answer:
       "Your data is protected with account-level isolation and row-level security in Supabase. Only you can access your invoices, clients, and company settings.",
+  },
+  {
+    question: "What is a freelance invoice used for?",
+    answer:
+      "A freelance invoice is the formal bill you send after completing work. It tells your client what you delivered, what they owe, when payment is due, and how to pay you — so you get paid on time without awkward follow-ups.",
+  },
+  {
+    question: "How do I generate invoice for freelancers quickly?",
+    answer:
+      "Sign up free, add your business details once, enter client and line-item information, preview live, and export a PDF. Most freelancers generate their first invoice for freelance work in under five minutes.",
+  },
+  {
+    question: "Why use an invoice template built for freelancers?",
+    answer:
+      "Generic Word or Excel templates leave awkward blank space and miss fields freelancers need — project names, hourly blocks, international payment details, and branding. A purpose-built tool keeps every bill consistent and professional.",
+  },
+  {
+    question: "Who should use a self-employed invoice template?",
+    answer:
+      "Anyone billing clients outside a payroll job: designers, developers, writers, consultants, photographers, marketers, and side-gig contractors. If you send even one bill a month, a proper invoice for freelance work protects your income and your reputation.",
+  },
+  {
+    question: "How can I get paid faster as a freelancer?",
+    answer:
+      "Put clear payment terms and accepted methods directly on the invoice — bank transfer, UPI, Wise, PayPal, or wire details. Send the PDF promptly, track status in your dashboard, and follow up before the due date passes.",
+  },
+  {
+    question: "Can I print or download my freelance invoice?",
+    answer:
+      "Yes. Export a print-ready PDF in one click. The free Classic template includes PDF download and print at no charge. Premium layouts are available as an optional one-time unlock.",
   },
 ] as const;
 
@@ -237,6 +259,7 @@ export function buildSocialMetadata({
   publishedTime,
 }: SocialMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
   const url = getCanonicalUrl(path);
+  const ogImage = `${siteConfig.url}/opengraph-image`;
   return {
     openGraph: {
       title,
@@ -245,12 +268,21 @@ export function buildSocialMetadata({
       type,
       siteName: siteConfig.name,
       locale: "en_US",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
       ...(publishedTime ? { publishedTime } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [ogImage],
     },
   };
 }

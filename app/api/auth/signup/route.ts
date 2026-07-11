@@ -5,6 +5,12 @@ import { getSupabasePublishableEnv } from "@/lib/supabase/env";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 import { formatAuthError } from "@/lib/supabase/auth-errors";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
+import { isLegalConsentValid } from "@/lib/legal-consent";
+import { privacyConsentRequiredMessage } from "@/lib/privacy-consent";
+import { recordLegalConsentForUser } from "@/lib/legal-consent-server";
+import { readConsentCountryFromRequest } from "@/lib/consent-country";
+import { PRIVACY_POLICY_VERSION } from "@/data/privacy-policy";
+import { TERMS_VERSION } from "@/data/terms-of-service";
 import { NextRequest, NextResponse } from "next/server";
 
 type CookieToSet = {
@@ -15,10 +21,34 @@ type CookieToSet = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = (await request.json()) as {
+    const { email, password, privacyPolicyAccepted, privacyPolicyVersion, termsAccepted, termsVersion } =
+      (await request.json()) as {
       email?: string;
       password?: string;
+      privacyPolicyAccepted?: boolean;
+      privacyPolicyVersion?: string;
+      termsAccepted?: boolean;
+      termsVersion?: string;
     };
+
+    if (
+      !isLegalConsentValid({
+        privacyPolicyAccepted: privacyPolicyAccepted === true,
+        termsAccepted: termsAccepted === true,
+        privacyPolicyVersion,
+        termsVersion,
+      })
+    ) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: privacyConsentRequiredMessage(
+            readConsentCountryFromRequest(request)
+          ),
+        },
+        { status: 400 }
+      );
+    }
 
     if (!email?.trim() || !password) {
       return NextResponse.json(
@@ -83,6 +113,25 @@ export async function POST(request: NextRequest) {
 
     if (data.user) {
       await ensureProfile(supabase, data.user);
+      const consentResult = await recordLegalConsentForUser(
+        admin,
+        data.user.id,
+        {
+          privacyPolicyVersion:
+            privacyPolicyVersion?.trim() || PRIVACY_POLICY_VERSION,
+          termsVersion: termsVersion?.trim() || TERMS_VERSION,
+        }
+      );
+      if (!consentResult.ok) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error:
+              "Account created but privacy consent could not be saved. Please contact support.",
+          },
+          { status: 500 }
+        );
+      }
       void logActivity({
         actorId: data.user.id,
         action: "user.signup",

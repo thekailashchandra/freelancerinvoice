@@ -117,6 +117,9 @@ export function LandingHero() {
             <Button size="lg" variant="outline" asChild className="h-12 px-8 text-base backdrop-blur-sm">
               <Link href="/features">{t("landing.hero.ctaFeatures")}</Link>
             </Button>
+            <Button size="lg" variant="ghost" asChild className="h-12 px-6 text-base">
+              <a href="#sample-invoice-preview">{t("landing.hero.ctaSample")}</a>
+            </Button>
           </motion.div>
 
           <motion.div
@@ -157,9 +160,10 @@ export function LandingHero() {
         </div>
 
         <motion.div
+          id="sample-invoice-preview"
           initial={reduceMotion ? false : { opacity: 0, y: 24 }}
           animate={reduceMotion ? undefined : fadeUpVariant(0.2)}
-          className="relative mx-auto w-full max-w-xl lg:max-w-none"
+          className="relative mx-auto w-full max-w-xl scroll-mt-28 lg:max-w-none"
         >
           <div className="hero-float">
             <HeroInvoiceDemo />

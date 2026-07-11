@@ -18,9 +18,9 @@ export function useMarketContext(override?: Partial<MarketContext>): MarketConte
   }));
 
   useEffect(() => {
-    if (override?.market) return;
+    if (override?.countryCode || override?.market) return;
     setContext(readMarketFromDocumentCookies());
-  }, [override?.market]);
+  }, [override?.countryCode, override?.market]);
 
   return context;
 }

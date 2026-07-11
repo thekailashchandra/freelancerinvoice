@@ -11,5 +11,17 @@ export const siteConfig = {
     light: "/brand/logo-light.png",
     dark: "/brand/logo-dark.png",
   },
+  /** Square icons for favicon, PWA, and Organization schema (Google Search). */
+  icons: {
+    faviconIco: "/favicon.ico",
+    favicon48: "/favicon-48.png",
+    favicon96: "/favicon-96.png",
+    app192: "/icon.png",
+    app512: "/icon-512.png",
+  },
   supportTipUrl: "https://ko-fi.com/invoiceforfreelance",
 } as const;
+
+export function absoluteSiteUrl(path: string): string {
+  return `${siteConfig.url}${path.startsWith("/") ? path : `/${path}`}`;
+}

@@ -17,6 +17,7 @@ import {
 } from "@/lib/invoice-modern-dates";
 import { modernTheme as t } from "@/lib/invoice-modern-theme";
 import { InvoiceMoney } from "@/components/invoice-money";
+import { InvoiceSummaryTaxRows } from "@/components/invoice-summary-tax-rows";
 import {
   getInvoicePaymentInfo,
   hasInvoicePaymentInfo,
@@ -155,13 +156,20 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
+  const shipping = totals.shippingFee ?? 0;
+  const taxPct =
+    invoice.taxDiscount.taxPercentage ??
+    invoice.taxDiscount.gstPercentage ??
+    0;
+  const paymentTerms =
+    invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
   const clientAddress = invoice.client.address?.trim();
   const clientPhone = invoice.client.phone?.trim();
   const clientEmail = invoice.client.email?.trim();
+  const notesText = invoice.notes?.trim();
   const termsText =
     invoice.termsAndConditions?.trim() ||
-    invoice.notes?.trim() ||
     "Payment is due by the date shown above. Thank you for your business.";
 
   return (
@@ -311,6 +319,11 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                 {clientPhone}
               </p>
             ) : null}
+            {invoice.client.gstin?.trim() ? (
+              <p style={{ margin: "6px 0 0", fontSize: 12, color: t.textMuted }}>
+                GSTIN: {invoice.client.gstin.trim()}
+              </p>
+            ) : null}
           </InfoCard>
 
           <InfoCard title="Ship To">
@@ -352,6 +365,7 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
           {invoice.invoice.dueDate ? (
             <MetaChip label="Due Date" value={formatDate(invoice.invoice.dueDate)} />
           ) : null}
+          <MetaChip label="Payment Terms" value={paymentTerms} />
           {invoice.invoice.purchaseOrder?.trim() ? (
             <MetaChip
               label="P.O. Number"
@@ -581,6 +595,21 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
               </div>
             ) : null}
             {taxOn ? (
+              <InvoiceSummaryTaxRows
+                totals={totals}
+                currency={currency}
+                taxOn={taxOn}
+                taxLabel={invoice.taxLabel}
+                taxAmt={taxAmt}
+                taxPct={taxPct}
+                rowStyle={{
+                  padding: "5px 0",
+                  fontSize: 12,
+                  color: t.textSecondary,
+                }}
+              />
+            ) : null}
+            {shipping > 0 ? (
               <div
                 style={{
                   display: "flex",
@@ -590,8 +619,8 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                   color: t.textSecondary,
                 }}
               >
-                <span>{invoice.taxLabel || "Tax"}</span>
-                <InvoiceMoney amount={taxAmt} currencyCode={currency} />
+                <span>Shipping</span>
+                <InvoiceMoney amount={shipping} currencyCode={currency} />
               </div>
             ) : null}
             <div
@@ -617,7 +646,9 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
           style={{
             marginTop: 28,
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: notesText
+              ? "1fr 1fr 1fr 1fr"
+              : "1fr 1fr 1fr",
             gap: 14,
           }}
         >
@@ -641,6 +672,22 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
           ) : (
             <div />
           )}
+
+          {notesText ? (
+            <InfoCard title="Notes">
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 11,
+                  lineHeight: 1.65,
+                  color: t.textMuted,
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {notesText}
+              </p>
+            </InfoCard>
+          ) : null}
 
           <InfoCard title="Terms">
             <p

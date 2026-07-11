@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 const publicNavKeys: Record<string, string> = {
   "/features": "nav.features",
   "/pricing": "nav.pricing",
+  "/blog": "nav.blog",
 };
 
 export function PublicSiteHeader() {
@@ -37,7 +38,7 @@ export function PublicSiteHeader() {
             </div>
           ))}
           <GuideNavMenu />
-          <LocaleCountrySwitcher />
+          <LocaleCountrySwitcher variant="compact" />
           <div className="hidden sm:block">
             <Button variant="ghost" asChild>
               <Link href="/login">{t("nav.signIn")}</Link>

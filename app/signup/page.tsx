@@ -18,6 +18,7 @@ import {
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 import { AuthPageLayout } from "@/components/auth-screen";
+import { readConsentCountryFromServerCookies } from "@/lib/consent-country-server";
 import { SignupForm } from "./signup-form";
 
 /** Uses cookies() via createClient when Supabase is configured. */
@@ -39,6 +40,7 @@ export default async function SignupPage() {
   const canSignUp = isSupabaseServerConfigured();
   const supabaseConfig = configured ? getSupabasePublishableEnv() : null;
   const googleClientId = getGoogleClientId() ?? null;
+  const initialCountryCode = await readConsentCountryFromServerCookies();
 
   if (configured) {
     const supabase = await createClient();
@@ -70,6 +72,7 @@ export default async function SignupPage() {
           canSignUp={canSignUp}
           supabaseConfig={supabaseConfig}
           googleClientId={googleClientId}
+          initialCountryCode={initialCountryCode ?? undefined}
         />
         <PageFaqSection
           faqItems={getPageFaqs("/signup")}

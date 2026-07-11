@@ -14,7 +14,8 @@ import { CurrencySelect } from "@/components/currency-select";
 import { InvoiceCustomerSection } from "@/components/invoice-client-picker";
 import type { SavedClient } from "@/lib/client-mapper";
 import { sanitizePaymentForCountry } from "@/lib/country";
-import { invoicePageSpecs, resolveLogoHeight } from "@/lib/invoice-design";
+import { invoicePageSpecs } from "@/lib/invoice-design";
+import { LogoSizeControl } from "@/components/logo-size-control";
 import type { InvoicePageSize } from "@/types/invoice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -562,26 +563,10 @@ export function InvoiceForm({
 
         {!isLoggedInCreate && (
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="logoHeight">Logo size</Label>
-              <span className="text-xs text-muted-foreground">
-                {resolveLogoHeight(invoice.company.logoHeight)}px
-              </span>
-            </div>
-            <input
-              id="logoHeight"
-              type="range"
-              min={32}
-              max={200}
-              step={4}
-              value={resolveLogoHeight(invoice.company.logoHeight)}
-              onChange={(e) =>
-                updateCompany("logoHeight", Number(e.target.value))
-              }
-              className="h-2 w-full cursor-pointer accent-primary"
-            />
-          </div>
+          <LogoSizeControl
+            value={invoice.company.logoHeight}
+            onChange={(height) => updateCompany("logoHeight", height)}
+          />
           <div className="space-y-2">
             <Label>Paper size</Label>
             <Select
@@ -721,6 +706,15 @@ export function InvoiceForm({
               </Select>
             </div>
           )}
+          {isLoggedInCreate ? (
+            <div className="space-y-2 sm:col-span-2">
+              <LogoSizeControl
+                value={invoice.company.logoHeight}
+                onChange={(height) => updateCompany("logoHeight", height)}
+                id="create-logoHeight"
+              />
+            </div>
+          ) : null}
           {!isLoggedInCreate && (
           <div className="space-y-2">
             <Label>Currency</Label>

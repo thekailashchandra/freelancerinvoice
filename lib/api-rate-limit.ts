@@ -8,6 +8,10 @@ const RULES: ReadonlyArray<{
 }> = [
   { method: "POST", path: "/api/auth/signin", bucket: "auth" },
   { method: "POST", path: "/api/auth/signup", bucket: "auth" },
+  { method: "POST", path: "/api/auth/legal-consent", bucket: "auth" },
+  { method: "GET", path: "/api/auth/legal-consent", bucket: "auth" },
+  { method: "POST", path: "/api/auth/privacy-consent", bucket: "auth" },
+  { method: "POST", path: "/api/auth/privacy-consent-required", bucket: "auth" },
   { method: "POST", path: "/api/support", bucket: "support" },
   { method: "POST", path: "/api/locale", bucket: "locale" },
   { method: "POST", path: "/api/profile/assets", bucket: "upload" },

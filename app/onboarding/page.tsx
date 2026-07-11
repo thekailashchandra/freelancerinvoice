@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { OnboardingForm } from "@/components/onboarding-form";
+import { PolicyUpdateGate } from "@/components/policy-update-gate";
 import { privateAppRobots } from "@/data/seo";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
@@ -27,7 +28,14 @@ export default async function OnboardingPage() {
     redirect("/login");
   }
 
-  const profile = await ensureProfile(supabase, user);
+  await ensureProfile(supabase, user);
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("company_name")
+    .eq("id", user.id)
+    .single();
+
   if (profile?.company_name) {
     redirect("/dashboard");
   }
@@ -40,6 +48,7 @@ export default async function OnboardingPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <PolicyUpdateGate />
       <OnboardingForm
         initialEmail={user.email ?? ""}
         initialName={initialName}

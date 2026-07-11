@@ -3,6 +3,7 @@
 export const mainNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/blog", label: "Blog" },
 ] as const;
 
 /** Full site links for footer and mobile drawer */

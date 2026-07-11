@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { ArrowRight, Heart, Target, Users } from "lucide-react";
-import { GeoEntityBlock } from "@/components/geo-entity-block";
-import { GeoKeyFacts } from "@/components/geo-key-facts";
+import { FounderSection } from "@/components/founder-section";
+import { KeyFactsBlock } from "@/components/key-facts-block";
 import { PageFaqSection } from "@/components/page-faq-section";
 import { geoEntity } from "@/data/geo";
 import { getPageFaqs } from "@/data/page-faqs";
 import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight, Heart, Target, Users } from "lucide-react";
 
 const values = [
   {
@@ -46,11 +46,7 @@ export function AboutPageContent() {
       </header>
 
       <div className="mt-10">
-        <GeoEntityBlock />
-      </div>
-
-      <div className="mt-10">
-        <GeoKeyFacts
+        <KeyFactsBlock
           extraFacts={[
             {
               term: "Why was Invoice for Freelance built?",
@@ -59,6 +55,8 @@ export function AboutPageContent() {
           ]}
         />
       </div>
+
+      <FounderSection />
 
       <section className="mt-12 space-y-6 text-muted-foreground leading-relaxed">
         <p>

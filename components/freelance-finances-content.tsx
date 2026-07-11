@@ -90,7 +90,7 @@ export function FreelanceFinancesContent() {
         </ol>
       </section>
 
-      <PageFaqSection faqItems={freelanceFinancesFaqs} />
+      <PageFaqSection faqItems={freelanceFinancesFaqs} includeSchema={false} />
 
       <nav className="mt-10 text-sm">
         <Link href="/blog" className="text-primary hover:underline">

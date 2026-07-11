@@ -82,7 +82,7 @@ export function ComparisonPageContent({ page }: ComparisonPageContentProps) {
         </ul>
       </section>
 
-      <PageFaqSection faqItems={page.faqItems} />
+      <PageFaqSection faqItems={page.faqItems} includeSchema={false} />
 
       {page.relatedComparisons.length > 0 && (
         <nav className="mt-14 border-t border-border/50 pt-10" aria-label="More comparisons">

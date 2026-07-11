@@ -40,6 +40,10 @@ export interface ProfileRow {
   razorpay_key_id?: string;
   razorpay_key_secret?: string;
   role?: string;
+  privacy_policy_accepted_at?: string | null;
+  privacy_policy_version?: string | null;
+  terms_accepted_at?: string | null;
+  terms_version?: string | null;
   created_at: string;
   updated_at: string;
 }

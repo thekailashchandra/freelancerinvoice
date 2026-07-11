@@ -15,7 +15,8 @@ export async function GET(request: Request) {
     if (!error && data.user) {
       const profile = await ensureProfile(supabase, data.user);
       const safeNext = safeAppRedirect(next, "/dashboard");
-      const redirectTo = !profile?.company_name ? "/onboarding" : safeNext;
+      const redirectTo =
+        !profile?.company_name ? "/onboarding" : safeNext;
 
       return NextResponse.redirect(`${origin}${redirectTo}`);
     }

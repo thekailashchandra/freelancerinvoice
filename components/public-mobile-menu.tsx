@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { useTranslation } from "@/components/locale-provider";
+import { LocaleCountrySwitcher } from "@/components/locale-country-switcher";
 import { publicNavKeys } from "@/lib/i18n/public-nav-keys";
 import { mobileNavLinks } from "@/data/public-navigation";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,9 @@ export function PublicMobileMenu() {
       </SheetTrigger>
       <SheetContent side="right" className="w-72 overflow-y-auto">
         <h2 className="text-lg font-semibold">{t("nav.menu")}</h2>
+        <div className="mt-4">
+          <LocaleCountrySwitcher variant="compact" className="w-full justify-start" />
+        </div>
         <nav className="mt-4 flex flex-col gap-1" aria-label="Mobile navigation">
           {mobileNavLinks.map((link) => (
             <SheetClose key={link.href} asChild>

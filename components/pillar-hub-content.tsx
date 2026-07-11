@@ -132,7 +132,7 @@ export function PillarHubContent({ pillar }: PillarHubContentProps) {
         </Button>
       </section>
 
-      <PageFaqSection faqItems={pillar.faqItems} />
+      <PageFaqSection faqItems={pillar.faqItems} includeSchema={false} />
 
       <nav className="mt-10 flex flex-wrap gap-4 text-sm">
         <Link href="/freelance-finances" className="text-primary hover:underline">
