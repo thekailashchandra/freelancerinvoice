@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPrimaryDataLaw } from "@/data/data-protection-laws";
 import { getIsoCountryName } from "@/lib/iso-data";
 
@@ -14,9 +15,9 @@ export function DataProtectionLawReference() {
       </p>
       <p className="mt-3 text-muted-foreground">
         Full details for your region are in the sections above and in our{" "}
-        <a href="/privacy" className="text-primary hover:underline">
+        <Link href="/privacy" className="text-primary hover:underline">
           Privacy Policy
-        </a>
+        </Link>
         .
       </p>
     </section>
