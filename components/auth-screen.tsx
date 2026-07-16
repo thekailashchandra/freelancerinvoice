@@ -12,16 +12,7 @@ function AuthPageBackground() {
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       aria-hidden
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,oklch(0.9_0.2_98/0.12),transparent)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,oklch(0.1_0_0/0.4))]" />
-      <div
-        className="absolute inset-0 opacity-[0.35]"
-        style={{
-          backgroundImage:
-            "linear-gradient(oklch(0.99 0 0 / 0.04) 1px, transparent 1px), linear-gradient(90deg, oklch(0.99 0 0 / 0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,oklch(0.9_0.2_98/0.08),transparent)]" />
     </div>
   );
 }

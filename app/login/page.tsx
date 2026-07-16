@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PageFaqSection } from "@/components/page-faq-section";
 import { PublicBreadcrumbSchema } from "@/components/public-breadcrumb-schema";
-import { getPageFaqs } from "@/data/page-faqs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
@@ -50,10 +48,6 @@ export default async function LoginPage() {
             supabaseConfig={supabaseConfig}
             googleClientId={googleClientId}
             initialCountryCode={initialCountryCode ?? undefined}
-          />
-          <PageFaqSection
-            faqItems={getPageFaqs("/login")}
-            heading="Sign-in FAQ"
           />
         </AuthPageLayout>
       </Suspense>

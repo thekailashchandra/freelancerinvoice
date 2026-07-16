@@ -7,9 +7,7 @@ import {
   isSupabaseConfigured,
   isSupabaseServerConfigured,
 } from "@/lib/supabase/env";
-import { PageFaqSection } from "@/components/page-faq-section";
 import { WebApplicationSchema } from "@/components/web-application-schema";
-import { getPageFaqs } from "@/data/page-faqs";
 import {
   buildBreadcrumbItems,
   buildBreadcrumbListSchema,
@@ -73,10 +71,6 @@ export default async function SignupPage() {
           supabaseConfig={supabaseConfig}
           googleClientId={googleClientId}
           initialCountryCode={initialCountryCode ?? undefined}
-        />
-        <PageFaqSection
-          faqItems={getPageFaqs("/signup")}
-          heading="Signup FAQ"
         />
       </AuthPageLayout>
     </>

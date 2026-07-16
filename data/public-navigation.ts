@@ -3,7 +3,6 @@
 export const mainNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
 ] as const;
 
 /** Full site links for footer and mobile drawer */
@@ -31,9 +30,6 @@ export const mobileNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/guide", label: "Guides" },
-  { href: "/blog", label: "Blog" },
-  { href: "/invoice-templates", label: "Templates" },
-  { href: "/india", label: "India invoicing" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ] as const;
