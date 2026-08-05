@@ -29,16 +29,28 @@ export function securityHeaders(): Record<string, string> {
     "https://apis.google.com",
     ...(umamiOrigin ? [umamiOrigin] : []),
   ].join(" ");
+  // Google Identity Services + FedCM (Sign in with Google button / popup)
+  // https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#content_security_policy
+  // https://developers.google.com/identity/sign-in/web/gsi-with-fedcm
   const connectSrc = [
     "'self'",
     "https://*.supabase.co",
     "wss://*.supabase.co",
+    "https://accounts.google.com/gsi/",
+    "https://accounts.google.com/o/fedcm/",
     "https://www.google-analytics.com",
     "https://region1.google-analytics.com",
     "https://pagead2.googlesyndication.com",
     "https://googleads.g.doubleclick.net",
     "https://api.razorpay.com",
     ...(umamiOrigin ? [umamiOrigin] : []),
+  ].join(" ");
+
+  const frameSrc = [
+    "https://accounts.google.com/gsi/",
+    "https://accounts.google.com/o/fedcm/",
+    "https://checkout.razorpay.com",
+    "https://googleads.g.doubleclick.net",
   ].join(" ");
 
   const csp = [
@@ -48,11 +60,11 @@ export function securityHeaders(): Record<string, string> {
     "frame-ancestors 'none'",
     "object-src 'none'",
     `script-src ${scriptSrc}`,
-    "style-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style",
     "img-src 'self' data: blob: https: *.supabase.co",
     "font-src 'self' data:",
     `connect-src ${connectSrc}`,
-    "frame-src https://accounts.google.com https://checkout.razorpay.com https://googleads.g.doubleclick.net",
+    `frame-src ${frameSrc}`,
   ].join("; ");
 
   const headers: Record<string, string> = {
