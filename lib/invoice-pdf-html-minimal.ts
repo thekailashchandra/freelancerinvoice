@@ -40,7 +40,7 @@ const labelColor = "#6b7280";
 const bodyColor = "#4b5563";
 
 export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
-  const d = resolveTemplateDesign(invoice.templateId ?? "minimal");
+  const d = resolveTemplateDesign(invoice.templateId ?? "minimal", invoice.company.brandColor);
   const F = d.pdfFont;
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const W = pageSpec.contentWidthPx;
@@ -59,7 +59,6 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const paymentTerms =
     invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
@@ -117,7 +116,7 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
     .map((item) => {
       const lineAmount = item.quantity * item.price;
       const desc = item.description
-        ? ` <span style="color:${labelColor}">— ${escapeHtml(item.description)}</span>`
+        ? ` <span style="color:${labelColor}">- ${escapeHtml(item.description)}</span>`
         : "";
       return `<tr>
         ${cell(`valign="top" style="padding:12px 8px 12px 0;font-family:${F};font-size:13px;color:${bodyColor};border-bottom:1px solid #f3f4f6"`, `<span style="font-weight:600;color:#111827">${escapeHtml(item.name || "Service")}</span>${desc}`)}
@@ -130,7 +129,7 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
 
   const discountRow =
     totals.discountAmount > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-family:${F};font-size:12px;color:#059669"><span>Discount</span><span>− ${invoiceMoneyHtml(totals.discountAmount, currency)}</span></div>`
+      ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-family:${F};font-size:12px;color:#111827"><span>Discount</span><span>− ${invoiceMoneyHtml(totals.discountAmount, currency)}</span></div>`
       : "";
 
   const taxRowStyle = `display:flex;justify-content:space-between;padding:4px 0;font-family:${F};font-size:12px;color:${bodyColor}`;
@@ -147,10 +146,12 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
     escapeHtml
   );
 
-  const shippingRow =
-    shipping > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-family:${F};font-size:12px;color:${bodyColor}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
-      : "";
+  const additionalChargeRows = totals.additionalCharges
+    .map(
+      (charge) =>
+        `<div style="display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-family:${F};font-size:12px;color:${bodyColor}"><span>${escapeHtml(charge.label || "Additional charge")}</span>${invoiceMoneyHtml(charge.amount, currency)}</div>`
+    )
+    .join("");
 
   const paymentBlock = hasInvoicePaymentInfo(invoice.payment, paymentOptions)
     ? `<div style="margin-top:28px"><div style="font-family:${F};font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:${labelColor}">Payment Information</div>${paymentLines
@@ -217,7 +218,7 @@ export function buildMinimalInvoicePdfHtml(invoice: Invoice): string {
     <div style="display:flex;justify-content:space-between;padding:4px 0;font-family:${F};font-size:12px;color:${bodyColor}"><span>Subtotal</span>${invoiceMoneyHtml(totals.subtotal, currency)}</div>
     ${discountRow}
     ${taxRows}
-    ${shippingRow}
+    ${additionalChargeRows}
     <div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;font-family:${F};font-size:14px;font-weight:700"><span>TOTAL</span>${invoiceMoneyHtml(totals.total, currency)}</div>
   </div>
 </div>

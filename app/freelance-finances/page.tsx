@@ -14,7 +14,7 @@ import {
 } from "@/data/structured-data";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${topicalAuthorityHub.title} — Expert Guides for Freelancers`,
+  title: `${topicalAuthorityHub.title} - Expert Guides for Freelancers`,
   description: topicalAuthorityHub.description,
   path: "/freelance-finances",
   keywords: [...topicalAuthorityHub.keywords],

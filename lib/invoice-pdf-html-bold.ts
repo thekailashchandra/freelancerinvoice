@@ -44,7 +44,7 @@ function cell(attrs = "", inner = ""): string {
 }
 
 export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
-  const d = resolveTemplateDesign(invoice.templateId ?? "bold");
+  const d = resolveTemplateDesign(invoice.templateId ?? "bold", invoice.company.brandColor);
   const F = d.pdfFont;
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const W = pageSpec.contentWidthPx;
@@ -63,7 +63,6 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const paymentTerms =
     invoice.invoice.paymentTerms?.trim() || "Due on receipt";
   const notesText = invoice.notes?.trim();
@@ -114,10 +113,12 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
     taxRowStyle,
     escapeHtml
   );
-  const shippingRow =
-    shipping > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
-      : "";
+  const additionalChargeRows = totals.additionalCharges
+    .map(
+      (charge) =>
+        `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>${escapeHtml(charge.label || "Additional charge")}</span>${invoiceMoneyHtml(charge.amount, currency)}</div>`
+    )
+    .join("");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -219,7 +220,7 @@ export function buildBoldInvoicePdfHtml(invoice: Invoice): string {
         <div style="display:flex;justify-content:space-between;padding:6px 0;font-family:${F};font-size:12px;color:${c.textMuted}"><span>Sub Total</span>${invoiceMoneyHtml(totals.subtotal, currency)}</div>
         ${discountRow}
         ${taxRow}
-        ${shippingRow}
+        ${additionalChargeRows}
         <div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:1px solid ${c.line};font-family:${F};font-size:16px;font-weight:800"><span>Total</span>${invoiceMoneyHtml(totals.total, currency)}</div>
       </div>
     </div>

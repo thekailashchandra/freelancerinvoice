@@ -132,8 +132,8 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
   onRemoveBranding,
 }: InvoicePreviewModernProps) {
   const d = useMemo(
-    () => resolveTemplateDesign(invoice.templateId ?? "modern"),
-    [invoice.templateId]
+    () => resolveTemplateDesign(invoice.templateId ?? "modern", invoice.company.brandColor),
+    [invoice.templateId, invoice.company.brandColor]
   );
   const showPoweredBy =
     showBranding ?? shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
@@ -156,7 +156,6 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const taxPct =
     invoice.taxDiscount.taxPercentage ??
     invoice.taxDiscount.gstPercentage ??
@@ -339,7 +338,7 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                 whiteSpace: "pre-line",
               }}
             >
-              {clientAddress || clientEmail || "—"}
+              {clientAddress || clientEmail || "-"}
             </p>
             {clientPhone ? (
               <p style={{ margin: "6px 0 0", fontSize: 12, color: t.textMuted }}>
@@ -609,20 +608,22 @@ export const InvoicePreviewModern = memo(function InvoicePreviewModern({
                 }}
               />
             ) : null}
-            {shipping > 0 ? (
+            {totals.additionalCharges.map((charge) => (
               <div
+                key={charge.id}
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
+                  gap: 12,
                   padding: "5px 0",
                   fontSize: 12,
                   color: t.textSecondary,
                 }}
               >
-                <span>Shipping</span>
-                <InvoiceMoney amount={shipping} currencyCode={currency} />
+                <span>{charge.label || "Additional charge"}</span>
+                <InvoiceMoney amount={charge.amount} currencyCode={currency} />
               </div>
-            ) : null}
+            ))}
             <div
               style={{
                 display: "flex",

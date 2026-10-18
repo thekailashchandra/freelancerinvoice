@@ -37,7 +37,7 @@ export function FreelanceFinancesContent() {
         </h2>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           {siteConfig.name} builds authority across invoicing operations, client
-          management, and tax compliance — not just invoice templates.
+          management, and tax compliance - not just invoice templates.
         </p>
 
         <ol className="mt-8 space-y-6">

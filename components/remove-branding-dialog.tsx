@@ -1,10 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
-import { siteConfig } from "@/data/site";
-import { SupportTipLink } from "@/components/support-tip-link";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +12,8 @@ import {
 type RemoveBrandingDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  displayAmount: string;
+  /** Kept for call-site compatibility; branding removal is included with Cloud. */
+  displayAmount?: string;
   onConfirmPaid: () => void;
   confirming?: boolean;
 };
@@ -24,7 +21,6 @@ type RemoveBrandingDialogProps = {
 export function RemoveBrandingDialog({
   open,
   onOpenChange,
-  displayAmount,
   onConfirmPaid,
   confirming = false,
 }: RemoveBrandingDialogProps) {
@@ -32,41 +28,29 @@ export function RemoveBrandingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-primary" aria-hidden />
-            Remove invoice footer
-          </DialogTitle>
+          <DialogTitle>Remove the invoice footer</DialogTitle>
           <DialogDescription className="text-left leading-relaxed">
-            Support {siteConfig.name} with a {displayAmount} tip on Ko-fi, then
-            confirm below to remove the &ldquo;Powered by&rdquo; footer from
-            your invoices.
+            Branding-free invoices are included with the Cloud plan. Remove the
+            &ldquo;Powered by&rdquo; footer from every invoice you export.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-2 sm:flex-row">
-          <SupportTipLink
-            showIcon={false}
-            className={cn(buttonVariants(), "flex-1 no-underline hover:no-underline")}
-          >
-            Tip {displayAmount} on Ko-fi
-          </SupportTipLink>
           <Button
-            variant="outline"
             className="flex-1"
             onClick={onConfirmPaid}
             disabled={confirming}
           >
-            {confirming ? "Saving…" : "I've contributed — remove footer"}
+            {confirming ? "Saving…" : "Remove footer"}
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => onOpenChange(false)}
+          >
+            Cancel
           </Button>
         </div>
-
-        <Button
-          variant="ghost"
-          className="w-full text-muted-foreground"
-          onClick={() => onOpenChange(false)}
-        >
-          Keep footer for now
-        </Button>
       </DialogContent>
     </Dialog>
   );

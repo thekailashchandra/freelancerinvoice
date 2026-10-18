@@ -22,7 +22,7 @@ export function formatCurrency(amount: number, currency = "USD"): string {
   }
 }
 
-/** Globally readable date — e.g. 5 Jun 2026 (day month year, unambiguous). */
+/** Globally readable date - e.g. 5 Jun 2026 (day month year, unambiguous). */
 export function formatDate(dateString: string): string {
   if (!dateString) return "-";
   const date = new Date(`${dateString}T12:00:00`);

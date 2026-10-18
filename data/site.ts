@@ -1,11 +1,14 @@
-/** Public site identity — https://www.invoiceforfreelance.com */
+/** Public site identity - https://www.invoiceforfreelance.com */
 export const siteConfig = {
   name: "Invoice for Freelance",
-  tagline: "Freelancer Invoice Generator",
+  tagline: "Freelancer billing, distilled",
   url: "https://www.invoiceforfreelance.com",
   description:
-    "Invoice for Freelance is a free invoice generator built for freelancers. Create professional invoices, export PDFs, track payments, and manage invoice history in the cloud.",
-  initials: "If",
+    "A monochrome invoicing studio for freelancers. Create polished invoices, track payments, and export client-ready PDFs. Self-host it free or subscribe to the cloud.",
+  initials: "IF",
+  githubUrl:
+    process.env.NEXT_PUBLIC_GITHUB_URL?.trim() ||
+    "https://github.com/thekailashchandra/freelancerinvoice",
   /** Light theme: Artboard 1 · Dark theme: Artboard 2 (source: /ogo/4x) */
   logos: {
     light: "/brand/logo-light.png",

@@ -10,7 +10,7 @@ import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
 const title = "Privacy Policy";
-const description = `How ${siteConfig.name} collects, uses, and protects your data — including regional data-protection laws, cookies, and your privacy rights.`;
+const description = `How ${siteConfig.name} collects, uses, and protects your data - including regional data-protection laws, cookies, and your privacy rights.`;
 
 export const metadata: Metadata = {
   title,
@@ -70,7 +70,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold">
-              India — Digital Personal Data Protection Act, 2023 (DPDP Act)
+              India - Digital Personal Data Protection Act, 2023 (DPDP Act)
             </h2>
             <p className="mt-2">
               If you are located in India, or if Indian law applies to your use of
@@ -194,7 +194,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold">
-              European Union / EEA — GDPR
+              European Union / EEA - GDPR
             </h2>
             <p className="mt-2">
               If you are in the EU or EEA, we process personal data under the
@@ -207,7 +207,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold">United Kingdom — UK GDPR</h2>
+            <h2 className="text-lg font-semibold">United Kingdom - UK GDPR</h2>
             <p className="mt-2">
               UK users are covered by the UK GDPR and Data Protection Act 2018,
               with equivalent rights to EU users. Contact us or the ICO for
@@ -221,7 +221,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="mt-2">
               We apply region-specific notices at signup and login for users in
-              jurisdictions with comprehensive data-protection laws — including
+              jurisdictions with comprehensive data-protection laws - including
               Brazil (LGPD), Canada (PIPEDA), the United States (applicable
               state privacy laws such as CCPA/CPRA), Australia, Japan, South
               Korea, Singapore, and others listed in the reference table below.

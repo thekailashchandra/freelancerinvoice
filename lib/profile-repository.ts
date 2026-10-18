@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { profileToCompanySettings } from "@/lib/invoice-mapper";
+import { normalizeBrandColor } from "@/lib/brand-color";
 import { sanitizePaymentForCountry } from "@/lib/country";
 import { isRazorpayEnabled } from "@/lib/razorpay-feature";
 import { isRazorpayOwnerEmail } from "@/lib/razorpay-access";
@@ -35,8 +36,19 @@ export async function fetchProfile(): Promise<CompanySettings | null> {
 
   if (error || !data) return null;
 
+  let brandColor: string | undefined;
+  const { data: brandRow } = await supabase
+    .from("profiles")
+    .select("brand_color")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (brandRow?.brand_color) brandColor = brandRow.brand_color;
+
   const withAssetUrls = await resolveProfileAssetUrls(
-    data as unknown as ProfileRow,
+    {
+      ...(data as unknown as ProfileRow),
+      ...(brandColor ? { brand_color: brandColor } : {}),
+    } as ProfileRow,
     supabase
   );
 
@@ -79,6 +91,9 @@ export async function updateProfile(
       Math.max(32, Math.round(settings.logoHeight))
     );
   }
+  if (settings.brandColor !== undefined) {
+    row.brand_color = normalizeBrandColor(settings.brandColor);
+  }
   if (settings.hideInvoiceBranding !== undefined) {
     row.hide_invoice_branding = settings.hideInvoiceBranding;
   }
@@ -112,10 +127,22 @@ export async function updateProfile(
     row.default_sort_code = payment.sortCode;
   }
 
-  const { error } = await supabase
+  let { error } = await supabase
     .from("profiles")
     .update(row)
     .eq("id", user.id);
+
+  // Older databases may not have the brand_color column yet. Save the rest of
+  // the profile instead of failing the whole request.
+  if (error && row.brand_color !== undefined) {
+    const withoutBrandColor = { ...row };
+    delete withoutBrandColor.brand_color;
+    const retry = await supabase
+      .from("profiles")
+      .update(withoutBrandColor)
+      .eq("id", user.id);
+    error = retry.error;
+  }
 
   if (error) throw new Error(error.message);
 

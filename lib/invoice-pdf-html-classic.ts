@@ -1,4 +1,4 @@
-﻿import { calculateTotals } from "@/lib/calculations";
+import { calculateTotals } from "@/lib/calculations";
 
 import {
   getInvoicePageSpec,
@@ -46,7 +46,7 @@ function cell(attrs = "", inner = ""): string {
 }
 
 export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
-  const d = resolveTemplateDesign(invoice.templateId ?? "classic");
+  const d = resolveTemplateDesign(invoice.templateId ?? "classic", invoice.company.brandColor);
   const F = d.pdfFont;
 
   function metaRow(label: string, value: string): string {
@@ -81,8 +81,6 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
     0;
 
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-
-  const shipping = totals.shippingFee ?? 0;
 
   const paymentTerms =
 
@@ -236,13 +234,12 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
         ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>Total Tax</span>${invoiceMoneyHtml(taxAmt, currency)}</div>`
         : "";
 
-  const shippingRow =
-
-    shipping > 0
-
-      ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
-
-      : "";
+  const additionalChargeRows = totals.additionalCharges
+    .map(
+      (charge) =>
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:${F};font-size:14px;color:${d.colors.textSecondary}"><span>${escapeHtml(charge.label || "Additional charge")}</span>${invoiceMoneyHtml(charge.amount, currency)}</div>`
+    )
+    .join("");
 
   return `<!DOCTYPE html>
 
@@ -356,7 +353,7 @@ export function buildClassicInvoicePdfHtml(invoice: Invoice): string {
 
   ${taxRow}
 
-  ${shippingRow}
+  ${additionalChargeRows}
 
   <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 12px;font-family:${F};font-size:15px;font-weight:bold;color:${d.colors.text};border-bottom:1px solid ${d.colors.border}"><span>Grand Total</span>${invoiceMoneyHtml(totals.total, currency)}</div>
 

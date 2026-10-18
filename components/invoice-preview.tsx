@@ -26,6 +26,10 @@ import { InvoiceCompanySignature } from "@/components/invoice-company-branding";
 import { InvoicePreviewModern } from "@/components/invoice-preview-modern";
 import { InvoicePreviewMinimal } from "@/components/invoice-preview-minimal";
 import { InvoicePreviewBold } from "@/components/invoice-preview-bold";
+import { InvoicePreviewCorporate } from "@/components/invoice-preview-corporate";
+import { InvoicePreviewStudio } from "@/components/invoice-preview-studio";
+import { InvoicePreviewGeometric } from "@/components/invoice-preview-geometric";
+import { InvoicePreviewSwiss } from "@/components/invoice-preview-swiss";
 
 type DesignColors = typeof invoiceDesign.colors;
 
@@ -82,8 +86,12 @@ export const InvoicePreview = memo(function InvoicePreview({
   onRemoveBranding,
 }: InvoicePreviewProps) {
   const d = useMemo(
-    () => resolveTemplateDesign(invoice.templateId ?? "classic"),
-    [invoice.templateId]
+    () =>
+      resolveTemplateDesign(
+        invoice.templateId ?? "classic",
+        invoice.company.brandColor
+      ),
+    [invoice.templateId, invoice.company.brandColor]
   );
   const showPoweredBy =
     showBranding ?? shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
@@ -112,7 +120,6 @@ export const InvoicePreview = memo(function InvoicePreview({
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const paymentTerms =
     invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
@@ -166,6 +173,50 @@ export const InvoicePreview = memo(function InvoicePreview({
   if (d.layout === "bold") {
     return (
       <InvoicePreviewBold
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "corporate") {
+    return (
+      <InvoicePreviewCorporate
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "studio") {
+    return (
+      <InvoicePreviewStudio
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "geometric") {
+    return (
+      <InvoicePreviewGeometric
+        invoice={invoice}
+        previewId={previewId}
+        showBranding={showBranding}
+        onRemoveBranding={onRemoveBranding}
+      />
+    );
+  }
+
+  if (d.layout === "swiss") {
+    return (
+      <InvoicePreviewSwiss
         invoice={invoice}
         previewId={previewId}
         showBranding={showBranding}
@@ -779,20 +830,22 @@ export const InvoicePreview = memo(function InvoicePreview({
               <InvoiceMoney amount={taxAmt} currencyCode={currency} />
             </div>
           )}
-          {shipping > 0 && (
+          {totals.additionalCharges.map((charge) => (
             <div
+              key={charge.id}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
+                gap: 16,
                 padding: "6px 0",
                 fontSize: 14,
                 color: d.colors.textSecondary,
               }}
             >
-              <span>Shipping</span>
-              <InvoiceMoney amount={shipping} currencyCode={currency} />
+              <span>{charge.label || "Additional charge"}</span>
+              <InvoiceMoney amount={charge.amount} currencyCode={currency} />
             </div>
-          )}
+          ))}
           <div
             style={{
               display: "flex",

@@ -206,7 +206,7 @@ async function buildPdfFromCanvas(
   pdf.save(`${sanitizeFilename(filename.replace(/\.pdf$/i, ""))}.pdf`);
 }
 
-/** PDF export — HTML renderer first (reliable), live preview as fallback. */
+/** PDF export - HTML renderer first (reliable), live preview as fallback. */
 export async function downloadInvoicePdf(
   invoice: Invoice,
   filename: string,
@@ -224,10 +224,12 @@ export async function downloadInvoicePdf(
   }
 
   const previewId = options?.previewId ?? DEFAULT_PREVIEW_ID;
-  const previewEl =
-    options?.preferHtml === false
-      ? document.getElementById(previewId)
-      : null;
+  const previewEl = document.getElementById(previewId);
+  const livePreviewOnly =
+    invoice.templateId === "corporate" ||
+    invoice.templateId === "studio" ||
+    invoice.templateId === "geometric" ||
+    invoice.templateId === "swiss";
 
   previewEl?.scrollIntoView({ block: "nearest" });
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -235,11 +237,13 @@ export async function downloadInvoicePdf(
   let canvas: HTMLCanvasElement | null = null;
   let lastError: unknown;
 
-  try {
-    canvas = await captureInvoiceHtmlToCanvas(invoice);
-  } catch (err) {
-    lastError = err;
-    console.warn("HTML PDF renderer failed:", err);
+  if (!livePreviewOnly) {
+    try {
+      canvas = await captureInvoiceHtmlToCanvas(invoice);
+    } catch (err) {
+      lastError = err;
+      console.warn("HTML PDF renderer failed:", err);
+    }
   }
 
   if (!canvas && previewEl) {

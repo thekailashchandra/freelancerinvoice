@@ -22,8 +22,8 @@ export default async function RazorpayIntegrationPage() {
     <main className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="text-3xl font-bold tracking-tight">{guide.title}</h1>
       <p className="mt-3 text-muted-foreground">{guide.description}</p>
-      <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-        Internal owner preview — Razorpay is not enabled for app users yet.
+      <p className="mt-2 text-sm text-muted-foreground">
+        Internal owner preview - Razorpay is not enabled for app users yet.
       </p>
 
       <section className="mt-10 space-y-4">

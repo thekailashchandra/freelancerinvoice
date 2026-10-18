@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const gstInvoiceTemplate: TemplatePage = {
   slug: "gst-invoice-template",
-  title: "GST Invoice Template for Freelancers — Free & Compliant Format",
+  title: "GST Invoice Template for Freelancers - Free & Compliant Format",
   description:
     "Free GST invoice template for Indian freelancers and service providers. Include GSTIN, HSN/SAC, taxable value, CGST/SGST or IGST, and download a professional PDF.",
   keywords: [
@@ -27,7 +27,7 @@ export const gstInvoiceTemplate: TemplatePage = {
       heading: "What is a GST invoice?",
       paragraphs: [
         "A GST invoice is a tax invoice issued by a registered supplier under India’s Goods and Services Tax regime. It documents taxable supply of goods or services and shows tax charged at the applicable rate so the recipient can claim input tax credit where allowed.",
-        "Freelancers and consultants registered under GST must issue invoices that meet statutory fields — not just a generic bill with a total.",
+        "Freelancers and consultants registered under GST must issue invoices that meet statutory fields - not just a generic bill with a total.",
       ],
     },
     {
@@ -51,11 +51,11 @@ export const gstInvoiceTemplate: TemplatePage = {
         "Services use SAC (Services Accounting Code) instead of HSN. Design, IT, marketing, and professional services each map to SAC categories. Use the code that matches your primary service; your chartered accountant can confirm the right SAC for mixed work.",
       ],
       list: [
-        "IT/design/development services — common SAC 998314 family (verify with CA)",
-        "Marketing and advertising services — relevant SAC under 99836x",
-        "Professional/consulting — check current SAC schedule for your activity",
+        "IT/design/development services - common SAC 998314 family (verify with CA)",
+        "Marketing and advertising services - relevant SAC under 99836x",
+        "Professional/consulting - check current SAC schedule for your activity",
       ],
-      note: "Tax rates and SAC mapping change — confirm with a qualified tax professional for your filings.",
+      note: "Tax rates and SAC mapping change - confirm with a qualified tax professional for your filings.",
     },
     {
       id: "intra-vs-inter-state",
@@ -84,7 +84,7 @@ export const gstInvoiceTemplate: TemplatePage = {
     {
       question: "What SAC code should I put on a freelance invoice?",
       answer:
-        "Use the SAC that matches your primary service category. When unsure, consult your CA — wrong codes can cause compliance issues.",
+        "Use the SAC that matches your primary service category. When unsure, consult your CA - wrong codes can cause compliance issues.",
     },
     {
       question: "How does IGST work on a freelancer invoice?",

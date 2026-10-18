@@ -35,10 +35,16 @@ export interface ProfileRow {
   default_bank_address: string;
   default_sort_code: string;
   logo_height?: number;
+  brand_color?: string;
   hide_invoice_branding?: boolean;
   hide_signature_text_fallback?: boolean;
   razorpay_key_id?: string;
   razorpay_key_secret?: string;
+  subscription_status?: "none" | "active" | "past_due" | "canceled";
+  subscription_plan?: "cloud_monthly" | null;
+  subscription_started_at?: string | null;
+  subscription_expires_at?: string | null;
+  subscription_last_payment_id?: string | null;
   role?: string;
   privacy_policy_accepted_at?: string | null;
   privacy_policy_version?: string | null;
@@ -95,6 +101,8 @@ export interface InvoiceRow {
   bank_address: string;
   sort_code: string;
   page_size?: string;
+  template_id?: string;
+  additional_charges?: Json;
   created_at: string;
   updated_at: string;
 }

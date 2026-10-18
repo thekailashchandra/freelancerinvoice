@@ -1,4 +1,4 @@
-/** Page-specific SEO keywords (5–8 terms each — avoid duplicating the same list everywhere). */
+/** Page-specific SEO keywords (5–8 terms each - avoid duplicating the same list everywhere). */
 
 export const homePageKeywords = [
   "invoice for freelance",

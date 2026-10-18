@@ -21,7 +21,7 @@ declare global {
 export function consentToGtagState(choice: CookieConsentChoice): GtagConsentState {
   const adsGranted = choice === "all";
   return {
-    // Traffic measurement (GA4) — allowed once the user picks either banner option.
+    // Traffic measurement (GA4) - allowed once the user picks either banner option.
     analytics_storage: "granted",
     ad_storage: adsGranted ? "granted" : "denied",
     ad_user_data: adsGranted ? "granted" : "denied",

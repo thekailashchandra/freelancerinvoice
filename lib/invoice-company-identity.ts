@@ -54,7 +54,7 @@ export function companyLogoMarkHtml(
 
   const bg =
     variant === "bold"
-      ? "#1b2f24"
+      ? "#111111"
       : variant === "classic"
         ? "#111827"
         : "#111827";

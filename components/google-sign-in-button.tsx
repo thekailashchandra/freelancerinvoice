@@ -18,7 +18,7 @@ type GoogleCredentialResponse = {
 type GoogleSignInButtonProps = {
   /** When true, the Google button is not rendered (e.g. Supabase not configured). */
   disabled?: boolean;
-  /** Faded look until consent checkbox is checked — button stays visible. */
+  /** Faded look until consent checkbox is checked - button stays visible. */
   fadedUntilConsent?: boolean;
   redirectTo?: string;
   supabaseConfig?: SupabaseBrowserConfig | null;

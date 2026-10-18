@@ -9,7 +9,7 @@ type KeyFactsBlockProps = {
 };
 
 /**
- * Canonical Key facts block — render once per page (intended for /about).
+ * Canonical Key facts block - render once per page (intended for /about).
  * Entity statement appears a single time; facts use distinct copy per row.
  */
 export function KeyFactsBlock({ extraFacts = [] }: KeyFactsBlockProps) {

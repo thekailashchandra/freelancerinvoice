@@ -9,6 +9,7 @@ import { UmamiAnalytics } from "@/components/umami-analytics";
 import { GoogleAnalyticsPageView } from "@/components/google-analytics-page-view";
 import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { LocaleProvider } from "@/components/locale-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { GooglePrivacyScripts } from "@/components/google-privacy-scripts";
 import { DevEarlyGuards } from "@/components/dev-early-guards";
 import { readDevBuildId } from "@/lib/dev-build";
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: `${siteConfig.name} — free invoice generator for freelancers`,
+        alt: `${siteConfig.name} - free invoice generator for freelancers`,
       },
     ],
   },
@@ -105,7 +106,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0a0a0a",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
 };
 
 export default function RootLayout({
@@ -116,9 +120,9 @@ export default function RootLayout({
   const devBuildId = readDevBuildId();
 
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google Search reads favicon from the home page — ICO + 48×48 PNG */}
+        {/* Google Search reads favicon from the home page - ICO + 48×48 PNG */}
         <link rel="icon" href={faviconIco} sizes="any" />
         <link rel="icon" type="image/png" href={favicon48} sizes="48x48" />
         <link rel="icon" type="image/png" href={favicon96} sizes="96x96" />
@@ -145,15 +149,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <LocaleProvider>
-          <Suspense fallback={null}>
-            <GoogleAnalyticsPageView />
-          </Suspense>
-          <GooglePrivacyScripts />
-          <CookieConsentBanner />
-          {children}
-          <Toaster richColors position="top-center" closeButton />
-        </LocaleProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <LocaleProvider>
+            <Suspense fallback={null}>
+              <GoogleAnalyticsPageView />
+            </Suspense>
+            <GooglePrivacyScripts />
+            <CookieConsentBanner />
+            {children}
+            <Toaster position="top-center" closeButton />
+          </LocaleProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

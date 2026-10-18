@@ -59,7 +59,7 @@ function infoCard(title: string, body: string, font: string): string {
 }
 
 export function buildModernInvoicePdfHtml(invoice: Invoice): string {
-  const d = resolveTemplateDesign(invoice.templateId ?? "modern");
+  const d = resolveTemplateDesign(invoice.templateId ?? "modern", invoice.company.brandColor);
   const F = d.pdfFont;
   const pageSpec = getInvoicePageSpec(resolveInvoicePageSize(invoice.pageSize));
   const W = pageSpec.contentWidthPx;
@@ -73,7 +73,6 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
   const taxOn =
     invoice.taxDiscount.taxEnabled ?? invoice.taxDiscount.gstEnabled ?? false;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const taxPct =
     invoice.taxDiscount.taxPercentage ??
     invoice.taxDiscount.gstPercentage ??
@@ -124,7 +123,7 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
 
   const discountRow =
     totals.discountAmount > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:#059669"><span>Discount</span>${invoiceMoneyHtml(totals.discountAmount, currency)}</div>`
+      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:#111827"><span>Discount</span>${invoiceMoneyHtml(totals.discountAmount, currency)}</div>`
       : "";
   const taxRowStyle = `display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}`;
   const taxRow = buildInvoiceSummaryTaxLinesHtml(
@@ -139,10 +138,12 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
     taxRowStyle,
     escapeHtml
   );
-  const shippingRow =
-    shipping > 0
-      ? `<div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>Shipping</span>${invoiceMoneyHtml(shipping, currency)}</div>`
-      : "";
+  const additionalChargeRows = totals.additionalCharges
+    .map(
+      (charge) =>
+        `<div style="display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>${escapeHtml(charge.label || "Additional charge")}</span>${invoiceMoneyHtml(charge.amount, currency)}</div>`
+    )
+    .join("");
 
   const contactFooter = [
     invoice.company.companyEmail?.trim(),
@@ -205,7 +206,7 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
     ${infoCard(
       "Ship To",
       `<div style="font-family:${F};font-size:12px;font-weight:bold;color:${t.textSecondary}">${invoice.client.company ? "Office Address" : "Billing Address"}</div>
-      <div style="margin-top:8px;font-family:${F};font-size:12px;line-height:18px;color:${t.textMuted};white-space:pre-wrap">${escapeHtml(invoice.client.address || invoice.client.email || "—")}</div>
+      <div style="margin-top:8px;font-family:${F};font-size:12px;line-height:18px;color:${t.textMuted};white-space:pre-wrap">${escapeHtml(invoice.client.address || invoice.client.email || "-")}</div>
       ${invoice.client.phone ? `<div style="margin-top:6px;font-family:${F};font-size:12px;color:${t.textMuted}">${escapeHtml(invoice.client.phone)}</div>` : ""}`,
       F
     )}
@@ -237,7 +238,7 @@ export function buildModernInvoicePdfHtml(invoice: Invoice): string {
       <div style="display:flex;justify-content:space-between;padding:5px 0;font-family:${F};font-size:12px;color:${t.textSecondary}"><span>Subtotal</span>${invoiceMoneyHtml(totals.subtotal, currency)}</div>
       ${discountRow}
       ${taxRow}
-      ${shippingRow}
+      ${additionalChargeRows}
       <div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:2px solid ${t.text};font-family:${F};font-size:14px;font-weight:800"><span>Total</span>${invoiceMoneyHtml(totals.total, currency)}</div>
     </div>
   </td>

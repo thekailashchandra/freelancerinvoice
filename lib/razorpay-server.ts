@@ -8,7 +8,7 @@ export type RazorpayCredentials = {
   keySecret: string;
 };
 
-/** Platform keys for ₹99 template unlocks — set in .env.local / Vercel (server only). */
+/** Platform keys for ₹99 template unlocks - set in .env.local / Vercel (server only). */
 export function getPlatformRazorpayCredentials(): RazorpayCredentials | null {
   const keyId = process.env.RAZORPAY_KEY_ID?.trim();
   const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();

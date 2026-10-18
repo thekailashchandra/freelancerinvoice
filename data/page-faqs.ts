@@ -12,39 +12,40 @@ export const pageFaqs: Record<string, TemplateFaqItem[]> = {
     },
     {
       question: "Is Invoice for Freelance free?",
-      answer: "Yes. Core invoicing features are free with no credit card required.",
+      answer:
+        "The source is open source and free to self-host. On our hosted Cloud service, creating and previewing invoices is free; PDF download and printing require the Cloud plan.",
     },
     {
       question: "Does it work for Indian freelancers?",
       answer:
-        "Yes — INR, UPI, GST fields, and India-specific templates and guides are supported.",
+        "Yes - INR, UPI, GST fields, and India-specific templates and guides are supported.",
     },
   ],
   "/pricing": [
     {
       question: "How much does Invoice for Freelance cost?",
       answer:
-        "The core product is free ($0/month). You can create invoices, use the Classic template, export PDFs, and print at no charge. Premium templates (Modern, Minimal, and Simple) are an optional one-time unlock — $1 internationally or ₹99 in India — when checkout is available.",
+        "Self-hosting is free forever under the open-source license. The hosted Cloud plan is ₹299/month or ₹999/year for Indian clients, and $5/month or $19/year elsewhere. Creating, editing, and previewing invoices is free on both.",
     },
     {
-      question: "Is there a paid plan or subscription?",
+      question: "What does the Cloud plan include?",
       answer:
-        "No subscription is required. Invoicing, cloud history, and the Classic template stay free. Premium templates are a one-time purchase per layout, not a recurring plan.",
+        "PDF download, printing, payment receipts, all eight invoice templates, brand colors, cloud invoice history, and payment status tracking. One payment covers 30 days or 365 days depending on the plan.",
     },
     {
-      question: "Do I have to pay to print an invoice?",
+      question: "Can I use the app without paying?",
       answer:
-        "Printing and PDF export are free with the Classic template. If you choose a premium template (Modern, Minimal, or Simple), the same one-time unlock required for PDF download also applies to print. You can always switch back to Classic to print or export for free.",
+        "Yes. You can create an account, build invoices, pick templates, and preview the finished document. PDF download, print, and receipt exports unlock with Cloud. Self-hosted installs have every feature unlocked for free.",
     },
     {
-      question: "What is the difference between Ko-fi tips and template payments?",
+      question: "Is Cloud an auto-renewing subscription?",
       answer:
-        "Ko-fi tips are voluntary contributions that help support the platform and can remove the small Powered by footer. Premium template unlocks are separate one-time Razorpay payments that let you download or print invoices using Modern, Minimal, or Simple layouts.",
+        "Cloud is a 30-day pass per payment rather than an automatic mandate. Add another month whenever you need it - the new period extends from your existing expiry.",
     },
     {
       question: "Are there hidden fees?",
       answer:
-        "No. Core invoicing is free. You only pay if you choose to unlock a premium template or leave a voluntary Ko-fi tip.",
+        "No. The price shown is the price charged. Self-hosting costs only what your own hosting and database provider charges.",
     },
   ],
   "/about": [
@@ -81,7 +82,8 @@ export const pageFaqs: Record<string, TemplateFaqItem[]> = {
   "/signup": [
     {
       question: "Is signup free?",
-      answer: "Yes. Create a free account to start invoicing immediately.",
+      answer:
+        "Yes. Creating an account and building invoices is free. Exporting PDFs, printing, and receipts are part of the Cloud plan, or free forever if you self-host.",
     },
     {
       question: "What do I need to sign up?",
@@ -98,7 +100,7 @@ export const pageFaqs: Record<string, TemplateFaqItem[]> = {
     {
       question: "How do regional data-protection laws apply?",
       answer:
-        "We tailor signup and login consent to laws in your country — for example GDPR in the EU, UK GDPR in Britain, DPDP in India, LGPD in Brazil, and CCPA-style rights in the United States. See the full country-by-country table on our privacy policy page.",
+        "We tailor signup and login consent to laws in your country - for example GDPR in the EU, UK GDPR in Britain, DPDP in India, LGPD in Brazil, and CCPA-style rights in the United States. See the full country-by-country table on our privacy policy page.",
     },
     {
       question: "Do I have to accept the privacy policy to sign up?",
@@ -115,9 +117,14 @@ export const pageFaqs: Record<string, TemplateFaqItem[]> = {
   ],
   "/refund-policy": [
     {
-      question: "Can I get a refund on Ko-fi tips?",
+      question: "Can I get a refund on a Cloud payment?",
       answer:
-        "Tips are voluntary. Refunds are considered for duplicate or erroneous charges — see this page for details.",
+        "Contact us within 7 days if you were charged in error, charged twice for the same period, or could not access the paid features. Approved refunds are returned to the original payment method.",
+    },
+    {
+      question: "Is Cloud a recurring subscription?",
+      answer:
+        "No. Each monthly payment covers 30 days and each yearly payment covers 365 days. There is no automatic renewal, so there is nothing to cancel mid-period. Access simply ends when the paid period expires.",
     },
   ],
   "/support": customerFaqs,

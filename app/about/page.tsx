@@ -6,7 +6,7 @@ import { aboutPageKeywords } from "@/data/page-keywords";
 import { siteConfig } from "@/data/site";
 
 const title = "About";
-const description = `Learn about ${siteConfig.name} — a free invoice generator built for freelancers, independent contractors, and small agencies.`;
+const description = `Learn about ${siteConfig.name} - an open-source, monochrome invoicing studio for freelancers, independent contractors, and small agencies.`;
 
 export const metadata: Metadata = {
   title,

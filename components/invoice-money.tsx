@@ -7,7 +7,7 @@ type InvoiceMoneyProps = {
   style?: React.CSSProperties;
 };
 
-/** Invoice preview amounts — currency symbol only (no flag or code prefix). */
+/** Invoice preview amounts - currency symbol only (no flag or code prefix). */
 export function InvoiceMoney({
   amount,
   currencyCode,

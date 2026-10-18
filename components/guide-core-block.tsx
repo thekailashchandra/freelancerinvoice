@@ -6,7 +6,7 @@ type GuideCoreBlockProps = {
   block: GuideCoreBlock;
 };
 
-/** Labeled data table / core steps — second tier of the AI content template. */
+/** Labeled data table / core steps - second tier of the AI content template. */
 export function GuideCoreBlockSection({ block }: GuideCoreBlockProps) {
   return (
     <section

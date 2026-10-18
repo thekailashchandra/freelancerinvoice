@@ -190,7 +190,7 @@ export function normalizeCountryCode(code: string | null | undefined): CountryCo
   return "US";
 }
 
-/** India (IN) — INR defaults and UPI payment fields */
+/** India (IN) - INR defaults and UPI payment fields */
 export function isIndianCountry(code: string | null | undefined): boolean {
   return normalizeCountryCode(code) === "IN";
 }

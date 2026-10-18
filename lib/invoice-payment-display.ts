@@ -7,7 +7,7 @@ export type InvoicePaymentDisplayOptions = {
   accountNameFallback?: string;
 };
 
-/** Payment lines for invoice preview — shows any filled field regardless of country. */
+/** Payment lines for invoice preview - shows any filled field regardless of country. */
 export function getInvoicePaymentInfo(
   payment: PaymentDetails,
   options?: InvoicePaymentDisplayOptions

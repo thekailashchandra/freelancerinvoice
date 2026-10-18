@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/data/site";
@@ -13,47 +12,59 @@ type SiteLogoProps = {
   priority?: boolean;
 };
 
+/**
+ * Monochrome wordmark. Drawn in markup instead of a raster asset so it stays
+ * crisp in both themes and needs no separate light/dark files.
+ */
 export function SiteLogo({
   variant = "compact",
   className,
   href = "/",
-  priority = false,
 }: SiteLogoProps) {
   const isFull = variant === "full";
 
-  const lightClass = cn(
-    "w-auto object-contain object-left dark:hidden",
-    isFull ? "h-16 md:h-24" : "h-14"
-  );
-  const darkClass = cn(
-    "hidden w-auto object-contain object-left dark:block",
-    isFull ? "h-14 md:h-20" : "h-12"
-  );
-
   const content = (
-    <span className={cn("relative inline-flex shrink-0 items-center", className)}>
-      <Image
-        src={siteConfig.logos.light}
-        alt={siteConfig.name}
-        width={isFull ? 480 : 300}
-        height={isFull ? 96 : 56}
-        className={lightClass}
-        priority={priority}
-      />
-      <Image
-        src={siteConfig.logos.dark}
-        alt={siteConfig.name}
-        width={isFull ? 400 : 260}
-        height={isFull ? 80 : 48}
-        className={darkClass}
-        priority={priority}
-      />
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center",
+        isFull ? "gap-3" : "gap-2.5",
+        className
+      )}
+    >
+      <span
+        className={cn(
+          "flex items-center justify-center rounded-[7px] bg-foreground font-semibold leading-none text-background",
+          isFull ? "h-9 w-9 text-[12px]" : "h-8 w-8 text-[11px]"
+        )}
+        aria-hidden
+      >
+        IF
+      </span>
+      <span className="flex flex-col justify-center">
+        <span
+          className={cn(
+            "display-serif leading-none tracking-[-0.02em]",
+            isFull ? "text-[22px]" : "text-[18px]"
+          )}
+        >
+          Invoice<span className="text-muted-foreground"> for </span>Freelance
+        </span>
+        {isFull ? (
+          <span className="eyebrow mt-1.5 text-[8px] text-muted-foreground">
+            Freelancer billing studio
+          </span>
+        ) : null}
+      </span>
     </span>
   );
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
+      <Link
+        href={href}
+        aria-label={siteConfig.name}
+        className="inline-flex shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
         {content}
       </Link>
     );

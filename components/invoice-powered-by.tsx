@@ -1,8 +1,5 @@
 import { invoiceDesign } from "@/lib/invoice-design";
-import {
-  invoiceBrandingLabel,
-  invoiceKofiTipUrl,
-} from "@/lib/invoice-branding";
+import { invoiceBrandingLabel } from "@/lib/invoice-branding";
 
 const d = invoiceDesign;
 
@@ -10,11 +7,11 @@ type InvoicePoweredByProps = {
   className?: string;
   /** Pin to the bottom of a full invoice page (flex child). */
   pinned?: boolean;
-  /** Screen-only: open Ko-fi removal flow */
+  /** Screen-only: open the branding removal flow */
   onRemoveBranding?: () => void;
 };
 
-/** Platform footer with Ko-fi tip — removable after a confirmed contribution. */
+/** Platform footer - removable with the Cloud plan. */
 export function InvoicePoweredBy({
   className,
   pinned,
@@ -45,39 +42,28 @@ export function InvoicePoweredBy({
           {invoiceBrandingLabel}
         </span>
       </p>
-      <p
-        className="invoice-screen-only"
-        style={{ margin: "6px 0 0", fontSize: 9, lineHeight: "12px" }}
-      >
-        <a
-          href={invoiceKofiTipUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: d.colors.textMuted, textDecoration: "underline" }}
+      {onRemoveBranding ? (
+        <p
+          className="invoice-screen-only"
+          style={{ margin: "6px 0 0", fontSize: 9, lineHeight: "12px" }}
         >
-          Tip on Ko-fi
-        </a>
-        {onRemoveBranding ? (
-          <>
-            {" · "}
-            <button
-              type="button"
-              onClick={onRemoveBranding}
-              style={{
-                color: d.colors.textMuted,
-                textDecoration: "underline",
-                background: "none",
-                border: "none",
-                padding: 0,
-                font: "inherit",
-                cursor: "pointer",
-              }}
-            >
-              Remove footer
-            </button>
-          </>
-        ) : null}
-      </p>
+          <button
+            type="button"
+            onClick={onRemoveBranding}
+            style={{
+              color: d.colors.textMuted,
+              textDecoration: "underline",
+              background: "none",
+              border: "none",
+              padding: 0,
+              font: "inherit",
+              cursor: "pointer",
+            }}
+          >
+            Remove footer
+          </button>
+        </p>
+      ) : null}
     </div>
   );
 }

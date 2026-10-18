@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const usdInvoiceTemplate: TemplatePage = {
   slug: "usd-invoice-template",
-  title: "USD Invoice Template for Freelancers — Bill International Clients",
+  title: "USD Invoice Template for Freelancers - Bill International Clients",
   description:
     "Free USD invoice template for freelancers billing US and global clients. Show amounts in dollars, payment details for wire/Wise, and export a professional PDF.",
   keywords: [
@@ -68,7 +68,7 @@ export const usdInvoiceTemplate: TemplatePage = {
     {
       question: "Should I show only USD on the invoice if I convert to my local currency?",
       answer:
-        "Yes — show USD as the invoice currency. Your bank converts on receipt; do not mix currencies on one invoice unless explicitly agreed.",
+        "Yes - show USD as the invoice currency. Your bank converts on receipt; do not mix currencies on one invoice unless explicitly agreed.",
     },
     {
       question: "What payment details do US clients need on a USD invoice?",
@@ -83,12 +83,12 @@ export const usdInvoiceTemplate: TemplatePage = {
     {
       question: "Do I charge US sales tax on a USD invoice as a foreign freelancer?",
       answer:
-        "Usually not for pure services exported from abroad, but rules vary. US clients often handle sales tax on their side — confirm with a tax advisor.",
+        "Usually not for pure services exported from abroad, but rules vary. US clients often handle sales tax on their side - confirm with a tax advisor.",
     },
     {
       question: "Which professions use USD invoices most?",
       answer:
-        "Developers, designers, marketers, and video editors billing US startups commonly use USD — see our profession-specific templates for line item examples.",
+        "Developers, designers, marketers, and video editors billing US startups commonly use USD - see our profession-specific templates for line item examples.",
     },
   ],
 };

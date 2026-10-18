@@ -110,7 +110,7 @@ export async function downloadPaymentReceiptPdf(data: PaymentReceiptData) {
 export async function sharePaymentReceipt(data: PaymentReceiptData) {
   if (typeof navigator !== "undefined" && navigator.share) {
     await navigator.share({
-      title: `Payment receipt — ${data.templateName} template`,
+      title: `Payment receipt - ${data.templateName} template`,
       text: `Paid ${data.amountDisplay} for ${data.templateName} invoice template on ${siteConfig.name}. Receipt #${data.receiptNumber}`,
       url: window.location.href,
     });

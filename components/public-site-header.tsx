@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { LocaleCountrySwitcher } from "@/components/locale-country-switcher";
 import { PublicMobileMenu } from "@/components/public-mobile-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useTranslation } from "@/components/locale-provider";
 import { SiteLogo } from "@/components/site-logo";
 import { mainNavLinks } from "@/data/public-navigation";
@@ -35,13 +36,16 @@ export function PublicSiteHeader() {
               </Button>
             </div>
           ))}
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
           <LocaleCountrySwitcher variant="compact" />
           <div className="hidden sm:block">
             <Button variant="ghost" asChild>
               <Link href="/login">{t("nav.signIn")}</Link>
             </Button>
           </div>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="rounded-full px-4">
             <Link href="/signup">
               <span className="hidden sm:inline">{t("nav.getStarted")}</span>
               <span className="sm:hidden">{t("nav.signUp")}</span>

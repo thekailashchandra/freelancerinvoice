@@ -3,9 +3,9 @@ import type { TemplatePage } from "./types";
 export const printableGraphicDesignerInvoiceLayout: TemplatePage = {
   slug: "printable-graphic-designer-invoice-layout-logo-upload",
   title:
-    "Printable Graphic Designer Invoice Layout with Logo Upload — Free Template",
+    "Printable Graphic Designer Invoice Layout with Logo Upload - Free Template",
   description:
-    "Free printable graphic designer invoice layout with logo upload. Professional PDF invoices for branding, UI/UX, and illustration work — upload your logo and export client-ready.",
+    "Free printable graphic designer invoice layout with logo upload. Professional PDF invoices for branding, UI/UX, and illustration work - upload your logo and export client-ready.",
   keywords: [
     "printable graphic designer invoice layout with logo upload",
     "graphic designer invoice printable",
@@ -27,7 +27,7 @@ export const printableGraphicDesignerInvoiceLayout: TemplatePage = {
       id: "printable-layout",
       heading: "Why designers need a printable invoice layout",
       paragraphs: [
-        "Finance teams and small-business clients often print invoices for approval chains. A clean, printable graphic designer invoice layout — with your logo, clear line items, and visible payment details — gets approved faster than a cluttered spreadsheet export.",
+        "Finance teams and small-business clients often print invoices for approval chains. A clean, printable graphic designer invoice layout - with your logo, clear line items, and visible payment details - gets approved faster than a cluttered spreadsheet export.",
         "Upload your logo once and every PDF matches your studio brand. That consistency signals professionalism before the client reads a single line item.",
       ],
     },
@@ -53,7 +53,7 @@ export const printableGraphicDesignerInvoiceLayout: TemplatePage = {
         "Client block: company name, billing contact, address",
         "Invoice meta: number, date, due date, project name",
         "Line items table: deliverable, qty, rate, amount",
-        "Subtotal, tax, total — right-aligned for print",
+        "Subtotal, tax, total - right-aligned for print",
         "Payment instructions and notes (revisions, licensing)",
         "Footer: thank-you line and support email",
       ],
@@ -62,11 +62,11 @@ export const printableGraphicDesignerInvoiceLayout: TemplatePage = {
       id: "line-items",
       heading: "Designer line items that print clearly",
       list: [
-        "Brand identity package — logo + style guide",
-        "UI design — 12 screens (desktop + mobile)",
-        "Social media template kit — 20 assets",
-        "Extra revision round (outside scope) — 3 hours",
-        "Illustration licensing — web + print, 1 year",
+        "Brand identity package - logo + style guide",
+        "UI design - 12 screens (desktop + mobile)",
+        "Social media template kit - 20 assets",
+        "Extra revision round (outside scope) - 3 hours",
+        "Illustration licensing - web + print, 1 year",
       ],
     },
     {
@@ -91,7 +91,7 @@ export const printableGraphicDesignerInvoiceLayout: TemplatePage = {
     {
       question: "Can I print the invoice or only send PDF?",
       answer:
-        "Both. Export PDF for email and print directly — the layout is optimized for standard paper sizes.",
+        "Both. Export PDF for email and print directly - the layout is optimized for standard paper sizes.",
     },
   ],
 };

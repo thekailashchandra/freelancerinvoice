@@ -5,6 +5,7 @@ import { ArrowRight, FileText, Receipt, TrendingUp, Wallet } from "lucide-react"
 import { toast } from "sonner";
 import { NavLink } from "@/components/nav-link";
 import { AnalyticsCard } from "@/components/analytics-card";
+import { CloudPlanCard } from "@/components/cloud-plan-card";
 import { EmptyState } from "@/components/empty-state";
 import { InvoiceTable } from "@/components/invoice-table";
 import { PageTransition } from "@/components/page-transition";
@@ -103,6 +104,8 @@ export default function DashboardPage() {
           </NavLink>
         </Button>
       </div>
+
+      <CloudPlanCard />
 
       {loading ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

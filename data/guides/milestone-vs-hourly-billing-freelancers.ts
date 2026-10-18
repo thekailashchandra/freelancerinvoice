@@ -4,7 +4,7 @@ export const milestoneVsHourlyBillingFreelancers: GuideArticle = {
   slug: "milestone-vs-hourly-billing-freelancers",
   title: "Milestone vs Hourly Billing for Freelancers: Which Model to Use",
   description:
-    "Compare milestone billing and hourly billing for freelancers — when each model fits, how to structure invoices, and hybrid approaches for deposits and change requests.",
+    "Compare milestone billing and hourly billing for freelancers - when each model fits, how to structure invoices, and hybrid approaches for deposits and change requests.",
   keywords: [
     "milestone billing freelancer",
     "hourly billing freelancer",
@@ -28,7 +28,7 @@ export const milestoneVsHourlyBillingFreelancers: GuideArticle = {
       id: "milestone-billing",
       heading: "Milestone billing: best for fixed-scope projects",
       paragraphs: [
-        "Milestone billing works when deliverables, timelines, and acceptance criteria are clear before work starts. You invoice when each phase is approved — not when hours accumulate.",
+        "Milestone billing works when deliverables, timelines, and acceptance criteria are clear before work starts. You invoice when each phase is approved - not when hours accumulate.",
       ],
       list: [
         "Website redesign: 30% kickoff, 40% design approval, 30% launch",

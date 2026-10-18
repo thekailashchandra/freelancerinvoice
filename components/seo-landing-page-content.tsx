@@ -72,7 +72,7 @@ export function SeoLandingPageContent({ page }: SeoLandingPageContentProps) {
             Payout channels & tax withholding (India)
           </h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">
-            Compare Wise, PayPal, SWIFT, and domestic UPI rails — fees, speed, and
+            Compare Wise, PayPal, SWIFT, and domestic UPI rails - fees, speed, and
             TDS/Form 16A implications for independent contractors.
           </p>
           <CrossBorderComparisonTable rows={indiaCrossBorderPayoutComparison} />
@@ -85,7 +85,7 @@ export function SeoLandingPageContent({ page }: SeoLandingPageContentProps) {
             International wire & banking layouts
           </h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">
-            Match payment fields to each client&apos;s corridor — routing numbers,
+            Match payment fields to each client&apos;s corridor - routing numbers,
             IBAN, sort codes, and compliance documentation.
           </p>
           <div className="ai-content-table mt-4 overflow-x-auto rounded-xl border border-border/50">

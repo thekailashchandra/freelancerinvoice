@@ -182,24 +182,24 @@ export function buildInvoiceReceiptHtml(data: InvoiceReceiptData): string {
 <html lang="en"><head><meta charset="utf-8"/>
 <style>
   * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 40px; color: #0f172a; background: #f1f5f9; }
-  .card { max-width: 560px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 12px 40px rgba(15,23,42,0.08); }
-  .head { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: #fff; padding: 28px 32px 24px; position: relative; }
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 40px; color: #111111; background: #f4f4f4; }
+  .card { max-width: 560px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e2e2; box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .head { background: linear-gradient(135deg, #0a0a0a 0%, #222222 100%); color: #fff; padding: 28px 32px 24px; position: relative; }
   .head h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
   .head .sub { margin: 6px 0 0; font-size: 13px; opacity: 0.8; }
-  .paid-badge { position: absolute; top: 24px; right: 24px; background: #059669; color: #fff; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 6px 12px; border-radius: 999px; }
-  .amount-block { margin: -20px 32px 0; padding: 20px 24px; background: linear-gradient(135deg, #4f46e5, #6366f1); border-radius: 12px; color: #fff; }
+  .paid-badge { position: absolute; top: 24px; right: 24px; background: #ffffff; color: #111111; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 6px 12px; border-radius: 999px; }
+  .amount-block { margin: -20px 32px 0; padding: 20px 24px; background: linear-gradient(135deg, #111111, #333333); border-radius: 12px; color: #fff; }
   .amount-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.9; }
   .amount-value { margin-top: 6px; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
   .body { padding: 28px 32px 8px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .block-title { margin: 0 0 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6366f1; }
-  .block-name { margin: 0; font-size: 14px; font-weight: 700; color: #0f172a; }
+  .block-title { margin: 0 0 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #555555; }
+  .block-name { margin: 0; font-size: 14px; font-weight: 700; color: #111111; }
   .rows { border-top: 1px solid #f1f5f9; }
   .row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
   .row:last-child { border-bottom: none; }
-  .label { color: #64748b; flex-shrink: 0; }
-  .value { font-weight: 600; text-align: right; color: #0f172a; word-break: break-word; }
+  .label { color: #666666; flex-shrink: 0; }
+  .value { font-weight: 600; text-align: right; color: #111111; word-break: break-word; }
   .foot { padding: 16px 32px 24px; background: #f8fafc; font-size: 11px; color: #64748b; line-height: 1.6; border-top: 1px solid #f1f5f9; }
 </style></head><body>
 <div class="card" id="invoice-receipt-root">

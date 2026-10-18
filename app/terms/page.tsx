@@ -61,15 +61,17 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">Free service & tips</h2>
+        <h2 className="text-lg font-semibold">Cloud plan, self-hosting &amp; tips</h2>
         <p className="mt-2">
-          Core features are provided free of charge. Optional voluntary tips via
-          Ko-fi do not constitute a purchase of additional features unless
-          explicitly stated. See our{" "}
+          Creating and previewing invoices is free. The hosted Cloud plan is a
+          paid 30-day access pass for PDF export, printing, receipts, and every
+          template. Self-hosted installations are governed by the open-source
+          license and may be used without charge. Optional voluntary tips via
+          Ko-fi do not constitute a purchase of additional features. See our{" "}
           <Link href="/refund-policy" className="text-primary hover:underline">
             Refund Policy
           </Link>{" "}
-          for tip-related terms.
+          for payment terms.
         </p>
       </section>
 
@@ -78,7 +80,7 @@ export default function TermsPage() {
         <p className="mt-2">
           {siteConfig.name} is provided &quot;as is&quot; without warranties of
           any kind. We do not provide tax, legal, or accounting advice. Invoice
-          templates and fields are tools only — you remain responsible for
+          templates and fields are tools only - you remain responsible for
           compliance with applicable laws in your jurisdiction.
         </p>
       </section>

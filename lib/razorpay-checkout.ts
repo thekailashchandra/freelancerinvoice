@@ -74,7 +74,7 @@ export async function openRazorpayCheckout(
       order_id: payload.orderId,
       prefill: payload.prefill,
       notes: payload.notes,
-      theme: { color: "#1b2f24" },
+      theme: { color: "#111111" },
       handler(response: RazorpaySuccessResponse) {
         resolve(response);
       },

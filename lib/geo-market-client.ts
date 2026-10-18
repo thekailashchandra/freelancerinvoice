@@ -15,7 +15,7 @@ function readCookie(name: string): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-/** Read geo market cookies set by middleware (client-only — keeps ISR pages static). */
+/** Read geo market cookies set by middleware (client-only - keeps ISR pages static). */
 export function readMarketFromDocumentCookies(): MarketContext {
   return resolveMarketContext({
     countryCode: readCookie(GEO_COUNTRY_COOKIE),

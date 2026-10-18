@@ -1,7 +1,7 @@
 import { analyticsConfig } from "@/data/analytics";
 import { readConsentCookie } from "@/lib/cookie-consent";
 
-/** User chose Essential only or Accept all — either enables GA (ads stay gated separately). */
+/** User chose Essential only or Accept all - either enables GA (ads stay gated separately). */
 export function hasAnalyticsConsent(): boolean {
   return readConsentCookie() !== null;
 }

@@ -16,7 +16,7 @@ function readDevConsentCountry(): string | null {
   return null;
 }
 
-/** Resolve consent country from IP only — never locale switcher. */
+/** Resolve consent country from IP only - never locale switcher. */
 export function resolveConsentCountryCode(input: {
   ipCookie?: string | null;
   requestHeaders?: Headers;

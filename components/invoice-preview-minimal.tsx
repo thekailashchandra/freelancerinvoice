@@ -62,8 +62,8 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
   onRemoveBranding,
 }: InvoicePreviewMinimalProps) {
   const d = useMemo(
-    () => resolveTemplateDesign(invoice.templateId ?? "minimal"),
-    [invoice.templateId]
+    () => resolveTemplateDesign(invoice.templateId ?? "minimal", invoice.company.brandColor),
+    [invoice.templateId, invoice.company.brandColor]
   );
   const showPoweredBy =
     showBranding ?? shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
@@ -84,7 +84,6 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
   const paymentTerms =
     invoice.invoice.paymentTerms?.trim() || "Due on receipt";
 
@@ -271,7 +270,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
           </div>
         </div>
 
-        {/* Line items — borderless table */}
+        {/* Line items - borderless table */}
         <table
           style={{
             width: "100%",
@@ -326,7 +325,7 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
                     {item.description ? (
                       <span style={{ color: labelColor }}>
                         {" "}
-                        — {item.description}
+                        - {item.description}
                       </span>
                     ) : null}
                   </td>
@@ -425,20 +424,22 @@ export const InvoicePreviewMinimal = memo(function InvoicePreviewMinimal({
               taxPct={taxPct}
               rowStyle={{ fontSize: 12, color: bodyColor }}
             />
-            {shipping > 0 ? (
+            {totals.additionalCharges.map((charge) => (
               <div
+                key={charge.id}
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
+                  gap: 12,
                   padding: "4px 0",
                   fontSize: 12,
                   color: bodyColor,
                 }}
               >
-                <span>Shipping</span>
-                <InvoiceMoney amount={shipping} currencyCode={currency} />
+                <span>{charge.label || "Additional charge"}</span>
+                <InvoiceMoney amount={charge.amount} currencyCode={currency} />
               </div>
-            ) : null}
+            ))}
             <div
               style={{
                 display: "flex",

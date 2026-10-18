@@ -109,43 +109,43 @@ export default function SuperadminOverviewPage() {
           title="Total users"
           value={stats.totalUsers}
           icon={Users}
-          gradient="from-violet-500 to-indigo-600"
+          gradient="from-foreground to-foreground/70"
         />
         <AnalyticsCard
           title="Invoices created"
           value={stats.totalInvoices}
           icon={FileText}
-          gradient="from-sky-500 to-blue-600"
+          gradient="from-foreground/80 to-foreground/50"
         />
         <AnalyticsCard
           title="Invoices paid"
           value={stats.invoicesPaid}
           icon={Wallet}
-          gradient="from-emerald-500 to-green-600"
+          gradient="from-foreground to-foreground/75"
         />
         <AnalyticsCard
           title="PDF downloads"
           value={stats.pdfDownloads}
           icon={Download}
-          gradient="from-amber-500 to-orange-600"
+          gradient="from-foreground/90 to-foreground/60"
         />
         <AnalyticsCard
           title="Receipt downloads"
           value={stats.receiptDownloads}
           icon={Receipt}
-          gradient="from-pink-500 to-rose-600"
+          gradient="from-foreground to-foreground/65"
         />
         <AnalyticsCard
           title="Signups (7d)"
           value={stats.signupsLast7Days}
           icon={TrendingUp}
-          gradient="from-cyan-500 to-teal-600"
+          gradient="from-foreground/85 to-foreground/55"
         />
         <AnalyticsCard
           title="Active users (30d)"
           value={stats.activeUsersLast30Days}
           icon={Users}
-          gradient="from-fuchsia-500 to-purple-600"
+          gradient="from-foreground to-foreground/70"
         />
         <AnalyticsCard
           title="Razorpay revenue"
@@ -153,7 +153,7 @@ export default function SuperadminOverviewPage() {
           icon={IndianRupee}
           prefix="₹"
           decimals={0}
-          gradient="from-lime-500 to-emerald-600"
+          gradient="from-foreground to-foreground/80"
         />
       </div>
 
@@ -163,7 +163,7 @@ export default function SuperadminOverviewPage() {
             <CardTitle className="text-base">Invoices created (7 days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <TrendBars data={stats.invoiceTrend} colorClass="bg-sky-500" />
+            <TrendBars data={stats.invoiceTrend} colorClass="bg-foreground" />
           </CardContent>
         </Card>
         <Card>
@@ -171,7 +171,7 @@ export default function SuperadminOverviewPage() {
             <CardTitle className="text-base">New signups (7 days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <TrendBars data={stats.signupTrend} colorClass="bg-violet-500" />
+            <TrendBars data={stats.signupTrend} colorClass="bg-muted-foreground" />
           </CardContent>
         </Card>
       </div>

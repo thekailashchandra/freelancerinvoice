@@ -9,7 +9,7 @@ export const en = {
     pricing: "Pricing",
     signIn: "Sign in",
     signUp: "Sign up",
-    getStarted: "Get started free",
+    getStarted: "Start free",
     guides: "Guides",
     blog: "Blog",
     templates: "Templates",
@@ -37,7 +37,7 @@ export const en = {
     minRead: "min read",
   },
   footer: {
-    tagline: "Free invoice generator for freelancers",
+    tagline: "Open-source invoicing for freelancers",
     sitemap: "Sitemap",
     llmsTxt: "LLMs.txt",
   },
@@ -47,22 +47,22 @@ export const en = {
   },
   landing: {
     hero: {
-      badge: "Built for freelancers & agencies worldwide",
-      titlePrefix: "Free",
-      titleHighlight: "Invoice for Freelance",
-      titleSuffix: ": Generate Invoices for Freelancers in Minutes",
+      badge: "Open source · Self-host it free",
+      titlePrefix: "Invoices that",
+      titleHighlight: "make you look expensive.",
+      titleSuffix: "",
       description:
-        "Create and send professional invoices in minutes. Free PDF export, cloud history, and a calm workspace built for freelancers.",
-      ctaPrimary: "Get started free",
+        "A quiet, monochrome workspace for independent work. Shape a polished invoice, share it with a client, and keep every payment in view - without spreadsheet chaos.",
+      ctaPrimary: "Start invoicing free",
       ctaSample: "See a sample invoice",
       ctaFeatures: "See all features",
       ctaSignIn: "Sign in",
-      metaFree: "Free to start",
+      metaFree: "Create an account in a minute",
       metaPricing: "Pricing",
-      metaPdf: "PDF export",
+      metaPdf: "PDF export on Cloud",
       metaCloud: "Cloud invoice history",
-      statFree: "Free",
-      statFreeLabel: "Forever plan",
+      statFree: "₹99",
+      statFreeLabel: "Cloud / month",
       statSpeed: "< 5 min",
       statSpeedLabel: "First invoice",
       statExport: "PDF",
@@ -80,12 +80,12 @@ export const en = {
     },
     homeSummary: {
       title: "Why freelancers use this invoice generator",
-      p1: "Send polished bills in minutes — with live preview, branded PDF export, and a searchable history of every invoice you have sent. No Word templates, no formula errors, no reformatting before every client email.",
+      p1: "Send polished bills in minutes - with live preview, branded PDF export, and a searchable history of every invoice you have sent. No Word templates, no formula errors, no reformatting before every client email.",
       p2: "{name} is purpose-built for independent contractors: designers, developers, writers, consultants, and agencies who bill per project, hourly, or on retainer.",
-      b1: "Free Classic template with PDF export and print at no charge",
+      b1: "A monochrome workspace that keeps the focus on your work",
       b2: "Cloud-backed invoice history with paid, pending, and overdue filters",
       b3: "Multi-currency fields and GST-ready details for Indian freelancers",
-      b4: "Optional premium layouts — preview free, pay only when you export or print them",
+      b4: "Open source and free to self-host, with an optional cloud plan",
     },
     features: {
       title: "Everything freelancers need to invoice clients",
@@ -188,39 +188,64 @@ export const en = {
       title: "Ready to create your invoice for freelancers?",
       descriptionBefore:
         "Join freelancers who bill professionally with {name}.",
-      descriptionAfter: ", instant PDF export, cloud-backed invoice history.",
-      freeLink: "Free forever",
-      primary: "Get started, it's free",
+      descriptionAfter:
+        " - open source, self-hostable, and built to make your work look as good as it is.",
+      freeLink: "Self-host free",
+      primary: "Start invoicing",
       secondary: "Read freelancer guides",
     },
     rich: {
       templates: {
         title: "Freelance invoice templates that actually fit your work",
         subtitle:
-          "Preview professional layouts built for self-employed billing — not generic spreadsheets with empty columns you'll never use.",
+          "Preview professional layouts built for self-employed billing - not generic spreadsheets with empty columns you'll never use.",
         classic: {
           name: "Classic",
-          tag: "Free forever",
+          tag: "Included",
           description:
-            "Clean professional layout with your logo, line items, and payment block. PDF export and print included at no cost.",
+            "Clean, confident layout with your logo, line items, and payment block.",
         },
         modern: {
           name: "Modern",
-          tag: "Premium",
+          tag: "Included",
           description:
-            "Minimal monochrome design with bold totals — ideal when you want a sharp, agency-grade look on every bill.",
+            "Minimal monochrome design with bold totals - ideal when you want a sharp, agency-grade look on every bill.",
         },
         minimal: {
           name: "Minimal",
-          tag: "Premium",
+          tag: "Included",
           description:
             "Airy whitespace and understated typography for consultants who prefer a quiet, confident invoice.",
         },
         simple: {
           name: "Simple",
-          tag: "Premium",
+          tag: "Included",
           description:
-            "Editorial cream layout with a payment sidebar — great for creative freelancers billing project milestones.",
+            "Editorial monochrome layout with a payment sidebar - great for creative freelancers billing project milestones.",
+        },
+        corporate: {
+          name: "Corporate",
+          tag: "Included",
+          description:
+            "Structured gray panels, a formal total due block, and account manager details for client-facing businesses.",
+        },
+        studio: {
+          name: "Studio",
+          tag: "Included",
+          description:
+            "A dark brand sidebar, striped line items, and a bold total row for studios and agencies.",
+        },
+        geometric: {
+          name: "Geometric",
+          tag: "Included",
+          description:
+            "Color-block accents, a large editorial invoice title, and a branded payment sidebar.",
+        },
+        swiss: {
+          name: "Swiss",
+          tag: "Included",
+          description:
+            "Grid-led minimalism with heavy rules, a compact table, and a quiet bottom brand block.",
         },
         cta: "Try templates free",
       },
@@ -229,7 +254,7 @@ export const en = {
         intro:
           "Freelancers lose hours fighting generic downloads that were never designed for how you actually bill. A dedicated invoice for freelance workflow saves that time every month.",
         points: {
-          w1: "Reuse your branding, payment details, and tax labels — stop retyping the same header on every bill.",
+          w1: "Reuse your branding, payment details, and tax labels - stop retyping the same header on every bill.",
           w2: "Stay organized for taxes and year-end accounting with searchable cloud history.",
           w3: "Look as professional as your deliverables so clients take payment seriously.",
           w4: "Outline services and deliverables clearly so scope disputes are rare.",
@@ -239,7 +264,7 @@ export const en = {
       whoNeeds: {
         title: "Who needs to generate invoice for freelance work?",
         intro:
-          "If you are paid by clients rather than an employer, you need a proper bill — even for a small side project. Sending only a PayPal link or a vague email slows payment and looks amateur.",
+          "If you are paid by clients rather than an employer, you need a proper bill - even for a small side project. Sending only a PayPal link or a vague email slows payment and looks amateur.",
         roles: {
           r1: { title: "Designers & creatives", body: "Brand, UI, illustration, and video deliverables with licensing notes on each line." },
           r2: { title: "Developers & engineers", body: "Hourly, sprint, and milestone billing with technical descriptions finance teams understand." },
@@ -267,13 +292,13 @@ export const en = {
         },
       },
       compare: {
-        title: "Generate invoice for freelancers online — not in a spreadsheet",
+        title: "Generate invoice for freelancers online - not in a spreadsheet",
         body:
           "Unlike static Excel or Word downloads, {name} is a live invoice generator: you type, preview updates instantly, and export a client-ready PDF. Your logo, signature, currency, and country-specific payment fields stay saved for the next bill.",
         cta: "Generate your first invoice",
       },
       countries: {
-        title: "Invoice for freelance work — by country",
+        title: "Invoice for freelance work - by country",
         subtitle:
           "Currency defaults, tax labels, and payment fields adapt to where you bill from. Pick your market or change country anytime from the header.",
         us: { label: "United States", hint: "USD · routing & ACH" },
@@ -284,7 +309,7 @@ export const en = {
       resources: {
         title: "More freelancer billing resources",
         freelancers: "Invoice generator for freelancers",
-        india: "GST invoice generator — India",
+        india: "GST invoice generator - India",
         designers: "Invoice software for designers",
         agencies: "Invoice template for agencies",
         guides: "Freelancer billing guides",

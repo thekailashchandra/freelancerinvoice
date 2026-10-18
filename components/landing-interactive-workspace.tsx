@@ -3,23 +3,15 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useState } from "react";
-import { Cloud, Download, Loader2, Lock } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowRight, Download } from "lucide-react";
 import { InvoiceForm } from "@/components/invoice-form";
 import { InvoiceTemplatePicker } from "@/components/invoice-template-picker";
-import { TemplateUnlockDialog } from "@/components/template-unlock-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDefaultInvoiceForCountry } from "@/data/defaults";
 import { useMarketContext } from "@/hooks/use-market-context";
-import { useTemplateCheckout } from "@/hooks/use-template-checkout";
-import {
-  getInvoiceTemplate,
-  type InvoiceTemplateId,
-} from "@/lib/invoice-templates";
-import { useTemplateUnlocked } from "@/hooks/use-template-unlocked";
+import type { InvoiceTemplateId } from "@/lib/invoice-templates";
 import type { Invoice } from "@/types/invoice";
-import { requiresTemplatePayment } from "@/lib/template-export-guard";
 
 const LANDING_PREVIEW_ID = "landing-invoice-preview";
 
@@ -48,18 +40,6 @@ export function LandingInteractiveWorkspace({
 }: LandingInteractiveWorkspaceProps) {
   const marketContext = useMarketContext();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [exporting, setExporting] = useState(false);
-
-  const {
-    unlockDialogOpen,
-    setUnlockDialogOpen,
-    pendingTemplateId,
-    pricing,
-    payWithRazorpay,
-    razorpayEnabled,
-    payingRazorpay,
-    startCheckout,
-  } = useTemplateCheckout({ market: marketContext.market });
 
   useEffect(() => {
     setInvoice(createDefaultInvoiceForCountry(initialCountryCode));
@@ -68,7 +48,6 @@ export function LandingInteractiveWorkspace({
   const deferredInvoice = useDeferredValue(invoice);
   const previewPending = deferredInvoice !== invoice;
   const previewInvoice = deferredInvoice;
-  const templateUnlocked = useTemplateUnlocked(invoice?.templateId ?? "classic");
 
   const setTemplateId = (templateId: InvoiceTemplateId) => {
     setInvoice((prev) => (prev ? { ...prev, templateId } : prev));
@@ -78,7 +57,7 @@ export function LandingInteractiveWorkspace({
     return (
       <div
         id="invoice-builder"
-        className="@container scroll-mt-24 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xl shadow-primary/5"
+        className="@container scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-card"
       >
         <div className="flex flex-col @min-[720px]:grid @min-[720px]:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)]">
           <Skeleton className="min-h-[420px] rounded-none" aria-hidden />
@@ -88,109 +67,35 @@ export function LandingInteractiveWorkspace({
     );
   }
 
-  const template = getInvoiceTemplate(invoice.templateId);
-  const needsPayment = template.isPremium && !templateUnlocked;
-
-  const handleDownloadPdf = async (forceClassic = false) => {
-    if (needsPayment && !forceClassic) {
-      toast.message(`Unlock ${template.name} to download`, {
-        description: `One-time ${pricing.displayAmount} via card, or use Classic free.`,
-        action: {
-          label: `Pay ${pricing.displayAmount}`,
-          onClick: () =>
-            void startCheckout(invoice.templateId ?? "modern"),
-        },
-      });
-      return;
-    }
-
-    const exportInvoice = forceClassic
-      ? { ...invoice, templateId: "classic" as const }
-      : invoice;
-
-    setExporting(true);
-    try {
-      const filename = exportInvoice.invoice.invoiceNumber
-        ? `${exportInvoice.invoice.invoiceNumber}.pdf`
-        : "invoice.pdf";
-      const { downloadInvoicePdf } = await import("@/lib/pdf");
-      await downloadInvoicePdf(exportInvoice, filename, {
-        previewId: LANDING_PREVIEW_ID,
-        skipTemplateGuard: forceClassic,
-      });
-      toast.success("PDF downloaded", {
-        description: forceClassic
-          ? "Downloaded with the free Classic template."
-          : "Sign up free to save invoices to your cloud history.",
-      });
-    } catch (err) {
-      toast.error("PDF export failed", {
-        description: err instanceof Error ? err.message : "Unknown error",
-      });
-    } finally {
-      setExporting(false);
-    }
-  };
-
   return (
     <div
       id="invoice-builder"
-      className="@container scroll-mt-24 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xl shadow-primary/5"
+      className="@container scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-card"
     >
-      <div className="flex flex-col gap-3 border-b border-border/60 bg-muted/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-3 border-b border-border bg-muted/30 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div>
           <p className="text-sm font-semibold">Live interactive workspace</p>
           <p className="text-xs text-muted-foreground">
-            Edit below — preview updates instantly. No account required.
+            Edit below - the preview updates instantly. No account required.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {needsPayment ? (
-            <>
-              <Button
-                size="lg"
-                className="gap-2"
-                onClick={() => void startCheckout(invoice.templateId ?? "modern")}
-              >
-                <Lock className="h-4 w-4" aria-hidden />
-                Unlock · {pricing.displayAmount}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2"
-                onClick={() => void handleDownloadPdf(true)}
-                disabled={exporting}
-              >
-                <Download className="h-4 w-4" aria-hidden />
-                Download Classic (free)
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="lg"
-              className="gap-2"
-              onClick={() => void handleDownloadPdf()}
-              disabled={exporting}
-            >
-              {exporting ? (
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              ) : (
-                <Download className="h-4 w-4" aria-hidden />
-              )}
-              {exporting ? "Generating PDF…" : "Generate PDF / Download"}
-            </Button>
-          )}
-          <Button size="lg" variant="outline" className="gap-2" asChild>
+          <Button size="lg" className="gap-2" asChild>
             <Link href="/signup">
-              <Cloud className="h-4 w-4" aria-hidden />
-              Save to cloud
+              <ArrowRight className="h-4 w-4" aria-hidden />
+              Save &amp; download
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2" asChild>
+            <Link href="/pricing">
+              <Download className="h-4 w-4" aria-hidden />
+              Export on Cloud
             </Link>
           </Button>
         </div>
       </div>
 
-      <div className="space-y-6 border-b border-border/40 px-4 py-5 sm:px-6 lg:px-8">
+      <div className="space-y-6 border-b border-border px-4 py-5 sm:px-6 lg:px-8">
         <InvoiceTemplatePicker
           value={invoice.templateId ?? "classic"}
           market={marketContext.market}
@@ -199,7 +104,7 @@ export function LandingInteractiveWorkspace({
       </div>
 
       <div className="flex flex-col @min-[720px]:grid @min-[720px]:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)] @min-[720px]:items-start">
-        <div className="border-b border-border/40 @min-[720px]:border-b-0 @min-[720px]:border-r">
+        <div className="border-b border-border @min-[720px]:border-b-0 @min-[720px]:border-r">
           <InvoiceForm invoice={invoice} onChange={setInvoice} guestMode />
         </div>
 
@@ -209,12 +114,9 @@ export function LandingInteractiveWorkspace({
             {previewPending ? " · updating…" : ""}
           </p>
           <div
-            className={`overflow-y-auto rounded-lg border border-border/50 bg-background/80 p-2 transition-opacity duration-100 sm:p-3 ${previewPending ? "opacity-80" : "opacity-100"}`}
+            className={`overflow-y-auto rounded-lg border border-border bg-background p-2 transition-opacity duration-100 sm:p-3 ${previewPending ? "opacity-80" : "opacity-100"}`}
           >
-            <InvoicePreviewFrame
-              pageSize={previewInvoice.pageSize}
-              exportLocked={needsPayment}
-            >
+            <InvoicePreviewFrame pageSize={previewInvoice.pageSize}>
               <InvoicePreview
                 invoice={previewInvoice}
                 previewId={LANDING_PREVIEW_ID}
@@ -224,17 +126,6 @@ export function LandingInteractiveWorkspace({
           </div>
         </aside>
       </div>
-
-      <TemplateUnlockDialog
-        open={unlockDialogOpen}
-        onOpenChange={setUnlockDialogOpen}
-        templateId={pendingTemplateId}
-        templateName={getInvoiceTemplate(pendingTemplateId).name}
-        displayAmount={pricing.displayAmount}
-        razorpayEnabled={razorpayEnabled}
-        onPayWithRazorpay={() => void payWithRazorpay()}
-        payingRazorpay={payingRazorpay}
-      />
     </div>
   );
 }

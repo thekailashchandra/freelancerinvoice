@@ -11,17 +11,17 @@ export function FeaturesPageContent() {
     <div className="mx-auto max-w-6xl px-4 py-12 md:px-8 md:py-16">
       <header className="mx-auto max-w-3xl text-center">
         <p className="text-sm font-medium text-primary">Features</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-5xl">
+        <h1 className="display-serif mt-2 text-3xl tracking-tight md:text-5xl">
           Everything you need to invoice as a freelancer
         </h1>
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
           {siteConfig.name} is built for independent contractors who want
           professional billing without spreadsheets, broken templates, or
-          overpriced software.
+          overpriced software. Preview for free; export on Cloud or self-host.
         </p>
         <Button size="lg" className="mt-8 gap-2" asChild>
           <Link href="/signup">
-            Start free
+            Start invoicing
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Button>
@@ -47,7 +47,7 @@ export function FeaturesPageContent() {
       <section className="mt-16">
         <h2 className="text-2xl font-bold">Invoice templates by profession & region</h2>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Purpose-built guides with FAQs and examples — designers, developers,
+          Purpose-built guides with FAQs and examples - designers, developers,
           marketers, photographers, video editors, plus GST, USD, and India formats.
         </p>
         <ul className="mt-6 grid gap-2 sm:grid-cols-2">
@@ -113,11 +113,12 @@ export function FeaturesPageContent() {
 
       <PageFaqSection faqItems={getPageFaqs("/features")} />
 
-      <section className="mt-16 rounded-2xl border border-primary/20 bg-primary/5 px-6 py-12 text-center md:px-12">
-        <h2 className="text-2xl font-bold">See pricing — it&apos;s free</h2>
+      <section className="mt-16 rounded-2xl border border-border bg-muted/30 px-6 py-12 text-center md:px-12">
+        <h2 className="display-serif text-2xl">Two ways to own it</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-          All core features are included at no cost. Optional Ko-fi tips help
-          keep the platform running.
+          Self-host the open-source edition for free, or use our hosted Cloud
+          plan for ₹299/month or ₹999/year in India, and $5/month or $19/year
+          elsewhere. Build and preview free either way.
         </p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>

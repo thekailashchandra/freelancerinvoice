@@ -76,7 +76,7 @@ export function isGoogleAuthConfigured(): boolean {
   return Boolean(getGoogleClientId());
 }
 
-/** Publishable key — safe for browser and cookie-based SSR (RLS applies). */
+/** Publishable key - safe for browser and cookie-based SSR (RLS applies). */
 export function getSupabasePublishableEnv(): {
   url: string;
   publishableKey: string;
@@ -95,7 +95,7 @@ export function getSupabasePublishableEnv(): {
   return { url, publishableKey };
 }
 
-/** Secret key — server-only; bypasses RLS. Use sparingly. */
+/** Secret key - server-only; bypasses RLS. Use sparingly. */
 export function getSupabaseSecretEnv(): { url: string; secretKey: string } {
   const url = readEnv(PUBLISHABLE_URL_KEY);
   const secretKey = readEnv(SECRET_KEY_KEY);

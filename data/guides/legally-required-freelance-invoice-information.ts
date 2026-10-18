@@ -4,7 +4,7 @@ export const legallyRequiredFreelanceInvoiceInformation: GuideArticle = {
   slug: "legally-required-freelance-invoice-information",
   title: "What Information Is Legally Required on a Freelance Invoice?",
   description:
-    "Mandatory invoice fields for freelancers in the US, UK, EU, and India — plus best-practice fields that speed up client payment.",
+    "Mandatory invoice fields for freelancers in the US, UK, EU, and India - plus best-practice fields that speed up client payment.",
   keywords: [
     "legally required invoice information",
     "freelance invoice requirements",
@@ -56,7 +56,7 @@ export const legallyRequiredFreelanceInvoiceInformation: GuideArticle = {
       id: "united-states",
       heading: "United States requirements",
       paragraphs: [
-        "The US does not mandate a single federal invoice format for freelancers. However, invoices must support tax reporting — especially if you receive 1099-NEC income.",
+        "The US does not mandate a single federal invoice format for freelancers. However, invoices must support tax reporting - especially if you receive 1099-NEC income.",
       ],
       list: [
         "Your legal name or business name",
@@ -98,7 +98,7 @@ export const legallyRequiredFreelanceInvoiceInformation: GuideArticle = {
         "Payment terms",
       ],
       paragraphs: [
-        "Cross-border EU B2B services often use reverse charge — the client accounts for VAT, not you. State this on the invoice.",
+        "Cross-border EU B2B services often use reverse charge - the client accounts for VAT, not you. State this on the invoice.",
       ],
     },
     {
@@ -136,7 +136,7 @@ export const legallyRequiredFreelanceInvoiceInformation: GuideArticle = {
       heading: "Common mistakes that delay payment",
       list: [
         "Missing or duplicate invoice numbers",
-        "No due date — AP teams deprioritize undated invoices",
+        "No due date - AP teams deprioritize undated invoices",
         "Vague line items (\"consulting\" instead of \"March 2026 strategy retainer\")",
         "Wrong client entity name (billing the parent company incorrectly)",
         "Missing bank details or incorrect account numbers",

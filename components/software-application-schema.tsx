@@ -5,7 +5,7 @@ type SoftwareApplicationSchemaProps = {
   includeOrganization?: boolean;
 };
 
-/** @deprecated Prefer WebApplicationSchema — kept for backward-compatible imports. */
+/** @deprecated Prefer WebApplicationSchema - kept for backward-compatible imports. */
 export function SoftwareApplicationSchema({
   includeOrganization = true,
 }: SoftwareApplicationSchemaProps) {

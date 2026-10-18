@@ -2,12 +2,12 @@ import type { SeoLandingPage } from "./types";
 
 export const invoiceSoftwareForDesigners: SeoLandingPage = {
   slug: "invoice-software-for-designers",
-  title: "Invoice Software for Designers — Free Freelance Billing",
+  title: "Invoice Software for Designers - Free Freelance Billing",
   metaDescription:
     "Free invoice software for freelance designers. Bill branding, UI/UX, and illustration projects with line items, revisions, licensing, PDF export, and cloud history.",
   h1: "Invoice software for designers",
   heroSummary:
-    "Purpose-built invoicing for graphic designers, UI/UX freelancers, and creative agencies — deliverable-based line items, revision tracking, usage licensing notes, and polished PDFs clients approve fast.",
+    "Purpose-built invoicing for graphic designers, UI/UX freelancers, and creative agencies - deliverable-based line items, revision tracking, usage licensing notes, and polished PDFs clients approve fast.",
   keywords: [
     "invoice software for designers",
     "graphic design invoice software",
@@ -51,7 +51,7 @@ export const invoiceSoftwareForDesigners: SeoLandingPage = {
     {
       question: "What is the best invoice software for freelance designers?",
       answer:
-        "Invoice for Freelance offers free designer-friendly invoicing with live preview, PDF export, branding, and cloud history — without complex accounting features.",
+        "Invoice for Freelance offers free designer-friendly invoicing with live preview, PDF export, branding, and cloud history - without complex accounting features.",
     },
     {
       question: "How should designers bill for revisions?",
@@ -66,7 +66,7 @@ export const invoiceSoftwareForDesigners: SeoLandingPage = {
     {
       question: "Is there a free invoice template for designers?",
       answer:
-        "Yes — see /invoice-template-for-designers for article-format examples, or sign up to create live invoices immediately.",
+        "Yes - see /invoice-template-for-designers for article-format examples, or sign up to create live invoices immediately.",
     },
   ],
   relatedSlugs: [

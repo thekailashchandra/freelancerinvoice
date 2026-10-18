@@ -1,3 +1,4 @@
+import { getSubscriptionAccess } from "@/lib/subscription-server";
 import { InvoiceViewClient } from "./invoice-view-client";
 
 type PageProps = {
@@ -6,5 +7,7 @@ type PageProps = {
 
 export default async function InvoiceViewPage({ params }: PageProps) {
   const { id } = await params;
-  return <InvoiceViewClient invoiceId={id} />;
+  const subscription = await getSubscriptionAccess();
+
+  return <InvoiceViewClient invoiceId={id} subscription={subscription} />;
 }

@@ -4,7 +4,7 @@ export const customerFaqs: TemplateFaqItem[] = [
   {
     question: "How do I delete a customer from my list?",
     answer:
-      "Open Customers, select the customer, and click Delete customer. Confirm the prompt — they are removed from your saved customer list immediately.",
+      "Open Customers, select the customer, and click Delete customer. Confirm the prompt - they are removed from your saved customer list immediately.",
   },
   {
     question: "Will deleting a customer delete their invoices?",

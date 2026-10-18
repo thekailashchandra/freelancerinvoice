@@ -206,7 +206,7 @@ export function NewCustomerDialog({
             <span>
               <span className="font-medium">Billing address</span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
-                Optional — street, city, state, country
+                Optional - street, city, state, country
               </span>
             </span>
             <ChevronRight
@@ -269,6 +269,8 @@ export type InvoiceCustomerSectionProps = {
   showInlineFields?: boolean;
   /** Wider inputs and spacing on the create-invoice page */
   relaxed?: boolean;
+  /** Dense create-invoice layout */
+  compact?: boolean;
 };
 
 export function InvoiceCustomerSection({
@@ -280,6 +282,7 @@ export function InvoiceCustomerSection({
   onEditClientField,
   showInlineFields = false,
   relaxed = false,
+  compact = false,
 }: InvoiceCustomerSectionProps) {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
@@ -346,14 +349,16 @@ export function InvoiceCustomerSection({
 
   return (
     <section
-      className={cn(relaxed ? "space-y-4" : "space-y-3")}
+      className={cn(
+        compact ? "space-y-2" : relaxed ? "space-y-4" : "space-y-3"
+      )}
       aria-labelledby="customer-section-heading"
     >
       <h3
         id="customer-section-heading"
         className={cn(
           "font-semibold tracking-tight",
-          relaxed ? "text-base" : "text-sm"
+          compact ? "sr-only" : relaxed ? "text-base" : "text-sm"
         )}
       >
         Customer
@@ -366,7 +371,7 @@ export function InvoiceCustomerSection({
         />
         <Input
           id="customer-search"
-          placeholder="Find or add a customer"
+          placeholder={compact ? "Customer: find, add, or type details below" : "Find or add a customer"}
           value={selectedClient && !focused ? clientLabel(selectedClient) : query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -376,7 +381,7 @@ export function InvoiceCustomerSection({
           }}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={cn("pl-9", relaxed && "h-11")}
+          className={cn("pl-9", compact ? "h-9" : relaxed && "h-11")}
           autoComplete="off"
         />
         {showDropdown && (
@@ -426,10 +431,11 @@ export function InvoiceCustomerSection({
         )}
       </div>
 
+      {(!compact || recentClients.length > 0) ? (
       <div
         className={cn(
           "rounded-xl border border-dashed border-border/80 bg-muted/10",
-          relaxed ? "px-5 py-4" : "px-4 py-3"
+          compact ? "px-3 py-2" : relaxed ? "px-5 py-4" : "px-4 py-3"
         )}
       >
         <div className="flex items-center justify-between gap-2">
@@ -471,12 +477,13 @@ export function InvoiceCustomerSection({
           </div>
         )}
       </div>
+      ) : null}
 
-      {hasClientDetails && (
+      {hasClientDetails && !compact && (
         <div
           className={cn(
             "rounded-xl border border-border bg-muted/20",
-            relaxed ? "p-5" : "p-4"
+            compact ? "p-3" : relaxed ? "p-5" : "p-4"
           )}
         >
           <div className="flex items-start justify-between gap-2">
@@ -521,30 +528,34 @@ export function InvoiceCustomerSection({
         <div
           className={cn(
             "rounded-xl border border-border/60 bg-muted/10",
-            relaxed ? "space-y-4 p-5" : "space-y-3 p-4"
+            compact
+              ? "grid gap-3 p-3 sm:grid-cols-3"
+              : relaxed
+                ? "space-y-4 p-5"
+                : "space-y-3 p-4"
           )}
         >
           <Input
-            className={relaxed ? "h-11" : undefined}
+            className={compact ? "h-9" : relaxed ? "h-11" : undefined}
             placeholder="Client or contact name"
             value={currentClient.name}
             onChange={(e) => onEditClientField("name", e.target.value)}
           />
           <Input
-            className={relaxed ? "h-11" : undefined}
+            className={compact ? "h-9" : relaxed ? "h-11" : undefined}
             placeholder="Company (optional)"
             value={currentClient.company}
             onChange={(e) => onEditClientField("company", e.target.value)}
           />
           <Input
-            className={relaxed ? "h-11" : undefined}
+            className={compact ? "h-9" : relaxed ? "h-11" : undefined}
             type="email"
             placeholder="Email address"
             value={currentClient.email}
             onChange={(e) => onEditClientField("email", e.target.value)}
           />
           <Input
-            className={relaxed ? "h-11" : undefined}
+            className={compact ? "h-9" : relaxed ? "h-11" : undefined}
             type="tel"
             placeholder="Phone"
             value={currentClient.phone}
@@ -554,10 +565,11 @@ export function InvoiceCustomerSection({
             placeholder="Billing address"
             value={currentClient.address}
             onChange={(e) => onEditClientField("address", e.target.value)}
-            rows={2}
+            rows={compact ? 1 : 2}
+            className={compact ? "min-h-[38px]" : undefined}
           />
           <Input
-            className={relaxed ? "h-11" : undefined}
+            className={compact ? "h-9" : relaxed ? "h-11" : undefined}
             placeholder="Client GSTIN (optional)"
             value={currentClient.gstin ?? ""}
             onChange={(e) => onEditClientField("gstin", e.target.value)}

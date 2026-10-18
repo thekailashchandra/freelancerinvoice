@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { homeSeo } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
-export const alt = `${siteConfig.name} — free invoice generator for freelancers`;
+export const alt = `${siteConfig.name} - invoicing studio for freelancers`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -17,7 +17,7 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "72px",
-          background: "linear-gradient(135deg, #fef9c3 0%, #ffffff 45%, #fef3c7 100%)",
+          background: "linear-gradient(135deg, #ffffff 0%, #f5f5f4 55%, #ececea 100%)",
           fontFamily: "system-ui, sans-serif",
         }}
       >
@@ -34,7 +34,7 @@ export default function OpenGraphImage() {
               width: "56px",
               height: "56px",
               borderRadius: "14px",
-              background: "#ca8a04",
+              background: "#111111",
               color: "#fff",
               display: "flex",
               alignItems: "center",
@@ -45,7 +45,7 @@ export default function OpenGraphImage() {
           >
             {siteConfig.initials}
           </div>
-          <span style={{ fontSize: "28px", fontWeight: 600, color: "#422006" }}>
+          <span style={{ fontSize: "28px", fontWeight: 600, color: "#111111" }}>
             {siteConfig.name}
           </span>
         </div>
@@ -54,7 +54,7 @@ export default function OpenGraphImage() {
             fontSize: "56px",
             fontWeight: 800,
             lineHeight: 1.1,
-            color: "#1c1917",
+            color: "#0a0a0a",
             maxWidth: "900px",
           }}
         >
@@ -65,7 +65,7 @@ export default function OpenGraphImage() {
             marginTop: "24px",
             fontSize: "28px",
             lineHeight: 1.4,
-            color: "#57534e",
+            color: "#555555",
             maxWidth: "880px",
           }}
         >

@@ -6,7 +6,7 @@ import { siteConfig } from "@/data/site";
 
 type RouteContext = { params: Promise<{ invoiceId: string }> };
 
-/** Authenticated invoice owner — returns a shareable receipt URL with signed token. */
+/** Authenticated invoice owner - returns a shareable receipt URL with signed token. */
 export async function GET(_request: Request, context: RouteContext) {
   const { invoiceId } = await context.params;
   const supabase = await createClient();

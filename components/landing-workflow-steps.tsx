@@ -12,13 +12,13 @@ const defaultSteps: LandingWorkflowStep[] = [
     icon: Eye,
     title: "Preview updates live",
     description:
-      "Watch a professional invoice layout update in real time as you type — no refresh needed.",
+      "Watch a professional invoice layout update in real time as you type - no refresh needed.",
   },
   {
     icon: Download,
-    title: "Download your PDF",
+    title: "Export your PDF",
     description:
-      "Generate a client-ready PDF instantly. No signup required to export from the landing page.",
+      "Generate a client-ready PDF from your workspace. Cloud unlocks PDF export and printing.",
   },
 ];
 
@@ -37,7 +37,7 @@ type LandingWorkflowStepsProps = {
 export function LandingWorkflowSteps({
   steps = defaultSteps,
   heading = "Three steps to a professional invoice",
-  subheading = "Start using the tool immediately — most freelancers finish their first PDF in under five minutes.",
+  subheading = "Start using the tool immediately - most freelancers finish their first invoice preview in under five minutes.",
 }: LandingWorkflowStepsProps) {
   return (
     <section className="py-12" aria-labelledby="workflow-heading">

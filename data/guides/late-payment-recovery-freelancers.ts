@@ -4,7 +4,7 @@ export const latePaymentRecoveryFreelancers: GuideArticle = {
   slug: "late-payment-recovery-freelancers",
   title: "Late Payment Recovery for Freelancers: A Step-by-Step Playbook",
   description:
-    "How to recover overdue freelance invoices — reminder sequences, late fee enforcement, when to pause work, and escalation without damaging client relationships.",
+    "How to recover overdue freelance invoices - reminder sequences, late fee enforcement, when to pause work, and escalation without damaging client relationships.",
   keywords: [
     "late payment recovery freelancer",
     "overdue invoice freelancer",
@@ -22,7 +22,7 @@ export const latePaymentRecoveryFreelancers: GuideArticle = {
       heading: "Why freelance invoices go unpaid",
       paragraphs: [
         "Late payments are rarely personal. Accounts payable runs on its own schedule, invoices get lost in approval chains, and clients sometimes treat freelancers as lowest priority in the payment queue.",
-        "Recovery starts with systems — clear terms upfront, professional invoices with visible due dates, and a documented follow-up sequence you run every time.",
+        "Recovery starts with systems - clear terms upfront, professional invoices with visible due dates, and a documented follow-up sequence you run every time.",
       ],
     },
     {
@@ -46,7 +46,7 @@ export const latePaymentRecoveryFreelancers: GuideArticle = {
       list: [
         "Day −3: Friendly heads-up that payment is due soon",
         "Day 0: Due date reminder with invoice PDF attached",
-        "Day +3: Polite overdue notice — ask if there are blockers",
+        "Day +3: Polite overdue notice - ask if there are blockers",
         "Day +7: Firmer follow-up referencing contract terms",
         "Day +14: Final notice before late fees or work pause",
         "Day +21: Escalate to the client's finance lead or sponsor",

@@ -4,7 +4,7 @@ import { siteConfig } from "@/data/site";
 import { useTranslation } from "@/components/locale-provider";
 import { formatMessage } from "@/lib/i18n/format-message";
 
-/** Homepage-only summary — distinct from the canonical entity statement on /about. */
+/** Homepage-only summary - distinct from the canonical entity statement on /about. */
 export function HomePageSummary() {
   const { t } = useTranslation();
   const name = siteConfig.name;

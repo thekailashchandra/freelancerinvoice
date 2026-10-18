@@ -1,11 +1,11 @@
 /** Shared tokens for the Simple (bold) invoice template. */
 
 export const simpleTemplateColors = {
-  bg: "#f6f4ef",
-  text: "#1b2f24",
-  textMuted: "#5a6d62",
-  border: "#d4cfc4",
-  line: "#c9c4b8",
+  bg: "#f7f7f5",
+  text: "#111111",
+  textMuted: "#555555",
+  border: "#d4d4d4",
+  line: "#c9c9c9",
 } as const;
 
 export function getSimpleHeaderMessage(invoice: {
@@ -15,7 +15,7 @@ export function getSimpleHeaderMessage(invoice: {
   const fromNotes = invoice.notes?.trim().split(/[.!?]/)[0]?.trim();
   if (fromNotes && fromNotes.length > 8) return fromNotes;
   if (invoice.invoice.projectName?.trim()) {
-    return `Thank you for your order — ${invoice.invoice.projectName.trim()}.`;
+    return `Thank you for your order - ${invoice.invoice.projectName.trim()}.`;
   }
   return "Thank you for your order.";
 }

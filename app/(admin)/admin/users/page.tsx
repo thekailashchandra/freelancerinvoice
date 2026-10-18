@@ -86,7 +86,7 @@ export default function SuperadminUsersPage() {
                   {(data?.items ?? []).map((user) => (
                     <tr key={user.id} className="border-b border-border/70">
                       <td className="px-4 py-3">
-                        <p className="font-medium">{user.companyName || "—"}</p>
+                        <p className="font-medium">{user.companyName || "-"}</p>
                         <p className="text-xs text-muted-foreground">{user.email}</p>
                       </td>
                       <td className="px-4 py-3">
@@ -100,7 +100,7 @@ export default function SuperadminUsersPage() {
                       <td className="px-4 py-3">
                         {user.lastActiveAt
                           ? new Date(user.lastActiveAt).toLocaleString()
-                          : "—"}
+                          : "-"}
                       </td>
                     </tr>
                   ))}

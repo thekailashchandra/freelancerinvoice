@@ -2,10 +2,10 @@ import type { SeoLandingPage } from "./types";
 
 export const invoiceForFreelanceUs: SeoLandingPage = {
   slug: "invoice-for-freelance-us",
-  title: "Invoice for Freelance — US Freelancers | Free PDF Generator",
+  title: "Invoice for Freelance - US Freelancers | Invoice Generator",
   metaDescription:
     "Generate invoice for freelance work as a US contractor. Free invoice generator with USD billing, routing numbers, sales tax fields, and professional PDF export.",
-  h1: "Invoice for freelance work — United States",
+  h1: "Invoice for freelance work - United States",
   heroSummary:
     "Bill US clients with USD invoices that include routing and account numbers, clear payment terms, and branded PDFs. Built for American freelancers, consultants, and 1099 contractors.",
   keywords: [
@@ -21,7 +21,7 @@ export const invoiceForFreelanceUs: SeoLandingPage = {
     "USD as default currency with US payment fields",
     "Routing number and account number on every PDF",
     "Sales tax label support for applicable states",
-    "Free PDF export with Classic template",
+    "PDF export on Cloud with Classic template",
     "Cloud history for tax season and 1099 reconciliation",
   ],
   features: [
@@ -38,7 +38,7 @@ export const invoiceForFreelanceUs: SeoLandingPage = {
     {
       title: "Remote-friendly billing",
       description:
-        "Invoice clients in any state from one dashboard — no state-specific spreadsheets.",
+        "Invoice clients in any state from one dashboard - no state-specific spreadsheets.",
     },
   ],
   useCases: [
@@ -56,7 +56,7 @@ export const invoiceForFreelanceUs: SeoLandingPage = {
     {
       question: "Can I generate invoice for freelance work in USD for free?",
       answer:
-        "Yes. Invoice for Freelance is free to start with USD defaults and one-click PDF export.",
+        "Yes. Invoice for Freelance is free to preview with USD defaults and one-click PDF export.",
     },
   ],
   relatedSlugs: ["invoice-for-freelance", "invoice-generator-for-freelancers"],

@@ -24,7 +24,7 @@ export const topicalAuthorityHub = {
   title: "Freelance Finances",
   slug: "freelance-finances",
   description:
-    "Expert guides on freelance finances — invoicing and billing operations, client management, tax compliance, and cross-border currency logistics for independent contractors worldwide.",
+    "Expert guides on freelance finances - invoicing and billing operations, client management, tax compliance, and cross-border currency logistics for independent contractors worldwide.",
   keywords: [
     "freelance finances",
     "freelancer financial management",
@@ -40,7 +40,7 @@ export const topicalPillars: TopicalPillar[] = [
     title: "Invoicing & Billing Operations",
     shortTitle: "Invoicing & Billing",
     description:
-      "Core monetization and utility — payment terms, milestone vs hourly billing, late payment recovery, and professional invoice workflows that protect cash flow.",
+      "Core monetization and utility - payment terms, milestone vs hourly billing, late payment recovery, and professional invoice workflows that protect cash flow.",
     keywords: [
       "freelance invoicing",
       "freelancer billing operations",
@@ -68,7 +68,7 @@ export const topicalPillars: TopicalPillar[] = [
       {
         question: "What is the best billing model for freelancers?",
         answer:
-          "Milestone billing suits fixed-scope projects; hourly billing suits ongoing or undefined scope. Many freelancers combine both — deposit upfront, milestones for deliverables, hourly for change requests.",
+          "Milestone billing suits fixed-scope projects; hourly billing suits ongoing or undefined scope. Many freelancers combine both - deposit upfront, milestones for deliverables, hourly for change requests.",
       },
       {
         question: "How do freelancers recover late payments?",
@@ -87,7 +87,7 @@ export const topicalPillars: TopicalPillar[] = [
     title: "Client Management & Legal Operations",
     shortTitle: "Client Management",
     description:
-      "Friction points that precede invoicing — freelance contracts, scope definitions, and scope creep mitigation that keep projects billable and disputes rare.",
+      "Friction points that precede invoicing - freelance contracts, scope definitions, and scope creep mitigation that keep projects billable and disputes rare.",
     keywords: [
       "freelance contracts",
       "scope creep freelancer",
@@ -100,7 +100,7 @@ export const topicalPillars: TopicalPillar[] = [
         slug: "freelance-contracts",
         title: "Freelance Contracts",
         description:
-          "Essential contract clauses every freelancer needs before work begins — payment, IP, revisions, and termination.",
+          "Essential contract clauses every freelancer needs before work begins - payment, IP, revisions, and termination.",
         articleSlug: "freelance-contracts-essentials",
       },
       {
@@ -115,7 +115,7 @@ export const topicalPillars: TopicalPillar[] = [
       {
         question: "Do freelancers need a written contract?",
         answer:
-          "Yes. A written contract defines scope, payment terms, IP ownership, revision limits, and termination — reducing disputes and making invoices enforceable.",
+          "Yes. A written contract defines scope, payment terms, IP ownership, revision limits, and termination - reducing disputes and making invoices enforceable.",
       },
       {
         question: "How do freelancers handle scope creep?",
@@ -133,7 +133,7 @@ export const topicalPillars: TopicalPillar[] = [
     title: "Tax, Compliance & Cross-Border Currency",
     shortTitle: "Tax & Compliance",
     description:
-      "High-intent, high-trust topics — GST and Form 16A in India, 1099 compliance in the US, cross-border wire fees, and international payment logistics.",
+      "High-intent, high-trust topics - GST and Form 16A in India, 1099 compliance in the US, cross-border wire fees, and international payment logistics.",
     keywords: [
       "freelance tax compliance",
       "1099 freelancer",
@@ -147,14 +147,14 @@ export const topicalPillars: TopicalPillar[] = [
         slug: "cross-border-wire-fees",
         title: "Cross-Border Wire Fees",
         description:
-          "SWIFT, Wise, and PayPal fee structures — how to price international work and invoice clients to protect your net income.",
+          "SWIFT, Wise, and PayPal fee structures - how to price international work and invoice clients to protect your net income.",
         articleSlug: "cross-border-wire-fees-freelancers",
       },
       {
         slug: "1099-form-16-compliance",
         title: "1099 / Form 16 Compliance",
         description:
-          "US 1099-NEC requirements and Indian TDS Form 16A — what freelancers must track, report, and request from clients.",
+          "US 1099-NEC requirements and Indian TDS Form 16A - what freelancers must track, report, and request from clients.",
         articleSlug: "form-1099-form-16-freelancer-compliance",
       },
     ],
@@ -257,6 +257,6 @@ export const freelanceFinancesFaqs: TemplateFaqItem[] = [
   },
   {
     question: "Does Invoice for Freelance help with freelance finances beyond invoicing?",
-    answer: `Yes. Our blog and guides at ${getCanonicalUrl("/freelance-finances")} cover billing operations, client management, tax compliance, and cross-border payments — with a free invoice tool to put it into practice.`,
+    answer: `Yes. Our blog and guides at ${getCanonicalUrl("/freelance-finances")} cover billing operations, client management, tax compliance, and cross-border payments - with a free invoice tool to put it into practice.`,
   },
 ];

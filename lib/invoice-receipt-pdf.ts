@@ -47,7 +47,7 @@ export async function shareInvoiceReceipt(
 ): Promise<boolean> {
   if (typeof navigator !== "undefined" && navigator.share) {
     await navigator.share({
-      title: `Receipt — ${data.invoiceNumber}`,
+      title: `Receipt - ${data.invoiceNumber}`,
       text: `Payment receipt for invoice ${data.invoiceNumber}: ${data.amountDisplay} paid on ${new Date(data.paidAt).toLocaleDateString()}.`,
       url: receiptUrl,
     });

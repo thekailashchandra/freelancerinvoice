@@ -18,6 +18,7 @@ const emptySettings: CompanySettings = {
   countryCode: "US",
   currencyCode: "USD",
   taxLabel: "VAT",
+  brandColor: "#111111",
   defaultPayment: emptyPaymentDetails(),
   razorpayKeyId: "",
   razorpayConfigured: false,

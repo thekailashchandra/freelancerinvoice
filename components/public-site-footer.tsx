@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { PrivacyConsentLink } from "@/components/privacy-consent-link";
-import { SupportTipLink } from "@/components/support-tip-link";
 import { useTranslation } from "@/components/locale-provider";
 import { publicNavKeys } from "@/lib/i18n/public-nav-keys";
 import { footerNavLinks } from "@/data/public-navigation";
@@ -35,7 +34,6 @@ export function PublicSiteFooter() {
               {t(publicNavKeys[link.href] ?? link.label)}
             </Link>
           ))}
-          <SupportTipLink className="text-primary hover:text-primary" />
           <a
             href={`${siteConfig.url}/sitemap.xml`}
             className="hover:text-foreground hover:underline"

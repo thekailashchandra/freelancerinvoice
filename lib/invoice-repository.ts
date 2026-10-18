@@ -78,11 +78,26 @@ export async function saveInvoice(invoice: Invoice): Promise<{ id: string }> {
 
     if (existing) {
       const { id: _id, user_id: _userId, ...updateFields } = payload.invoice;
-      const { error: updateError } = await supabase
-        .from("invoices")
-        .update(updateFields)
-        .eq("id", invoiceId)
-        .eq("user_id", user.id);
+      let updateError = (
+        await supabase
+          .from("invoices")
+          .update(updateFields)
+          .eq("id", invoiceId)
+          .eq("user_id", user.id)
+      ).error;
+
+      if (updateError && /template_id|additional_charges/i.test(updateError.message)) {
+        const fallback = { ...updateFields };
+        delete fallback.template_id;
+        delete fallback.additional_charges;
+        updateError = (
+          await supabase
+            .from("invoices")
+            .update(fallback)
+            .eq("id", invoiceId)
+            .eq("user_id", user.id)
+        ).error;
+      }
 
       if (updateError) throw new Error(updateError.message);
 
@@ -115,10 +130,24 @@ export async function saveInvoice(invoice: Invoice): Promise<{ id: string }> {
   }
 
   savedInvoiceId = randomUUID();
-  const { error: insertError } = await supabase.from("invoices").insert({
-    ...payload.invoice,
-    id: savedInvoiceId,
-  });
+  let insertError = (
+    await supabase.from("invoices").insert({
+      ...payload.invoice,
+      id: savedInvoiceId,
+    })
+  ).error;
+
+  if (insertError && /template_id|additional_charges/i.test(insertError.message)) {
+    const fallback = { ...payload.invoice };
+    delete fallback.template_id;
+    delete fallback.additional_charges;
+    insertError = (
+      await supabase.from("invoices").insert({
+        ...fallback,
+        id: savedInvoiceId,
+      })
+    ).error;
+  }
 
   if (insertError) throw new Error(insertError.message);
 

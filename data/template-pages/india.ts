@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const invoiceTemplateIndia: TemplatePage = {
   slug: "invoice-template-india",
-  title: "Invoice Template India — Free Format for Freelancers & Consultants",
+  title: "Invoice Template India - Free Format for Freelancers & Consultants",
   description:
     "Free invoice template for Indian freelancers. Bill in INR with UPI, bank details, GST-ready fields, and professional PDF export for domestic and export clients.",
   keywords: [
@@ -54,7 +54,7 @@ export const invoiceTemplateIndia: TemplatePage = {
       id: "export-services",
       heading: "Billing foreign clients from India",
       paragraphs: [
-        "Export of services may have different GST treatment than domestic billing. Many Indian freelancers invoice overseas clients in USD without GST on the invoice when LUT/export rules apply — confirm with your CA. Link to our USD template for dollar-denominated bills.",
+        "Export of services may have different GST treatment than domestic billing. Many Indian freelancers invoice overseas clients in USD without GST on the invoice when LUT/export rules apply - confirm with your CA. Link to our USD template for dollar-denominated bills.",
       ],
     },
   ],
@@ -67,7 +67,7 @@ export const invoiceTemplateIndia: TemplatePage = {
     {
       question: "Should I add UPI on my freelance invoice?",
       answer:
-        "Yes — UPI is the fastest payment method for many Indian clients. Add UPI ID alongside bank account and IFSC.",
+        "Yes - UPI is the fastest payment method for many Indian clients. Add UPI ID alongside bank account and IFSC.",
     },
     {
       question: "Do I need GST on every invoice in India?",

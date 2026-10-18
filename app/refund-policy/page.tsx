@@ -8,7 +8,7 @@ import { buildSocialMetadata, getCanonicalUrl } from "@/data/seo";
 import { siteConfig } from "@/data/site";
 
 const title = "Refund Policy";
-const description = `Refund policy for voluntary Ko-fi tips and contributions to ${siteConfig.name}.`;
+const description = `Refund and cancellation policy for the ${siteConfig.name} Cloud plan and voluntary contributions.`;
 
 export const metadata: Metadata = {
   title,
@@ -25,32 +25,42 @@ export default function RefundPolicyPage() {
       />
       <LegalDocument title="Refund Policy">
       <p>
-        {siteConfig.name} is a free invoice generator. This Refund Policy applies
-        to voluntary tips and contributions made through Ko-fi or similar
-        platforms — not to subscription fees, since the core product is free.
+        {siteConfig.name} is open source and free to self-host. The hosted Cloud
+        plan is a paid, 30-day access pass. This policy explains refunds for Cloud
+        payments and voluntary contributions.
       </p>
 
       <section>
-        <h2 className="text-lg font-semibold">Voluntary tips</h2>
+        <h2 className="text-lg font-semibold">Cloud plan payments</h2>
         <p className="mt-2">
-          Tips on Ko-fi are optional donations to support development and hosting.
-          They are not required to use any feature of {siteConfig.name}. Tips do
-          not unlock premium tiers unless explicitly communicated at the time of
-          contribution.
+          A Cloud payment grants 30 days of access to PDF export, printing,
+          receipts, and every template. Access begins immediately after a verified
+          payment. Adding another payment extends access from your current expiry.
+        </p>
+        <p className="mt-2">
+          If you were charged in error, charged twice for the same period, or could
+          not access the Cloud features you paid for, contact us within 7 days of
+          the charge and we will review a full or partial refund.
         </p>
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">Refund eligibility</h2>
+        <h2 className="text-lg font-semibold">Cancellation</h2>
         <p className="mt-2">
-          Because tips are voluntary gifts, refunds are generally not offered.
-          However, we will consider refund requests in these cases:
+          Cloud is not an automatic recurring mandate. There is nothing to cancel
+          mid-period: access simply runs to the end of the 30 days you paid for.
+          You can stop using Cloud at any time and continue on the free preview
+          plan.
         </p>
-        <ul className="mt-2 list-disc space-y-1 pl-5">
-          <li>Duplicate or accidental charges processed through Ko-fi.</li>
-          <li>Technical errors that resulted in an unintended payment.</li>
-          <li>Fraudulent transactions reported within a reasonable timeframe.</li>
-        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold">Voluntary tips</h2>
+        <p className="mt-2">
+          Tips through Ko-fi or similar platforms are optional contributions that
+          support development and hosting. They are not required to use any
+          feature and do not unlock Cloud access.
+        </p>
       </section>
 
       <section>
@@ -60,17 +70,18 @@ export default function RefundPolicyPage() {
           <Link href="/contact" className="text-primary hover:underline">
             contact page
           </Link>{" "}
-          with your Ko-fi transaction details (date, amount, and username). We
-          aim to respond within 5–7 business days.
+          with your Razorpay payment ID, date, and amount. We aim to respond within
+          5–7 business days. Approved refunds are returned to the original payment
+          method.
         </p>
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold">Ko-fi platform</h2>
+        <h2 className="text-lg font-semibold">Payment processor</h2>
         <p className="mt-2">
-          Payments are processed by Ko-fi. Their terms and dispute processes may
-          also apply. For platform-specific issues, you may contact Ko-fi support
-          directly in addition to reaching out to us.
+          Cloud payments are processed by Razorpay. Their terms and dispute
+          processes may also apply. For platform-specific issues, you may contact
+          Razorpay support in addition to reaching out to us.
         </p>
       </section>
 

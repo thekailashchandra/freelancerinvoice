@@ -37,7 +37,7 @@ gtag('config', '${analyticsConfig.measurementId}', {
 });
 `.trim();
 
-/** GA4 via gtag.js — loaded from the document head for reliable collection. */
+/** GA4 via gtag.js - loaded from the document head for reliable collection. */
 export function GoogleAnalytics() {
   if (!analyticsConfig.measurementId) return null;
 

@@ -4,7 +4,7 @@ export const howToDeleteCustomersInvoiceForFreelance: GuideArticle = {
   slug: "how-to-delete-customers-invoice-for-freelance",
   title: "How to Delete a Customer in Invoice for Freelance",
   description:
-    "Remove a saved customer from your list in Invoice for Freelance — step-by-step instructions, what happens to linked invoices, and how to add customers again.",
+    "Remove a saved customer from your list in Invoice for Freelance - step-by-step instructions, what happens to linked invoices, and how to add customers again.",
   keywords: [
     "delete customer invoice for freelance",
     "remove client from customer list",
@@ -21,7 +21,7 @@ export const howToDeleteCustomersInvoiceForFreelance: GuideArticle = {
       heading: "When to delete a customer",
       paragraphs: [
         "You might remove a customer after a one-off project ends, when you entered a duplicate profile, or when you no longer work with that client and want a cleaner customer list.",
-        "Deleting a customer only removes their saved profile — not your billing history.",
+        "Deleting a customer only removes their saved profile - not your billing history.",
       ],
     },
     {

@@ -2,10 +2,10 @@ import type { SeoLandingPage } from "./types";
 
 export const invoiceForFreelanceUk: SeoLandingPage = {
   slug: "invoice-for-freelance-uk",
-  title: "Invoice for Freelance — UK Freelancers | Free PDF Generator",
+  title: "Invoice for Freelance - UK Freelancers | Invoice Generator",
   metaDescription:
-    "Generate invoice for freelance work as a UK sole trader or contractor. GBP billing, sort codes, IBAN, VAT-ready fields, and professional PDF export — free to start.",
-  h1: "Invoice for freelance work — United Kingdom",
+    "Generate invoice for freelance work as a UK sole trader or contractor. GBP billing, sort codes, IBAN, VAT-ready fields, and professional PDF export - free to preview.",
+  h1: "Invoice for freelance work - United Kingdom",
   heroSummary:
     "Bill UK clients with GBP invoices featuring sort codes, optional IBAN, VAT labels, and polished PDFs. Built for British freelancers, consultants, and limited-company contractors.",
   keywords: [
@@ -21,7 +21,7 @@ export const invoiceForFreelanceUk: SeoLandingPage = {
     "GBP default with UK sort code and account fields",
     "Optional IBAN and SWIFT for international payers",
     "VAT label support on every invoice",
-    "Free Classic template PDF export",
+    "PDF export with Cloud",
     "Cloud-backed invoice history",
   ],
   features: [

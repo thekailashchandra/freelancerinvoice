@@ -1,12 +1,12 @@
 import type { SeoLandingPage } from "./types";
 
-/** Primary keyword landing — "invoice for freelance" / "generate invoice for freelance work". */
+/** Primary keyword landing - "invoice for freelance" / "generate invoice for freelance work". */
 export const invoiceForFreelance: SeoLandingPage = {
   slug: "invoice-for-freelance",
-  title: "Invoice for Freelance — Generate Invoice for Freelance Work Free",
+  title: "Invoice for Freelance - Generate Invoice for Freelance Work Free",
   metaDescription:
-    "Generate invoice for freelance work in minutes. Free invoice for freelance professionals with PDF export, cloud history, payment tracking, and branded templates — no Word or Excel required.",
-  h1: "Invoice for freelance work — free generator & PDF export",
+    "Generate invoice for freelance work in minutes. Free invoice for freelance professionals with PDF export, cloud history, payment tracking, and branded templates - no Word or Excel required.",
+  h1: "Invoice for freelance work - free generator & PDF export",
   heroSummary:
     "Invoice for Freelance is built for self-employed professionals who need to bill clients quickly. Generate a polished invoice for freelancers, download PDFs, and keep every bill organized in the cloud.",
   keywords: [
@@ -20,7 +20,7 @@ export const invoiceForFreelance: SeoLandingPage = {
   publishedAt: "2026-07-11",
   benefits: [
     "Generate invoice for freelancers in under five minutes",
-    "Free Classic template — PDF export and print at no charge",
+    "Free preview - PDF export and print on Cloud",
     "Live preview with your logo, signature, and payment details",
     "Cloud invoice history with paid, pending, and overdue filters",
     "Multi-currency and country-specific payment fields",
@@ -29,7 +29,7 @@ export const invoiceForFreelance: SeoLandingPage = {
     {
       title: "Purpose-built for freelance billing",
       description:
-        "Not generic accounting software — every field is designed for how designers, developers, and consultants actually invoice clients.",
+        "Not generic accounting software - every field is designed for how designers, developers, and consultants actually invoice clients.",
     },
     {
       title: "Better than Word or Excel templates",
@@ -57,7 +57,7 @@ export const invoiceForFreelance: SeoLandingPage = {
     {
       question: "How do I generate invoice for freelancers for free?",
       answer:
-        "Create a free account, add your business details, enter client and line items, preview live, and export PDF. The Classic template is free forever.",
+        "Create a free account, add your business details, enter client and line items, preview live, then export a PDF on Cloud. Every template is included with a paid plan.",
     },
     {
       question: "Is this better than a freelance invoice Word template?",

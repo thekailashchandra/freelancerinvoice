@@ -26,9 +26,10 @@ import {
   type InvoicePdfDialogPhase,
 } from "@/components/invoice-pdf-dialog";
 import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
-import { TemplateUnlockDialog } from "@/components/template-unlock-dialog";
+import { ExportLockBanner } from "@/components/export-lock-banner";
+import { UpgradeDialog } from "@/components/upgrade-dialog";
 import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
-import { useTemplateCheckout } from "@/hooks/use-template-checkout";
+import { useSubscriptionCheckout } from "@/hooks/use-subscription-checkout";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,15 +48,21 @@ import { downloadInvoiceReceiptPdf, shareInvoiceReceipt } from "@/lib/invoice-re
 import { trackActivity } from "@/lib/activity-client";
 import type { InvoiceReceiptData } from "@/lib/invoice-receipt";
 import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
-import { getInvoiceTemplate } from "@/lib/invoice-templates";
 import type { MarketRegion } from "@/lib/geo-market";
-import { requiresTemplatePayment } from "@/lib/template-export-guard";
+import {
+  canExportWithAccess,
+  type SubscriptionAccess,
+} from "@/lib/subscription";
 
 type InvoiceViewClientProps = {
   invoiceId: string;
+  subscription: SubscriptionAccess;
 };
 
-export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
+export function InvoiceViewClient({
+  invoiceId,
+  subscription,
+}: InvoiceViewClientProps) {
   const router = useRouter();
   const [invoice, setInvoice] = useState<Awaited<
     ReturnType<typeof fetchInvoiceByIdClient>
@@ -89,16 +96,23 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
 
   const { isOwner: razorpayOwner, invoiceCheckout } = useRazorpayAccess();
 
+  const canExport = canExportWithAccess(subscription);
+
   const {
-    unlockDialogOpen,
-    setUnlockDialogOpen,
-    pendingTemplateId,
-    pricing: templatePricing,
-    payWithRazorpay,
-    razorpayEnabled,
-    payingRazorpay,
-    startCheckout: startTemplateCheckout,
-  } = useTemplateCheckout({ market });
+    dialogOpen: upgradeDialogOpen,
+    setDialogOpen: setUpgradeDialogOpen,
+    openUpgrade,
+    pay: payForSubscription,
+    paying: payingSubscription,
+    pricing: subscriptionPricing,
+    reason: upgradeReason,
+    interval: subscriptionInterval,
+    setInterval: setSubscriptionInterval,
+    checkoutAvailable,
+  } = useSubscriptionCheckout({
+    market,
+    checkoutAvailable: subscription.checkoutAvailable,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -202,6 +216,10 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
   };
 
   const handleDownloadReceipt = async () => {
+    if (!canExport) {
+      openUpgrade("receipt");
+      return;
+    }
     if (!receiptData) {
       toast.error("Receipt not ready", { description: "Try again in a moment." });
       return;
@@ -247,20 +265,9 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
     }
   };
 
-  const promptTemplateUnlock = (action: "print" | "download") => {
-    const template = getInvoiceTemplate(invoice.templateId);
-    toast.message(`Unlock ${template.name} to ${action}`, {
-      description: `One-time ${templatePricing.displayAmount} payment required.`,
-      action: {
-        label: `Pay ${templatePricing.displayAmount}`,
-        onClick: () => void startTemplateCheckout(invoice.templateId ?? "modern"),
-      },
-    });
-  };
-
   const handleDownloadPdf = async () => {
-    if (requiresTemplatePayment(invoice.templateId)) {
-      promptTemplateUnlock("download");
+    if (!canExport) {
+      openUpgrade("download");
       return;
     }
 
@@ -391,8 +398,8 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
             size="sm"
             className="gap-2"
             onClick={async () => {
-              if (requiresTemplatePayment(invoice.templateId)) {
-                promptTemplateUnlock("print");
+              if (!canExport) {
+                openUpgrade("print");
                 return;
               }
               try {
@@ -529,16 +536,27 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         </div>
       </div>
 
+      <ExportLockBanner
+        billingEnabled={subscription.billingEnabled}
+        active={subscription.active}
+        pricing={subscriptionPricing}
+        onUpgrade={() => openUpgrade("generic")}
+      />
+
       <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
         <InvoicePreviewFrame
           pageSize={invoice.pageSize}
-          exportLocked={requiresTemplatePayment(invoice.templateId)}
+          exportLocked={!canExport}
         >
           <InvoicePreview
             invoice={invoice}
             previewId="invoice-preview"
             onRemoveBranding={
-              hideBranding ? undefined : requestBrandingRemoval
+              hideBranding
+                ? undefined
+                : canExport
+                  ? requestBrandingRemoval
+                  : () => openUpgrade("generic")
             }
           />
         </InvoicePreviewFrame>
@@ -557,15 +575,16 @@ export function InvoiceViewClient({ invoiceId }: InvoiceViewClientProps) {
         onConfirmPaid={() => void confirmKofiRemoval()}
         confirming={brandingConfirming}
       />
-      <TemplateUnlockDialog
-        open={unlockDialogOpen}
-        onOpenChange={setUnlockDialogOpen}
-        templateId={pendingTemplateId}
-        templateName={getInvoiceTemplate(pendingTemplateId).name}
-        displayAmount={templatePricing.displayAmount}
-        razorpayEnabled={razorpayEnabled}
-        onPayWithRazorpay={() => void payWithRazorpay()}
-        payingRazorpay={payingRazorpay}
+      <UpgradeDialog
+        open={upgradeDialogOpen}
+        onOpenChange={setUpgradeDialogOpen}
+        pricing={subscriptionPricing}
+        reason={upgradeReason}
+        interval={subscriptionInterval}
+        onIntervalChange={setSubscriptionInterval}
+        checkoutAvailable={checkoutAvailable}
+        paying={payingSubscription}
+        onSubscribe={payForSubscription}
       />
     </PageTransition>
   );

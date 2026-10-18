@@ -15,7 +15,7 @@ Fill in:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Dashboard → API Keys → **Publishable**)
-- `SUPABASE_SECRET_KEY` (Dashboard → API Keys → **Secret** — server-only)
+- `SUPABASE_SECRET_KEY` (Dashboard → API Keys → **Secret** - server-only)
 
 Then restart `npm run dev`.
 
@@ -36,9 +36,9 @@ This creates:
 
 ## 4. Enable auth providers & URL configuration
 
-1. **Authentication → Providers → Email** — enable Email.
+1. **Authentication → Providers → Email** - enable Email.
 2. For local dev, disable **Confirm email** if you want instant sign-in after signup.
-3. **Authentication → Providers → Google** — enable Google:
+3. **Authentication → Providers → Google** - enable Google:
    - In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create **OAuth client ID** → **Web application**:
      - **Authorized JavaScript origins:** `http://localhost:3000`, `https://www.invoiceforfreelance.com`
      - **Authorized redirect URIs:** `https://<project-ref>.supabase.co/auth/v1/callback` (from Supabase Google provider page)
@@ -94,7 +94,7 @@ Upload paths look like: `{user_id}/logo.png`, `{user_id}/signature.png`.
 
 If signup shows **fetch failed** but `.env.local` looks correct:
 
-1. **Shell env overrides `.env.local`** — Next.js will not replace variables that are already set in the terminal or Windows. Check PowerShell:
+1. **Shell env overrides `.env.local`** - Next.js will not replace variables that are already set in the terminal or Windows. Check PowerShell:
    ```powershell
    $env:NEXT_PUBLIC_SUPABASE_URL
    ```
@@ -113,7 +113,7 @@ If signup shows **fetch failed** but `.env.local` looks correct:
 ## 7. Smoke test
 
 1. Sign up at `/signup` → complete `/onboarding`.
-2. Open `/settings` — upload logo/signature.
+2. Open `/settings` - upload logo/signature.
 3. Create an invoice at `/create-invoice` and **Save Invoice**.
 4. Confirm rows in **Table Editor** and files under **Storage**.
 

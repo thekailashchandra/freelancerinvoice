@@ -4,7 +4,7 @@ export const crossBorderWireFeesFreelancers: GuideArticle = {
   slug: "cross-border-wire-fees-freelancers",
   title: "Cross-Border Wire Fees for Freelancers: SWIFT, Wise, and PayPal Compared",
   description:
-    "How cross-border payment fees affect freelancer net income — SWIFT wire costs, Wise vs PayPal pricing, and how to invoice international clients to protect your margins.",
+    "How cross-border payment fees affect freelancer net income - SWIFT wire costs, Wise vs PayPal pricing, and how to invoice international clients to protect your margins.",
   keywords: [
     "cross border wire fees freelancer",
     "SWIFT fee freelancer",
@@ -21,7 +21,7 @@ export const crossBorderWireFeesFreelancers: GuideArticle = {
       id: "why-fees-matter",
       heading: "Why wire fees matter to your freelance rate",
       paragraphs: [
-        "A $5,000 invoice can become $4,920 after SWIFT intermediary fees — or less if your bank charges receiving fees. Over a year, payment friction can cost thousands.",
+        "A $5,000 invoice can become $4,920 after SWIFT intermediary fees - or less if your bank charges receiving fees. Over a year, payment friction can cost thousands.",
         "Pricing international work without accounting for transfer costs is one of the most common freelancer financial mistakes.",
       ],
     },
@@ -45,7 +45,7 @@ export const crossBorderWireFeesFreelancers: GuideArticle = {
       list: [
         "Transparent fee shown upfront (often 0.4–1.5% of transfer amount)",
         "Mid-market exchange rate with no hidden markup",
-        "Multi-currency account — hold USD, EUR, GBP, INR separately",
+        "Multi-currency account - hold USD, EUR, GBP, INR separately",
         "Popular with freelancers billing US and EU clients",
         "Indian freelancers: can receive foreign currency and convert to INR",
       ],

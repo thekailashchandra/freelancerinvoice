@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogOut, MessageSquarePlus, Settings, Shield } from "lucide-react";
+import { CreditCard, LogOut, MessageSquarePlus, Settings, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { signOutClient } from "@/lib/api/app-client";
 import { useProfile } from "@/hooks/use-profile";
@@ -97,6 +97,12 @@ export function UserMenu() {
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/subscribe" className="cursor-pointer">
+            <CreditCard />
+            Cloud plan
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/settings" className="cursor-pointer">
             <Settings />

@@ -7,7 +7,7 @@ export type InvoiceSummaryTaxLine = {
   amount: number;
 };
 
-/** Tax rows after discount — CGST/SGST, IGST, or a single tax line. */
+/** Tax rows after discount - CGST/SGST, IGST, or a single tax line. */
 export function getInvoiceSummaryTaxLines(options: {
   totals: InvoiceTotals;
   taxOn: boolean;

@@ -28,10 +28,14 @@ import { cn } from "@/lib/utils";
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const TEMPLATE_SWATCHES = [
-  { id: "classic", swatch: "bg-slate-800", free: true },
-  { id: "modern", swatch: "bg-neutral-800", free: false },
-  { id: "minimal", swatch: "bg-neutral-300", free: false },
-  { id: "simple", swatch: "bg-[#1b2f24]", free: false },
+  { id: "classic", swatch: "bg-neutral-800", free: true },
+  { id: "modern", swatch: "bg-neutral-900", free: true },
+  { id: "minimal", swatch: "bg-neutral-300 text-neutral-900", free: true },
+  { id: "simple", swatch: "bg-neutral-700", free: true },
+  { id: "corporate", swatch: "bg-neutral-200 text-neutral-900", free: true },
+  { id: "studio", swatch: "bg-neutral-900", free: true },
+  { id: "geometric", swatch: "bg-neutral-600", free: true },
+  { id: "swiss", swatch: "bg-neutral-100 text-neutral-900", free: true },
 ] as const;
 
 const WHY_KEYS = ["w1", "w2", "w3", "w4", "w5"] as const;
@@ -97,7 +101,7 @@ export function LandingRichContent() {
           <div className="mb-10 text-center">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <LayoutTemplate className="h-3.5 w-3.5" aria-hidden />
-              {t("landing.rich.templates.title").split("—")[0]?.trim()}
+              {t("landing.rich.templates.title").split("-")[0]?.trim()}
             </div>
             <h2 id="templates-heading" className="text-3xl font-bold">
               {t("landing.rich.templates.title")}
@@ -128,7 +132,7 @@ export function LandingRichContent() {
                     className={cn(
                       "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
                       tpl.free
-                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                        ? "bg-foreground/10 text-foreground"
                         : "bg-primary/15 text-primary"
                     )}
                   >

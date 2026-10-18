@@ -97,9 +97,9 @@ export function HubClusterContent({ cluster }: HubClusterContentProps) {
       </section>
 
       <div className="mt-12 rounded-2xl border border-primary/20 bg-primary/5 px-6 py-8 text-center">
-        <h2 className="text-xl font-semibold">Invoice professionally — free</h2>
+        <h2 className="text-xl font-semibold">Invoice professionally - free</h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
-          Put this guide into practice with {siteConfig.name} — live preview, PDF
+          Put this guide into practice with {siteConfig.name} - live preview, PDF
           export, and payment tracking.
         </p>
         <Button className="mt-5 gap-2" asChild>

@@ -50,7 +50,7 @@ export type WebApplicationSchemaOptions = {
 };
 
 /**
- * WebApplication JSON-LD — signals a functional browser-based tool (not static content).
+ * WebApplication JSON-LD - signals a functional browser-based tool (not static content).
  * Embed on homepage, SEO landings, and template conversion pages.
  */
 export function buildWebApplicationSchema(

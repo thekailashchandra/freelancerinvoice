@@ -106,7 +106,7 @@ export function InvoiceActionsMenu({
             onClick={() => void onMarkPaid(invoice.id)}
             disabled={busyAction === "paid"}
           >
-            <CheckCircle2 className="text-emerald-600" />
+            <CheckCircle2 className="text-foreground" />
             Mark as paid
           </DropdownMenuItem>
         )}
@@ -114,7 +114,7 @@ export function InvoiceActionsMenu({
         {isPaid && (
           <DropdownMenuItem asChild>
             <Link href={`/receipt/${invoice.id}`} target="_blank">
-              <Receipt className="text-indigo-600" />
+              <Receipt className="text-muted-foreground" />
               Payment receipt
             </Link>
           </DropdownMenuItem>

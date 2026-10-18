@@ -1,9 +1,9 @@
-/** Homepage SEO copy — isolated to avoid circular imports with data/seo.ts. */
+/** Homepage SEO copy - isolated to avoid circular imports with data/seo.ts. */
 export const homeSeo = {
-  title: "Invoice for Freelance | Generate Invoice for Freelancers — Free PDF",
+  title: "Invoice for Freelance | Polished Freelancer Invoices in Minutes",
   description:
-    "Generate invoice for freelance work in minutes. Free invoice for freelance professionals — PDF export, cloud storage, payment tracking, and branded templates. Built for designers, developers, writers, and consultants worldwide.",
-  ogTitle: "Invoice for Freelance — Generate Invoice for Freelancers",
+    "Create invoice for freelance work in a calm, monochrome workspace. Live preview, cloud history, and client-ready PDFs. Self-host free or subscribe to Cloud for ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere.",
+  ogTitle: "Invoice for Freelance - Invoices that make you look expensive",
   ogDescription:
-    "The fastest way to generate invoice for freelance work. Create professional PDFs, track payments, and manage billing — no spreadsheets or broken Word templates.",
+    "A quiet, monochrome invoicing studio for freelancers. Build a polished invoice, track payments, and export client-ready PDFs. Open source and free to self-host.",
 } as const;

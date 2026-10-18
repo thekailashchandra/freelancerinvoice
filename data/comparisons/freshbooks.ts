@@ -3,21 +3,21 @@ import type { ComparisonPage } from "./types";
 export const vsFreshbooks: ComparisonPage = {
   slug: "freshbooks",
   competitorName: "FreshBooks",
-  title: "Invoice for Freelance vs FreshBooks — Free Alternative for Freelancers",
+  title: "Invoice for Freelance vs FreshBooks - Open-Source Alternative for Freelancers",
   metaDescription:
-    "Compare Invoice for Freelance vs FreshBooks for freelancer invoicing. Free PDF export, cloud history, and simple billing without monthly subscription fees.",
+    "Compare Invoice for Freelance vs FreshBooks for freelancer invoicing. Self-host free or use Cloud for PDF export and cloud history.",
   h1: "Invoice for Freelance vs FreshBooks",
   summary:
-    "FreshBooks is full accounting software with monthly plans. Invoice for Freelance is a free, focused invoice generator for freelancers who need professional PDFs and cloud history without accounting complexity or subscription cost.",
+    "FreshBooks is full accounting software with monthly plans. Invoice for Freelance is a focused, open-source invoice studio for freelancers who need professional PDFs and cloud history without accounting complexity.",
   keywords: [
     "FreshBooks alternative freelancer",
     "Invoice for Freelance vs FreshBooks",
-    "free FreshBooks alternative",
+    "open source FreshBooks alternative",
     "freelancer invoice software comparison",
   ],
   publishedAt: "2026-06-10",
   rows: [
-    { feature: "Price", us: "Free core product ($0/month)", them: "Paid plans from ~$19/month" },
+    { feature: "Price", us: "Self-host free · Cloud ₹299/month or ₹999/year India / $5/month or $19/year elsewhere", them: "Paid plans from ~$19/month" },
     { feature: "Best for", us: "Solo freelancers & small agencies", them: "SMBs needing full accounting" },
     { feature: "Invoicing", us: "Live preview + PDF export", them: "Invoicing + expenses + accounting" },
     { feature: "Learning curve", us: "Minutes to first invoice", them: "Broader feature set to learn" },
@@ -25,8 +25,8 @@ export const vsFreshbooks: ComparisonPage = {
     { feature: "Multi-currency", us: "Yes", them: "Yes (plan dependent)" },
   ],
   whyChooseUs: [
-    "You only need invoicing — not full bookkeeping",
-    "You want $0/month with no trial cliff",
+    "You only need invoicing - not full bookkeeping",
+    "You want the option to self-host, or Cloud for ₹299/month or ₹999/year in India / $5/month or $19/year elsewhere",
     "You bill Indian clients with UPI/GST fields",
     "You prefer a lightweight tool over accounting suites",
   ],
@@ -39,7 +39,7 @@ export const vsFreshbooks: ComparisonPage = {
     {
       question: "Is Invoice for Freelance cheaper than FreshBooks?",
       answer:
-        "Invoice for Freelance core features are free. FreshBooks requires a paid subscription after trials.",
+        "The self-hosted edition is free. The hosted Cloud plan is ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere. FreshBooks requires a paid subscription after trials.",
     },
     {
       question: "Can I switch from FreshBooks to Invoice for Freelance?",

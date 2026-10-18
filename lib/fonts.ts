@@ -14,6 +14,6 @@ export const geistMono = Geist_Mono({
 export const invoicePreviewFontFamily =
   "var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
-/** PDF / html2canvas-safe stack — no webfont loading in iframes. */
+/** PDF / html2canvas-safe stack - no webfont loading in iframes. */
 export const invoicePdfFontFamily =
   "Arial, Helvetica, 'Segoe UI', system-ui, sans-serif";

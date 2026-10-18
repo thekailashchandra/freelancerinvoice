@@ -11,7 +11,7 @@ import { featuresPageKeywords } from "@/data/page-keywords";
 import { siteConfig } from "@/data/site";
 
 const title = "Features";
-const description = `Explore ${siteConfig.name} features: professional invoices, PDF export, cloud storage, payment tracking, multi-currency billing, and GST support for freelancers.`;
+const description = `Explore ${siteConfig.name} features: professional invoices, PDF export, cloud storage, payment tracking, multi-currency billing, and GST support. Open source, free to self-host, with an optional Cloud plan.`;
 
 export const metadata: Metadata = {
   title,

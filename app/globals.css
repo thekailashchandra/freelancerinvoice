@@ -29,47 +29,52 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * Monochrome design system.
+ * Pure ink-on-paper light theme and a paper-on-ink dark theme.
+ * No accent hues - hierarchy comes from weight, spacing, and hairlines.
+ */
 :root {
-  --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.12 0 0);
+  --radius: 0.625rem;
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.11 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0 0);
+  --card-foreground: oklch(0.11 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0 0);
-  --primary: oklch(0.9 0.2 98);
-  --primary-foreground: oklch(0.12 0 0);
-  --secondary: oklch(0.97 0.02 98);
-  --secondary-foreground: oklch(0.12 0 0);
-  --muted: oklch(0.96 0.015 98);
-  --muted-foreground: oklch(0.42 0 0);
-  --accent: oklch(0.94 0.06 98);
-  --accent-foreground: oklch(0.12 0 0);
-  --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.12 0 0 / 0.14);
-  --input: oklch(0.12 0 0 / 0.1);
-  --ring: oklch(0.9 0.2 98);
+  --popover-foreground: oklch(0.11 0 0);
+  --primary: oklch(0.11 0 0);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.955 0 0);
+  --secondary-foreground: oklch(0.11 0 0);
+  --muted: oklch(0.95 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.93 0 0);
+  --accent-foreground: oklch(0.11 0 0);
+  --destructive: oklch(0.42 0 0);
+  --border: oklch(0.11 0 0 / 0.12);
+  --input: oklch(0.11 0 0 / 0.16);
+  --ring: oklch(0.11 0 0 / 0.55);
 }
 
 .dark {
-  --background: oklch(0.1 0 0);
-  --foreground: oklch(0.99 0 0);
-  --card: oklch(0.14 0 0);
-  --card-foreground: oklch(0.99 0 0);
-  --popover: oklch(0.14 0 0);
-  --popover-foreground: oklch(0.99 0 0);
-  --primary: oklch(0.9 0.2 98);
-  --primary-foreground: oklch(0.1 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.99 0 0);
-  --muted: oklch(0.2 0 0);
+  --background: oklch(0.085 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.115 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.115 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.085 0 0);
+  --secondary: oklch(0.17 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.19 0 0);
   --muted-foreground: oklch(0.68 0 0);
-  --accent: oklch(0.22 0.03 98);
-  --accent-foreground: oklch(0.99 0 0);
-  --destructive: oklch(0.62 0.2 25);
-  --border: oklch(0.99 0 0 / 0.14);
-  --input: oklch(0.99 0 0 / 0.1);
-  --ring: oklch(0.9 0.2 98);
+  --accent: oklch(0.21 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.8 0 0);
+  --border: oklch(0.985 0 0 / 0.14);
+  --input: oklch(0.985 0 0 / 0.18);
+  --ring: oklch(0.985 0 0 / 0.6);
 }
 
 @layer base {
@@ -84,19 +89,53 @@
 
 @layer utilities {
   .surface {
-    @apply border border-border bg-card shadow-sm;
+    @apply border border-border bg-card;
   }
 
   .glass {
-    @apply border border-foreground/10 bg-card shadow-sm;
+    @apply border border-border bg-card/80 backdrop-blur-xl;
   }
 
   .glass-strong {
-    @apply border border-foreground/15 bg-card shadow-md;
+    @apply border border-border bg-card/90 backdrop-blur-xl;
   }
 
   .gradient-text {
-    @apply text-primary;
+    @apply text-foreground;
+  }
+
+  /* Editorial serif display face - no webfont request, renders everywhere. */
+  .display-serif {
+    font-family: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino,
+      Georgia, Cambria, "Times New Roman", serif;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+  }
+
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* Fine drafting grid used behind the hero and CTA panels. */
+  .hairline-grid {
+    background-image:
+      linear-gradient(to right, oklch(0.11 0 0 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.11 0 0 / 0.055) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 78% 70% at 50% 0%, black 25%, transparent 78%);
+  }
+
+  .dark .hairline-grid {
+    background-image:
+      linear-gradient(to right, oklch(0.985 0 0 / 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.985 0 0 / 0.07) 1px, transparent 1px);
+  }
+
+  .ink-panel {
+    @apply bg-foreground text-background;
   }
 
   .invoice-print-area {
@@ -136,37 +175,36 @@
   }
 
   .hero-gradient-text {
-    background: linear-gradient(
-      120deg,
-      oklch(0.92 0.22 98) 0%,
-      oklch(0.88 0.18 90) 45%,
-      oklch(0.82 0.14 75) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--foreground);
   }
 
   .hero-grid {
     background-image:
-      linear-gradient(to right, oklch(0.99 0 0 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(0.99 0 0 / 0.04) 1px, transparent 1px);
+      linear-gradient(to right, oklch(0.11 0 0 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.11 0 0 / 0.06) 1px, transparent 1px);
     background-size: 48px 48px;
     mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 20%, transparent 75%);
   }
 
   .dark .hero-grid {
     background-image:
-      linear-gradient(to right, oklch(0.99 0 0 / 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(0.99 0 0 / 0.06) 1px, transparent 1px);
+      linear-gradient(to right, oklch(0.985 0 0 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.985 0 0 / 0.06) 1px, transparent 1px);
   }
 
   .hero-aurora {
     background:
-      radial-gradient(ellipse 80% 50% at 20% -10%, oklch(0.9 0.2 98 / 0.35), transparent 55%),
-      radial-gradient(ellipse 60% 45% at 85% 5%, oklch(0.75 0.12 280 / 0.2), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 50% 100%, oklch(0.9 0.15 98 / 0.12), transparent 55%);
-    animation: hero-aurora-shift 14s ease-in-out infinite alternate;
+      radial-gradient(ellipse 70% 55% at 18% -10%, oklch(0.11 0 0 / 0.09), transparent 62%),
+      radial-gradient(ellipse 55% 45% at 88% 8%, oklch(0.11 0 0 / 0.06), transparent 58%),
+      radial-gradient(ellipse 60% 40% at 50% 108%, oklch(0.11 0 0 / 0.04), transparent 60%);
+    animation: hero-aurora-shift 16s ease-in-out infinite alternate;
+  }
+
+  .dark .hero-aurora {
+    background:
+      radial-gradient(ellipse 70% 55% at 18% -10%, oklch(0.985 0 0 / 0.1), transparent 62%),
+      radial-gradient(ellipse 55% 45% at 88% 8%, oklch(0.985 0 0 / 0.07), transparent 58%),
+      radial-gradient(ellipse 60% 40% at 50% 108%, oklch(0.985 0 0 / 0.05), transparent 60%);
   }
 
   .hero-shine {

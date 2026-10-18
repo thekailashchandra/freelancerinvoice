@@ -2,7 +2,7 @@ import type { SeoLandingPage } from "./types";
 
 export const gstInvoiceGeneratorIndia: SeoLandingPage = {
   slug: "gst-invoice-generator-india",
-  title: "GST Invoice Generator India — Free for Freelancers",
+  title: "GST Invoice Generator India - Free for Freelancers",
   metaDescription:
     "Free GST invoice generator for Indian freelancers. GSTIN, SAC codes, CGST/SGST/IGST, UPI payments, and PDF export. Compliant freelancer billing made simple.",
   h1: "GST invoice generator for India",
@@ -23,7 +23,7 @@ export const gstInvoiceGeneratorIndia: SeoLandingPage = {
     "CGST/SGST and IGST tax line support",
     "UPI ID and bank/IFSC on PDF",
     "INR and USD for domestic vs export clients",
-    "Free — no subscription required",
+    "Self-host free · Cloud ₹299/month or ₹999/year",
   ],
   features: [
     {
@@ -57,7 +57,7 @@ export const gstInvoiceGeneratorIndia: SeoLandingPage = {
     {
       question: "What SAC code goes on a freelancer GST invoice?",
       answer:
-        "Use the SAC matching your service type — IT, design, marketing, and consulting each have different codes. Confirm with your chartered accountant.",
+        "Use the SAC matching your service type - IT, design, marketing, and consulting each have different codes. Confirm with your chartered accountant.",
     },
     {
       question: "Can I add UPI to my GST invoice?",

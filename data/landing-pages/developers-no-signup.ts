@@ -3,12 +3,12 @@ import type { SeoLandingPage } from "./types";
 export const freeDynamicInvoiceGeneratorDevelopersNoSignup: SeoLandingPage = {
   slug: "free-dynamic-invoice-generator-for-developers-no-signup",
   title:
-    "Free Dynamic Invoice Generator for Developers — No Signup Required to Preview",
+    "Free Dynamic Invoice Generator for Developers - No Signup Required to Preview",
   metaDescription:
-    "Free dynamic invoice generator for freelance developers. Live preview, line items for sprints and milestones, PDF export — create your account only when you are ready to save.",
+    "Free dynamic invoice generator for freelance developers. Live preview, line items for sprints and milestones, PDF export - create your account only when you are ready to save.",
   h1: "Free dynamic invoice generator for developers",
   heroSummary:
-    "Build developer invoices with live preview — hourly, sprint, and milestone line items, tax fields, and branded PDF export. Start instantly; signup is only needed to save invoices to your cloud history.",
+    "Build developer invoices with live preview - hourly, sprint, and milestone line items, tax fields, and branded PDF export. Start instantly; signup is only needed to save invoices to your cloud history.",
   keywords: [
     "free dynamic invoice generator for developers no signup",
     "developer invoice generator free",
@@ -19,10 +19,10 @@ export const freeDynamicInvoiceGeneratorDevelopersNoSignup: SeoLandingPage = {
   category: "Tool variant",
   publishedAt: "2026-06-12",
   benefits: [
-    "Live dynamic preview — see changes as you type",
+    "Live dynamic preview - see changes as you type",
     "No signup wall to explore the invoice builder",
     "Line items for hours, sprints, milestones, and retainers",
-    "One-click PDF export — no signup required on the landing page",
+    "One-click PDF export - no signup required on the landing page",
     "Multi-currency for US and international clients",
   ],
   features: [
@@ -34,7 +34,7 @@ export const freeDynamicInvoiceGeneratorDevelopersNoSignup: SeoLandingPage = {
     {
       title: "Dynamic preview",
       description:
-        "Adjust rates, quantities, and notes and watch the invoice update in real time — no spreadsheet formulas.",
+        "Adjust rates, quantities, and notes and watch the invoice update in real time - no spreadsheet formulas.",
     },
     {
       title: "Professional PDFs",

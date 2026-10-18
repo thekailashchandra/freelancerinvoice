@@ -4,7 +4,7 @@ export const clientDisputesBillableHours: GuideArticle = {
   slug: "client-disputes-billable-hours",
   title: "How to Handle Client Disputes Over Billable Tracked Hours",
   description:
-    "Resolve freelancer billing disputes over tracked hours — documentation, de-escalation scripts, contract clauses, and how to get hourly invoices approved.",
+    "Resolve freelancer billing disputes over tracked hours - documentation, de-escalation scripts, contract clauses, and how to get hourly invoices approved.",
   keywords: [
     "billable hours dispute freelancer",
     "client disputes invoice hours",
@@ -34,7 +34,7 @@ export const clientDisputesBillableHours: GuideArticle = {
       {
         title: "Schedule a 15-minute review call",
         description:
-          "Walk through disputed entries calmly — assume miscommunication, not fraud.",
+          "Walk through disputed entries calmly - assume miscommunication, not fraud.",
       },
       {
         title: "Offer a good-faith adjustment if warranted",
@@ -53,7 +53,7 @@ export const clientDisputesBillableHours: GuideArticle = {
       id: "why-disputes-happen",
       heading: "Why clients dispute billable hours",
       paragraphs: [
-        "Hour disputes usually stem from mismatched expectations — not dishonesty. The client expected a fixed price; you billed hourly. They did not realize how long tasks take. They question time spent in meetings or revisions.",
+        "Hour disputes usually stem from mismatched expectations - not dishonesty. The client expected a fixed price; you billed hourly. They did not realize how long tasks take. They question time spent in meetings or revisions.",
         "Prevention is cheaper than resolution. Define billable vs non-billable time in your contract before the first hour is logged.",
       ],
     },
@@ -77,10 +77,10 @@ export const clientDisputesBillableHours: GuideArticle = {
         "Links to deliverables produced during logged time",
         "Email or Slack approval for out-of-scope tasks before logging",
         "Meeting notes showing client attendance and decisions made",
-        "Weekly timesheet summaries sent proactively — silence = acceptance",
+        "Weekly timesheet summaries sent proactively - silence = acceptance",
       ],
       paragraphs: [
-        "A timesheet that says \"2.5 hrs — homepage layout revisions per March 12 feedback email\" is defensible. \"2.5 hrs — design\" is not.",
+        "A timesheet that says \"2.5 hrs - homepage layout revisions per March 12 feedback email\" is defensible. \"2.5 hrs - design\" is not.",
       ],
     },
     {
@@ -90,7 +90,7 @@ export const clientDisputesBillableHours: GuideArticle = {
         "Step 1: Acknowledge calmly. \"I understand the total is higher than expected. Let me walk you through the breakdown.\"",
         "Step 2: Share the detailed timesheet with task-level notes.",
         "Step 3: Reference the contract and any approvals for extra work.",
-        "Step 4: Offer a good-faith adjustment only if you genuinely over-billed — not to appease unreasonable clients.",
+        "Step 4: Offer a good-faith adjustment only if you genuinely over-billed - not to appease unreasonable clients.",
         "Step 5: Propose a fixed-price phase for future work if hourly friction persists.",
       ],
     },
@@ -120,7 +120,7 @@ export const clientDisputesBillableHours: GuideArticle = {
       id: "when-to-walk",
       heading: "When to stand firm vs compromise",
       paragraphs: [
-        "Stand firm when hours were contractually billable, documented, and approved. Compromise when you genuinely exceeded estimates without warning the client — a one-time goodwill credit builds trust.",
+        "Stand firm when hours were contractually billable, documented, and approved. Compromise when you genuinely exceeded estimates without warning the client - a one-time goodwill credit builds trust.",
         "Chronic disputants are a client problem. After two disputes, switch to fixed-price milestones or end the engagement.",
       ],
     },

@@ -1,4 +1,4 @@
-/** Primary public site navigation links (header — keep minimal) */
+/** Primary public site navigation links (header - keep minimal) */
 
 export const mainNavLinks = [
   { href: "/features", label: "Features" },
@@ -10,6 +10,7 @@ export const footerNavLinks = [
   { href: "/", label: "Home" },
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/subscribe", label: "Cloud plan" },
   { href: "/guide", label: "Guides" },
   { href: "/blog", label: "Blog" },
   { href: "/invoice-templates", label: "Templates" },
@@ -29,6 +30,7 @@ export const footerNavLinks = [
 export const mobileNavLinks = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/subscribe", label: "Cloud plan" },
   { href: "/guide", label: "Guides" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

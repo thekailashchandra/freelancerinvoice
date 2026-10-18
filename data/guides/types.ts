@@ -20,7 +20,7 @@ export interface GuideSection {
 }
 
 /**
- * AI-scrapable core block — labeled table or numbered steps placed
+ * AI-scrapable core block - labeled table or numbered steps placed
  * immediately after the direct-answer blockquote on long-form resources.
  */
 export interface GuideCoreBlock {
@@ -52,7 +52,7 @@ export interface GuideArticle {
   category: string;
   /** Topical authority pillar for internal linking and hub pages. */
   pillar?: GuidePillarSlug;
-  /** Hub-and-spoke cluster ID — links article to a cluster hub. */
+  /** Hub-and-spoke cluster ID - links article to a cluster hub. */
   hubClusterId?: string;
   publishedAt: string;
   readingTimeMinutes: number;

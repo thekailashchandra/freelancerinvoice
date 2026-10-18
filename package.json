@@ -2,6 +2,15 @@
   "name": "invoice-tool",
   "version": "0.1.0",
   "private": true,
+  "description": "Open-source monochrome invoicing studio for freelancers with Cloud billing and self-hosting.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thekailashchandra/freelancerinvoice.git"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "node scripts/free-port.js 3000 && node scripts/ensure-dev-cache.js && node scripts/write-dev-build-id.js && next dev --turbopack -p 3000",
     "dev:turbo": "node scripts/free-port.js 3000 && node scripts/ensure-dev-cache.js && node scripts/write-dev-build-id.js && next dev --turbopack -p 3000",
@@ -9,7 +18,7 @@
     "dev:clean": "node scripts/free-port.js 3000 && node scripts/clean-next.js && node scripts/write-dev-build-id.js && next dev --turbopack -p 3000",
     "clean": "node scripts/clean-next.js",
     "generate-favicons": "npx tsx scripts/generate-favicons.ts",
-    "build": "npm run generate-favicons && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },

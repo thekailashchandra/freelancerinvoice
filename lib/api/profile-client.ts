@@ -13,13 +13,13 @@ async function parseProfileResponse(
   return data as CompanySettings;
 }
 
-/** Stable alternative to fetchProfileAction — avoids dev Server Action ID drift. */
+/** Stable alternative to fetchProfileAction - avoids dev Server Action ID drift. */
 export async function fetchProfileClient(): Promise<CompanySettings | null> {
   const res = await fetch("/api/profile", { cache: "no-store" });
   return parseProfileResponse(res);
 }
 
-/** Stable alternative to updateProfileAction — avoids dev Server Action ID drift. */
+/** Stable alternative to updateProfileAction - avoids dev Server Action ID drift. */
 export async function updateProfileClient(
   settings: Partial<CompanySettings> & {
     companyName?: string;

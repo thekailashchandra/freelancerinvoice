@@ -8,7 +8,7 @@ export function DataProtectionLawReference() {
       <h2 className="text-lg font-semibold">Regional privacy notices</h2>
       <p className="mt-2">
         We localize consent and privacy notices to the country detected from
-        your IP or chosen in the site locale switcher — for example GDPR in the
+        your IP or chosen in the site locale switcher - for example GDPR in the
         EU, UK GDPR in Britain, DPDP in India, or LGPD in Brazil. You only see
         the notice that applies where you are; we do not ask you to review laws
         for other countries.

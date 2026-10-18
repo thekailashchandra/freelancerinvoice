@@ -4,7 +4,7 @@ export const freelanceContractsEssentials: GuideArticle = {
   slug: "freelance-contracts-essentials",
   title: "Freelance Contracts: Essential Clauses Every Freelancer Needs",
   description:
-    "A practical guide to freelance contract essentials — scope, payment terms, IP ownership, revisions, confidentiality, and termination before you send the first invoice.",
+    "A practical guide to freelance contract essentials - scope, payment terms, IP ownership, revisions, confidentiality, and termination before you send the first invoice.",
   keywords: [
     "freelance contract",
     "freelancer contract template",
@@ -21,7 +21,7 @@ export const freelanceContractsEssentials: GuideArticle = {
       id: "why-contracts",
       heading: "Why a contract comes before the invoice",
       paragraphs: [
-        "An invoice requests payment for agreed work. A contract defines what was agreed. Without a contract, disputes over scope, revisions, and payment timing become he-said-she-said — and invoices become harder to enforce.",
+        "An invoice requests payment for agreed work. A contract defines what was agreed. Without a contract, disputes over scope, revisions, and payment timing become he-said-she-said - and invoices become harder to enforce.",
         "A one-page freelance agreement is enough for most projects. What matters is that both parties sign before work begins.",
       ],
     },

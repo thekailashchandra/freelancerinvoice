@@ -15,6 +15,7 @@ export const defaultCompanySettings: CompanySettings = {
   countryCode: "US",
   currencyCode: "USD",
   taxLabel: "VAT",
+  brandColor: "#111111",
   defaultPayment: emptyPaymentDetails(),
 };
 

@@ -61,7 +61,7 @@ const publicAllow = [
   ...hubClusterSlugs.map((slug) => `/blog/hub/${slug}`),
 ] as const;
 
-/** AI / LLM crawlers — allow public marketing content, block app routes. */
+/** AI / LLM crawlers - allow public marketing content, block app routes. */
 const aiCrawlers = [
   "GPTBot",
   "ChatGPT-User",

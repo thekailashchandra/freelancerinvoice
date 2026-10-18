@@ -11,15 +11,16 @@ import {
 } from "@/components/invoice-pdf-dialog";
 import { InvoiceTemplatePicker } from "@/components/invoice-template-picker";
 import { RemoveBrandingDialog } from "@/components/remove-branding-dialog";
-import { TemplateUnlockDialog } from "@/components/template-unlock-dialog";
+import { ExportLockBanner } from "@/components/export-lock-banner";
+import { UpgradeDialog } from "@/components/upgrade-dialog";
 import { useInvoiceBrandingRemoval } from "@/hooks/use-invoice-branding-removal";
-import { useTemplateCheckout } from "@/hooks/use-template-checkout";
+import { useSubscriptionCheckout } from "@/hooks/use-subscription-checkout";
 import type { MarketRegion } from "@/lib/geo-market";
+import type { InvoiceTemplateId } from "@/lib/invoice-templates";
 import {
-  getInvoiceTemplate,
-  type InvoiceTemplateId,
-} from "@/lib/invoice-templates";
-import { useTemplateUnlocked } from "@/hooks/use-template-unlocked";
+  canExportWithAccess,
+  type SubscriptionAccess,
+} from "@/lib/subscription";
 import { CurrencySelect } from "@/components/currency-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,6 @@ import Link from "next/link";
 import { InvoicePreviewFrame } from "@/components/invoice-preview-frame";
 import { InvoicePreview } from "@/components/invoice-preview";
 import { printInvoice } from "@/lib/invoice-print";
-import { requiresTemplatePayment } from "@/lib/template-export-guard";
 import { cn } from "@/lib/utils";
 
 type MobileCreateTab = "edit" | "preview";
@@ -47,6 +47,7 @@ type CreateInvoiceClientProps = {
   initialSettings: CompanySettings | null;
   initialInvoice: Invoice | null;
   initialClients: SavedClient[];
+  subscription: SubscriptionAccess;
 };
 
 function buildInitialInvoice(
@@ -62,6 +63,7 @@ export function CreateInvoiceClient({
   initialSettings,
   initialInvoice,
   initialClients,
+  subscription,
 }: CreateInvoiceClientProps) {
   const [invoice, setInvoice] = useState<Invoice | null>(() =>
     buildInitialInvoice(initialSettings, initialInvoice)
@@ -88,19 +90,23 @@ export function CreateInvoiceClient({
     pricing: brandingPricing,
   } = useInvoiceBrandingRemoval(invoice, setInvoice);
 
-  const {
-    unlockDialogOpen,
-    setUnlockDialogOpen,
-    pendingTemplateId,
-    pricing: templatePricing,
-    payWithRazorpay,
-    razorpayEnabled,
-    payingRazorpay,
-    startCheckout: startTemplateCheckout,
-  } = useTemplateCheckout({ market });
+  const canExport = canExportWithAccess(subscription);
 
-  const selectedTemplateId = invoice?.templateId ?? "classic";
-  const selectedTemplateUnlocked = useTemplateUnlocked(selectedTemplateId);
+  const {
+    dialogOpen: upgradeDialogOpen,
+    setDialogOpen: setUpgradeDialogOpen,
+    openUpgrade,
+    pay: payForSubscription,
+    paying: payingSubscription,
+    pricing: subscriptionPricing,
+    reason: upgradeReason,
+    interval: subscriptionInterval,
+    setInterval: setSubscriptionInterval,
+    checkoutAvailable,
+  } = useSubscriptionCheckout({
+    market,
+    checkoutAvailable: subscription.checkoutAvailable,
+  });
 
   useEffect(() => {
     if (initialInvoice) return;
@@ -148,26 +154,16 @@ export function CreateInvoiceClient({
     }
   }, [invoice]);
 
-  const handleDownloadPdf = async (forceClassic = false) => {
+  const handleDownloadPdf = async () => {
     if (!invoice) return;
 
-    const template = getInvoiceTemplate(invoice.templateId);
-    if (requiresTemplatePayment(invoice.templateId) && !forceClassic) {
-      toast.message(`Unlock ${template.name} to download`, {
-        description: `One-time ${templatePricing.displayAmount} payment, or download with Classic free.`,
-        action: {
-          label: `Pay ${templatePricing.displayAmount}`,
-          onClick: () =>
-            void startTemplateCheckout(invoice.templateId ?? "modern"),
-        },
-      });
+    if (!canExport) {
+      openUpgrade("download");
       return;
     }
 
-    const exportInvoice =
-      forceClassic && invoice.templateId !== "classic"
-        ? { ...invoice, templateId: "classic" as const }
-        : invoice;
+    setMobileTab("preview");
+    await new Promise((r) => setTimeout(r, 120));
 
     setExporting(true);
     setPdfError(null);
@@ -179,15 +175,14 @@ export function CreateInvoiceClient({
         requestAnimationFrame(() => requestAnimationFrame(r))
       );
       const { downloadInvoicePdf } = await import("@/lib/pdf");
-      await downloadInvoicePdf(exportInvoice, `${exportInvoice.invoice.invoiceNumber}.pdf`, {
+      await downloadInvoicePdf(invoice, `${invoice.invoice.invoiceNumber}.pdf`, {
         previewId: "invoice-preview",
-        skipTemplateGuard: forceClassic,
       });
       trackActivity({
         action: "invoice.pdf_downloaded",
         resourceType: "invoice",
-        resourceId: exportInvoice.id,
-        metadata: { invoiceNumber: exportInvoice.invoice.invoiceNumber },
+        resourceId: invoice.id,
+        metadata: { invoiceNumber: invoice.invoice.invoiceNumber },
       });
       setPdfDialogPhase("success");
     } catch (err) {
@@ -208,18 +203,13 @@ export function CreateInvoiceClient({
   const handlePrint = async () => {
     if (!invoice) return;
 
-    const template = getInvoiceTemplate(invoice.templateId);
-    if (requiresTemplatePayment(invoice.templateId)) {
-      toast.message(`Unlock ${template.name} to print`, {
-        description: `One-time ${templatePricing.displayAmount} payment required.`,
-        action: {
-          label: `Pay ${templatePricing.displayAmount}`,
-          onClick: () =>
-            void startTemplateCheckout(invoice.templateId ?? "modern"),
-        },
-      });
+    if (!canExport) {
+      openUpgrade("print");
       return;
     }
+
+    setMobileTab("preview");
+    await new Promise((r) => setTimeout(r, 120));
 
     toast.info("Opening print dialog…");
     try {
@@ -264,10 +254,6 @@ export function CreateInvoiceClient({
     );
   }
 
-  const template = getInvoiceTemplate(invoice.templateId);
-  const needsTemplatePayment =
-    template.isPremium && !selectedTemplateUnlocked;
-
   const previewPanel = (
     <>
       <p className="mb-2 hidden text-xs font-medium uppercase tracking-wide text-muted-foreground @min-[680px]:block">
@@ -276,13 +262,17 @@ export function CreateInvoiceClient({
       <div className="overflow-x-auto rounded-lg border border-border bg-muted/20 p-1 @min-[680px]:max-h-[calc(100vh-9rem)] @min-[680px]:overflow-y-auto sm:p-2">
         <InvoicePreviewFrame
           pageSize={invoice.pageSize}
-          exportLocked={needsTemplatePayment}
+          exportLocked={!canExport}
           maxScale={1}
         >
           <InvoicePreview
             invoice={invoice}
             onRemoveBranding={
-              hideBranding ? undefined : requestBrandingRemoval
+              hideBranding
+                ? undefined
+                : canExport
+                  ? requestBrandingRemoval
+                  : () => openUpgrade("generic")
             }
           />
         </InvoicePreviewFrame>
@@ -292,6 +282,13 @@ export function CreateInvoiceClient({
 
   return (
     <PageTransition className="create-invoice-page mx-auto w-full max-w-[1600px] md:pb-0">
+      <ExportLockBanner
+        className="mb-3"
+        billingEnabled={subscription.billingEnabled}
+        active={subscription.active}
+        pricing={subscriptionPricing}
+        onUpgrade={() => openUpgrade("generic")}
+      />
       <div className="sticky top-14 z-30 -mx-4 mb-4 space-y-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-sm md:hidden">
         <div className="flex min-w-0 items-center gap-2">
           <Input
@@ -367,17 +364,6 @@ export function CreateInvoiceClient({
           />
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-2">
-          {needsTemplatePayment ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => void handleDownloadPdf(true)}
-              disabled={exporting}
-            >
-              <Download className="h-4 w-4" />
-              Classic (free)
-            </Button>
-          ) : null}
           <Button variant="outline" size="sm" onClick={handlePrint}>
             <Printer className="h-4 w-4" />
             Print
@@ -405,7 +391,7 @@ export function CreateInvoiceClient({
       <div className="@container w-full">
         <div
           className={cn(
-            "flex flex-col gap-5 @min-[680px]:grid @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(340px,44%)] @min-[1100px]:grid-cols-[minmax(0,1fr)_minmax(400px,48%)] @min-[1400px]:grid-cols-[minmax(0,1fr)_540px] @min-[680px]:items-start @min-[680px]:gap-6"
+            "flex flex-col gap-5 @min-[680px]:grid @min-[680px]:grid-cols-[minmax(0,1fr)_minmax(320px,40%)] @min-[1100px]:grid-cols-[minmax(0,1fr)_minmax(360px,42%)] @min-[1400px]:grid-cols-[minmax(0,1fr)_460px] @min-[680px]:items-start @min-[680px]:gap-5"
           )}
         >
         <div
@@ -426,6 +412,7 @@ export function CreateInvoiceClient({
             value={invoice.templateId ?? "classic"}
             market={market}
             onChange={setTemplateId}
+            compact
           />
           <InvoiceForm
             invoice={invoice}
@@ -433,6 +420,7 @@ export function CreateInvoiceClient({
             savedClients={savedClients}
             onClientsChange={setSavedClients}
             createFlow
+            compact
           />
         </div>
 
@@ -497,15 +485,16 @@ export function CreateInvoiceClient({
         onConfirmPaid={() => void confirmKofiRemoval()}
         confirming={brandingConfirming}
       />
-      <TemplateUnlockDialog
-        open={unlockDialogOpen}
-        onOpenChange={setUnlockDialogOpen}
-        templateId={pendingTemplateId}
-        templateName={getInvoiceTemplate(pendingTemplateId).name}
-        displayAmount={templatePricing.displayAmount}
-        razorpayEnabled={razorpayEnabled}
-        onPayWithRazorpay={() => void payWithRazorpay()}
-        payingRazorpay={payingRazorpay}
+      <UpgradeDialog
+        open={upgradeDialogOpen}
+        onOpenChange={setUpgradeDialogOpen}
+        pricing={subscriptionPricing}
+        reason={upgradeReason}
+        interval={subscriptionInterval}
+        onIntervalChange={setSubscriptionInterval}
+        checkoutAvailable={checkoutAvailable}
+        paying={payingSubscription}
+        onSubscribe={payForSubscription}
       />
     </PageTransition>
   );

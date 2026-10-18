@@ -190,7 +190,7 @@ export function TemplatePageContent({ page }: TemplatePageContentProps) {
                 }`}
                 aria-current={item.slug === page.slug ? "page" : undefined}
               >
-                {item.title.split(" — ")[0]}
+                {item.title.split(" - ")[0]}
               </Link>
             </li>
           ))}

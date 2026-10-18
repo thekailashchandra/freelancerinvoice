@@ -16,18 +16,18 @@ import { getCanonicalUrl } from "@/data/seo";
 import { Button } from "@/components/ui/button";
 
 const title = "Invoice Templates & Generators for Freelancers";
-const description = `Browse free invoice templates and generators for freelancers — by profession, region, GST India, USD, agencies, and designers. ${siteConfig.name}.`;
+const description = `Browse invoice templates and generators for freelancers - by profession, region, GST India, USD, agencies, and designers. ${siteConfig.name}. Preview free; export on Cloud.`;
 
 const hubFaqs = [
   {
     question: "What invoice templates does Invoice for Freelance offer?",
     answer:
-      "Templates and guides for designers, developers, marketers, photographers, video editors, GST India, USD international billing, agencies, and general freelancers — all free with PDF export.",
+      "Templates and guides for designers, developers, marketers, photographers, video editors, GST India, USD international billing, agencies, and general freelancers - preview free, with PDF export on Cloud.",
   },
   {
     question: "Are these invoice templates free?",
     answer:
-      "Yes. Every template and generator on this page is free with no credit card required.",
+      "Yes. Every template can be previewed free with no credit card required. PDF export and printing are part of the Cloud plan.",
   },
   {
     question: "Which template should Indian freelancers use?",
@@ -121,7 +121,7 @@ export default function InvoiceTemplatesHubPage() {
                   href={`/${page.slug}`}
                   className="text-sm text-primary hover:underline"
                 >
-                  {page.title.split(" — ")[0]}
+                  {page.title.split(" - ")[0]}
                 </Link>
               </li>
             ))}

@@ -55,7 +55,7 @@ export function InvoiceCompanyLogo({
         width: height,
         height,
         borderRadius: variant === "classic" ? "50%" : 0,
-        backgroundColor: variant === "bold" ? "#1b2f24" : accentColor,
+        backgroundColor: variant === "bold" ? "#111111" : accentColor,
         color: "#fff",
         display: "flex",
         alignItems: "center",

@@ -5,6 +5,7 @@ import { ArrowRight, Search, History } from "lucide-react";
 import { NavLink } from "@/components/nav-link";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/empty-state";
+import { CloudPlanCard } from "@/components/cloud-plan-card";
 import {
   InvoiceTable,
   matchesHistoryFilter,
@@ -126,6 +127,8 @@ export default function InvoiceHistoryPage() {
         </Button>
       </div>
 
+      <CloudPlanCard />
+
       <div className="space-y-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -144,18 +147,7 @@ export default function InvoiceHistoryPage() {
               type="button"
               size="sm"
               variant={statusFilter === f.value ? "default" : "outline"}
-              className={cn(
-                "shrink-0 rounded-full",
-                f.value === "paid" &&
-                  statusFilter === "paid" &&
-                  "bg-emerald-600 hover:bg-emerald-600",
-                f.value === "overdue" &&
-                  statusFilter === "overdue" &&
-                  "bg-destructive hover:bg-destructive",
-                f.value === "void" &&
-                  statusFilter === "void" &&
-                  "bg-zinc-600 hover:bg-zinc-600"
-              )}
+              className={cn("shrink-0 rounded-full", f.value === "void" && statusFilter === "void" && "bg-muted-foreground hover:bg-muted-foreground")}
               onClick={() => setStatusFilter(f.value)}
             >
               {f.label}

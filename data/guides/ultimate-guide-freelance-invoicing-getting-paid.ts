@@ -4,7 +4,7 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
   slug: "ultimate-guide-freelance-invoicing-getting-paid",
   title: "The Ultimate Guide to Freelance Invoicing & Getting Paid On Time",
   description:
-    "The complete freelancer invoicing playbook — professional invoices, payment terms, overdue recovery, legal requirements, and dispute resolution so you get paid faster.",
+    "The complete freelancer invoicing playbook - professional invoices, payment terms, overdue recovery, legal requirements, and dispute resolution so you get paid faster.",
   keywords: [
     "freelance invoicing guide",
     "get paid on time freelancer",
@@ -53,8 +53,8 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
       id: "why-invoicing-matters",
       heading: "Why invoicing is the backbone of freelance cash flow",
       paragraphs: [
-        "Great work means nothing if you are not paid for it. Invoicing is not paperwork — it is the system that converts completed deliverables into money in your account.",
-        "Freelancers who invoice late, vaguely, or without clear terms wait longer to get paid. Those who treat invoicing as a professional operation — clear terms, polished PDFs, consistent follow-up — get paid on time more often.",
+        "Great work means nothing if you are not paid for it. Invoicing is not paperwork - it is the system that converts completed deliverables into money in your account.",
+        "Freelancers who invoice late, vaguely, or without clear terms wait longer to get paid. Those who treat invoicing as a professional operation - clear terms, polished PDFs, consistent follow-up - get paid on time more often.",
       ],
     },
     {
@@ -63,7 +63,7 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
       list: [
         "Your legal business name, address, email, and phone",
         "Client company name, billing contact, and address",
-        "Unique invoice number (sequential — never reuse)",
+        "Unique invoice number (sequential - never reuse)",
         "Issue date and payment due date",
         "Itemized line items: description, quantity, rate, amount",
         "Subtotal, taxes (GST/VAT if applicable), and total due",
@@ -88,12 +88,12 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
       id: "getting-paid-faster",
       heading: "Seven habits that get freelancers paid faster",
       list: [
-        "Invoice the same day work is approved — not weeks later",
+        "Invoice the same day work is approved - not weeks later",
         "Put the due date in bold near the total amount",
         "Require deposits from new clients (30–50% is common)",
         "Use Net 14 instead of Net 30 when cash flow is tight",
         "Send a reminder 3 days before the due date",
-        "Make payment easy — include all methods on the invoice",
+        "Make payment easy - include all methods on the invoice",
         "Track status: sent, viewed, paid, overdue",
       ],
     },
@@ -110,14 +110,14 @@ export const ultimateGuideFreelanceInvoicingGettingPaid: GuideArticle = {
       heading: "Handling disputes over billable hours",
       paragraphs: [
         "Hourly billing disputes happen when clients question time logged. Prevention beats resolution: share timesheets proactively, define billable vs non-billable in your contract, and get written approval on estimates before work exceeds them.",
-        "When a dispute arises, respond with documented evidence — timestamps, task descriptions, and approval emails — not emotion.",
+        "When a dispute arises, respond with documented evidence - timestamps, task descriptions, and approval emails - not emotion.",
       ],
     },
     {
       id: "tools",
       heading: "Use the right invoicing tool",
       paragraphs: [
-        "Spreadsheets and Word templates break at scale. A purpose-built invoice generator gives you live preview, branded PDF export, cloud history, payment status tracking, and multi-currency support — so you spend minutes invoicing, not hours formatting.",
+        "Spreadsheets and Word templates break at scale. A purpose-built invoice generator gives you live preview, branded PDF export, cloud history, payment status tracking, and multi-currency support - so you spend minutes invoicing, not hours formatting.",
       ],
       list: [
         "Live preview with your logo and branding",

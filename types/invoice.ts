@@ -18,7 +18,15 @@ export type GstSupplyType = "intra" | "inter";
 
 export type InvoicePageSize = "a4" | "letter";
 
-export type InvoiceTemplateId = "classic" | "modern" | "minimal" | "bold";
+export type InvoiceTemplateId =
+  | "classic"
+  | "modern"
+  | "minimal"
+  | "bold"
+  | "corporate"
+  | "studio"
+  | "geometric"
+  | "swiss";
 
 export interface ClientDetails {
   name: string;
@@ -39,11 +47,17 @@ export interface InvoiceDetails {
   projectName?: string;
 }
 
+export interface AdditionalCharge {
+  id: string;
+  label: string;
+  amount: number;
+}
+
 export interface TaxDiscount {
   taxEnabled: boolean;
   taxPercentage: number;
   discount: number;
-  shippingFee?: number;
+  additionalCharges?: AdditionalCharge[];
   /** Indian GST: intra-state (CGST+SGST) or inter-state (IGST) */
   gstSupplyType?: GstSupplyType;
   /** @deprecated Use taxEnabled */
@@ -80,6 +94,8 @@ export interface CompanySettings {
   countryCode: string;
   currencyCode: string;
   taxLabel: string;
+  /** Brand accent used by invoice templates (hex, e.g. #111111) */
+  brandColor?: string;
   gstin?: string;
   /** Default payment details copied onto new invoices */
   defaultPayment: PaymentDetails;
@@ -132,7 +148,8 @@ export interface InvoiceTotals {
   subtotal: number;
   taxAmount: number;
   discountAmount: number;
-  shippingFee?: number;
+  additionalCharges: AdditionalCharge[];
+  additionalChargesTotal: number;
   total: number;
   gstBreakdown?: GstBreakdown;
   /** @deprecated Use taxAmount */

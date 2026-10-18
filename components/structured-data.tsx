@@ -12,7 +12,7 @@ import { faqItems, homeSeo } from "@/data/seo";
 import { buildFaqPageSchemaFromItems } from "@/data/structured-data";
 
 type StructuredDataProps = {
-  /** Include FAQ schema — use on pages that render the FAQ section. */
+  /** Include FAQ schema - use on pages that render the FAQ section. */
   includeFaq?: boolean;
   /** Append GEO authoritative Q&A to FAQ schema (homepage). */
   includeGeoAnswers?: boolean;

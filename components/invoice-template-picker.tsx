@@ -1,29 +1,86 @@
 "use client";
 
-import { Check, Lock } from "lucide-react";
+import { Check } from "lucide-react";
 import {
-  getInvoiceTemplate,
-  getTemplatePricing,
   invoiceTemplates,
   type InvoiceTemplateId,
 } from "@/lib/invoice-templates";
-import type { MarketRegion } from "@/lib/geo-market";
-import { useTemplateUnlockLookup } from "@/hooks/use-template-unlocked";
 import { cn } from "@/lib/utils";
 
 type InvoiceTemplatePickerProps = {
   value: InvoiceTemplateId;
-  market: MarketRegion;
+  /** Kept for call-site compatibility. */
+  market?: string;
   onChange: (id: InvoiceTemplateId) => void;
+  /** Dense grid for the create invoice workspace. */
+  compact?: boolean;
 };
 
 export function InvoiceTemplatePicker({
   value,
-  market,
   onChange,
+  compact = false,
 }: InvoiceTemplatePickerProps) {
-  const pricing = getTemplatePricing(market);
-  const isUnlocked = useTemplateUnlockLookup();
+  if (compact) {
+    return (
+      <section aria-labelledby="template-picker-heading" className="space-y-2">
+        <div className="flex items-center justify-between gap-3">
+          <h3
+            id="template-picker-heading"
+            className="text-sm font-semibold tracking-tight"
+          >
+            Template
+          </h3>
+          <p className="text-[11px] text-muted-foreground">
+            All included with Cloud
+          </p>
+        </div>
+        <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-8">
+          {invoiceTemplates.map((template) => {
+            const selected = value === template.id;
+            return (
+              <button
+                key={template.id}
+                type="button"
+                onClick={() => onChange(template.id)}
+                aria-pressed={selected}
+                className={cn(
+                  "group relative flex min-w-0 flex-col gap-1.5 rounded-lg border p-1.5 text-left transition-colors",
+                  selected
+                    ? "border-foreground bg-foreground/[0.04] ring-1 ring-foreground/20"
+                    : "border-border bg-card hover:border-foreground/30 hover:bg-muted/40"
+                )}
+              >
+                <span
+                  className={cn(
+                    "block h-5 w-full overflow-hidden rounded border border-border/60",
+                    template.swatchClass
+                  )}
+                  aria-hidden
+                >
+                  <span className="flex h-full flex-col justify-between p-1">
+                    <span className="block h-0.5 w-3 rounded bg-white/40" />
+                    <span className="block space-y-0.5">
+                      <span className="block h-0.5 w-full rounded bg-white/25" />
+                      <span className="block h-0.5 w-2/3 rounded bg-white/25" />
+                    </span>
+                  </span>
+                </span>
+                <span className="flex items-center justify-between gap-1">
+                  <span className="truncate text-[10px] font-medium">
+                    {template.name}
+                  </span>
+                  {selected ? (
+                    <Check className="h-3 w-3 shrink-0" aria-hidden />
+                  ) : null}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section aria-labelledby="template-picker-heading" className="space-y-3">
@@ -35,15 +92,14 @@ export function InvoiceTemplatePicker({
           Invoice template
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Classic is free. Premium layouts are coming soon for all users.
+          Every layout is included with Cloud. Set your brand color in Settings
+          to match your identity.
         </p>
       </div>
 
       <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 sm:snap-none xl:grid-cols-4 [&::-webkit-scrollbar]:hidden">
         {invoiceTemplates.map((template) => {
           const selected = value === template.id;
-          const unlocked =
-            !template.isPremium || isUnlocked(template.id);
 
           return (
             <button
@@ -53,8 +109,8 @@ export function InvoiceTemplatePicker({
               className={cn(
                 "group relative flex min-w-[78%] shrink-0 snap-start flex-col rounded-xl border p-4 text-left transition-all sm:min-w-0",
                 selected
-                  ? "border-primary bg-primary/5 ring-2 ring-primary/30"
-                  : "border-border bg-card hover:border-primary/40 hover:bg-muted/30"
+                  ? "border-foreground bg-foreground/[0.04] ring-1 ring-foreground/20"
+                  : "border-border bg-card hover:border-foreground/30 hover:bg-muted/30"
               )}
             >
               <div
@@ -80,38 +136,15 @@ export function InvoiceTemplatePicker({
                   </p>
                 </div>
                 {selected ? (
-                  <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  <Check className="h-4 w-4 shrink-0 text-foreground" aria-hidden />
                 ) : null}
               </div>
 
-              <p className="mt-2 text-xs font-medium">
-                {template.isPremium ? (
-                  unlocked ? (
-                    <span className="text-emerald-600 dark:text-emerald-400">
-                      Unlocked
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-muted-foreground">
-                      <Lock className="h-3 w-3" aria-hidden />
-                      {pricing.displayAmount}
-                    </span>
-                  )
-                ) : (
-                  <span className="text-muted-foreground">Free</span>
-                )}
-              </p>
+              <p className="mt-2 text-xs text-muted-foreground">Included</p>
             </button>
           );
         })}
       </div>
-
-      {getInvoiceTemplate(value).isPremium &&
-      !isUnlocked(value) ? (
-        <p className="text-xs text-muted-foreground">
-          Preview premium layouts anytime. Full PDF export requires a one-time
-          unlock — coming soon for all users.
-        </p>
-      ) : null}
     </section>
   );
 }

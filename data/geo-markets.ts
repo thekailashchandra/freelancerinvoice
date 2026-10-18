@@ -69,15 +69,15 @@ export function getMarketLandingPaths(market: MarketRegion): MarketLandingPath[]
 }
 
 export const indiaMarketHero = {
-  badge: "GST-compliant · No signup required for PDF export",
-  title: "Free GST Invoice Generator for Indian Freelancers",
+  badge: "GST-ready · Preview free, export on Cloud",
+  title: "GST Invoice Generator for Indian Freelancers",
   summary:
-    "Build GST-ready invoices with SAC codes, CGST/SGST/IGST breakdowns, UPI and bank details, and instant PDF download. Designed for independent contractors billing Indian and US clients.",
+    "Build GST-ready invoices with SAC codes, CGST/SGST/IGST breakdowns, UPI and bank details, and a polished PDF. Preview free; export with the Cloud plan. Designed for independent contractors billing Indian and US clients.",
 };
 
 export const globalMarketHero = {
-  badge: "No signup required to build & download PDFs",
-  title: "Free Invoice for Freelancers — Start Invoicing Now",
+  badge: "Build invoices free · Export with Cloud",
+  title: "Invoice for Freelancers - Start Invoicing Now",
   summary:
-    "Create professional invoices with live preview and one-click PDF export. Currency defaults to your region — USD, EUR, GBP, or AUD — with cross-border banking fields built in.",
+    "Create professional invoices with live preview and brand colors. Currency defaults to your region - USD, EUR, GBP, or AUD - with cross-border banking fields built in. Preview free; export with Cloud.",
 };

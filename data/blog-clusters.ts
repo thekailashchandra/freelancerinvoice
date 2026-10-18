@@ -1,5 +1,5 @@
 /**
- * @deprecated Use topical-pillars.ts — kept for sitemap/robots path generation.
+ * @deprecated Use topical-pillars.ts - kept for sitemap/robots path generation.
  * Cluster slugs now map 1:1 to topical authority pillars.
  */
 import type { TemplateFaqItem } from "@/data/template-pages/types";

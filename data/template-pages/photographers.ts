@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const invoiceTemplateForPhotographers: TemplatePage = {
   slug: "invoice-template-for-photographers",
-  title: "Invoice Template for Photographers — Sessions, Licensing & Prints",
+  title: "Invoice Template for Photographers - Sessions, Licensing & Prints",
   description:
     "Free invoice template for freelance photographers. Bill weddings, events, commercial shoots, editing, and image licensing with professional PDF invoices.",
   keywords: [
@@ -46,14 +46,14 @@ export const invoiceTemplateForPhotographers: TemplatePage = {
       id: "licensing-line-items",
       heading: "How to line-item image licensing",
       paragraphs: [
-        "Commercial clients often need explicit usage on the invoice: duration, media (web, print, OOH), and exclusivity. A line such as “Commercial license — 12 months, digital + social, non-exclusive” sets expectations and supports renewals later.",
+        "Commercial clients often need explicit usage on the invoice: duration, media (web, print, OOH), and exclusivity. A line such as “Commercial license - 12 months, digital + social, non-exclusive” sets expectations and supports renewals later.",
       ],
     },
     {
       id: "deposits-and-balances",
       heading: "Deposits, retainers, and final balances",
       paragraphs: [
-        "Show the deposit as a credit line or subtract it from the total so the client sees the remaining balance clearly. For event photography, many freelancers invoice 50% upfront and 50% before delivery — mirror that on each document.",
+        "Show the deposit as a credit line or subtract it from the total so the client sees the remaining balance clearly. For event photography, many freelancers invoice 50% upfront and 50% before delivery - mirror that on each document.",
       ],
     },
   ],

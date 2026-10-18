@@ -3,12 +3,12 @@ import type { SeoLandingPage } from "./types";
 export const freelanceContractorInvoiceFormatInrUsClients: SeoLandingPage = {
   slug: "freelance-contractor-invoice-format-inr-us-clients",
   title:
-    "Freelance Contractor Invoice Format in INR for US Clients — India Billing Guide",
+    "Freelance Contractor Invoice Format in INR for US Clients - India Billing Guide",
   metaDescription:
-    "How Indian freelancers invoice US clients in INR or USD — contractor invoice format, FIRC, GST export, SWIFT and Wise payment fields, and free invoice template.",
+    "How Indian freelancers invoice US clients in INR or USD - contractor invoice format, FIRC, GST export, SWIFT and Wise payment fields, and free invoice template.",
   h1: "Freelance contractor invoice format in INR for US clients",
   heroSummary:
-    "Indian freelancers and contractors billing American clients need the right invoice format — currency choice (INR vs USD), export or LUT notes, bank SWIFT details, and SAC codes. This guide and free tool cover the full workflow.",
+    "Indian freelancers and contractors billing American clients need the right invoice format - currency choice (INR vs USD), export or LUT notes, bank SWIFT details, and SAC codes. This guide and free tool cover the full workflow.",
   keywords: [
     "freelance contractor invoice format in INR for US clients",
     "India freelancer invoice US client",
@@ -24,13 +24,13 @@ export const freelanceContractorInvoiceFormatInrUsClients: SeoLandingPage = {
     "GST export invoice fields for US clients",
     "SWIFT, Wise, and FIRC-ready payment notes",
     "SAC codes for professional services",
-    "Free PDF export for contractor invoices",
+    "PDF export on Cloud for contractor invoices",
   ],
   features: [
     {
       title: "Currency flexibility",
       description:
-        "Bill US clients in USD (most common) or INR when agreed — show currency clearly on every line item.",
+        "Bill US clients in USD (most common) or INR when agreed - show currency clearly on every line item.",
     },
     {
       title: "India compliance fields",

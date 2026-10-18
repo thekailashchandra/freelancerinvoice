@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SupportTipLink } from "@/components/support-tip-link";
 import { siteConfig } from "@/data/site";
 
 export function AppFooter() {
@@ -10,7 +9,9 @@ export function AppFooter() {
         <Link href="/pricing" className="hover:text-foreground hover:underline">
           Pricing
         </Link>
-        <SupportTipLink className="text-primary hover:text-primary" />
+        <Link href="/subscribe" className="hover:text-foreground hover:underline">
+          Cloud plan
+        </Link>
       </div>
     </footer>
   );

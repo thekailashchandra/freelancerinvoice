@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const invoiceTemplateForVideoEditors: TemplatePage = {
   slug: "invoice-template-for-video-editors",
-  title: "Invoice Template for Video Editors — Projects, Revisions & Licensing",
+  title: "Invoice Template for Video Editors - Projects, Revisions & Licensing",
   description:
     "Free invoice template for freelance video editors. Bill per minute, per project, revisions, color grade, and delivery formats with professional PDF invoices.",
   keywords: [
@@ -33,12 +33,12 @@ export const invoiceTemplateForVideoEditors: TemplatePage = {
       id: "line-items",
       heading: "Common line items for post-production",
       list: [
-        "Rough cut — X minutes of source to Y minute deliverable",
+        "Rough cut - X minutes of source to Y minute deliverable",
         "Fine cut + sound sync",
         "Color grade (basic or advanced)",
-        "Motion graphics package — lower thirds, titles",
+        "Motion graphics package - lower thirds, titles",
         "Revision round beyond included count",
-        "Export pack — 16:9, 9:16, captions file",
+        "Export pack - 16:9, 9:16, captions file",
       ],
     },
     {
@@ -70,17 +70,17 @@ export const invoiceTemplateForVideoEditors: TemplatePage = {
     {
       question: "Should I list export formats on the invoice?",
       answer:
-        "Yes — note resolutions and aspect ratios delivered (1080p, 4K, vertical cut) so clients cannot expect unlimited re-exports without a new line item.",
+        "Yes - note resolutions and aspect ratios delivered (1080p, 4K, vertical cut) so clients cannot expect unlimited re-exports without a new line item.",
     },
     {
       question: "Can I invoice YouTube or creator clients professionally?",
       answer:
-        "Absolutely. Use clear project titles (e.g. “March vlog batch — 4 videos”) and PDF invoices even for smaller creators — it builds trust and tax records.",
+        "Absolutely. Use clear project titles (e.g. “March vlog batch - 4 videos”) and PDF invoices even for smaller creators - it builds trust and tax records.",
     },
     {
       question: "What is the fastest way to make a video editor invoice?",
       answer:
-        "Use Invoice for Freelance: add line items, preview live, download PDF, and save to cloud history — free for freelancers.",
+        "Use Invoice for Freelance: add line items, preview live, download PDF, and save to cloud history - free for freelancers.",
     },
   ],
 };

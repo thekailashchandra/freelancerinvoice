@@ -3,7 +3,7 @@
 import { modernTheme } from "@/lib/invoice-modern-theme";
 
 export function formatModernHeaderDate(dateString: string): string {
-  if (!dateString) return "DATE. —";
+  if (!dateString) return "DATE. -";
   const date = new Date(`${dateString}T12:00:00`);
   if (Number.isNaN(date.getTime())) return `DATE. ${dateString}`;
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -13,7 +13,7 @@ export function formatModernHeaderDate(dateString: string): string {
 }
 
 export function formatModernMetaDate(dateString: string): string {
-  if (!dateString) return "—";
+  if (!dateString) return "-";
   const date = new Date(`${dateString}T12:00:00`);
   if (Number.isNaN(date.getTime())) return dateString;
   return new Intl.DateTimeFormat("en-GB", {

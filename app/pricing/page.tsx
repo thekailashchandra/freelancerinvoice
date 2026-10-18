@@ -6,7 +6,7 @@ import { pricingPageKeywords } from "@/data/page-keywords";
 import { siteConfig } from "@/data/site";
 
 const title = "Pricing";
-const description = `${siteConfig.name} is free for freelancers. Classic template PDF export and print are $0. Premium templates are an optional one-time unlock.`;
+const description = `${siteConfig.name} is free to self-host. The hosted Cloud plan is ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere. It unlocks PDF download, printing, brand colors, and every template.`;
 
 export const metadata: Metadata = {
   title,
@@ -17,7 +17,8 @@ export const metadata: Metadata = {
   },
   ...buildSocialMetadata({
     title: `Pricing | ${siteConfig.name}`,
-    description: "Free invoice generator for freelancers. Optional premium template unlocks and Ko-fi tips.",
+    description:
+      "Self-host for free or subscribe to Cloud for ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere. Preview invoices free; unlock PDF and print with Cloud.",
     path: "/pricing",
   }),
 };

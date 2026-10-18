@@ -30,7 +30,7 @@ export function BlogIndexContent() {
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
           Expert guides from {siteConfig.name} on invoicing operations, client
           contracts, scope management, tax compliance, and cross-border payments
-          — not just invoice templates.
+          - not just invoice templates.
         </p>
         <Link
           href="/freelance-finances"

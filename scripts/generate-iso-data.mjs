@@ -34,7 +34,7 @@ const EURO_ZONE = new Set([
   "LT", "LU", "LV", "MT", "NL", "PT", "SI", "SK", "MC", "SM", "VA", "ME", "XK",
 ]);
 
-/** Primary legal tender by country (partial — unlisted countries use EUR zone or USD). */
+/** Primary legal tender by country (partial - unlisted countries use EUR zone or USD). */
 const COUNTRY_CURRENCY = {
   US: "USD", CA: "CAD", GB: "GBP", AU: "AUD", NZ: "NZD", IN: "INR", JP: "JPY",
   CN: "CNY", CH: "CHF", SE: "SEK", NO: "NOK", DK: "DKK", PL: "PLN", CZ: "CZK",

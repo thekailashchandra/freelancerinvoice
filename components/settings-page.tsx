@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Building2, MessageSquarePlus, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/page-transition";
+import { CloudPlanCard } from "@/components/cloud-plan-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ import {
   type CountryCode,
 } from "@/lib/country";
 import { PaymentFieldsForm } from "@/components/payment-fields-form";
+import { normalizeBrandColor } from "@/lib/brand-color";
 import { SettingsRazorpayCard } from "@/components/settings-razorpay-card";
 import { useRazorpayAccess } from "@/hooks/use-razorpay-access";
 import type { AssetKind } from "@/lib/supabase/asset-storage";
@@ -126,6 +128,8 @@ export default function SettingsPage() {
         </p>
       </div>
 
+      <CloudPlanCard variant="card" />
+
       <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -210,6 +214,34 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="brandColor">Brand color</Label>
+                <div className="flex items-center gap-3">
+                  <input
+                    id="brandColor"
+                    type="color"
+                    value={normalizeBrandColor(form.brandColor)}
+                    onChange={(e) =>
+                      setForm({ ...form, brandColor: e.target.value })
+                    }
+                    className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-background p-1"
+                  />
+                  <Input
+                    value={form.brandColor ?? "#111111"}
+                    onChange={(e) =>
+                      setForm({ ...form, brandColor: e.target.value })
+                    }
+                    className="max-w-[160px] font-mono uppercase"
+                    maxLength={7}
+                    aria-label="Brand color hex value"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Used by the Corporate, Studio, Geometric, and Swiss invoice
+                  templates. Enter a hex value such as #111111.
+                </p>
+              </div>
+
               <div className="space-y-3 sm:col-span-2">
                 <Label className="text-base">{t("settings.paymentDetails")}</Label>
                 <p className="text-xs text-muted-foreground">

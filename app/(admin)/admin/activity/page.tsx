@@ -121,9 +121,9 @@ export default function SuperadminActivityPage() {
                       <td className="px-4 py-3 font-medium">
                         {formatAction(row.action)}
                       </td>
-                      <td className="px-4 py-3">{row.actorEmail ?? "—"}</td>
+                      <td className="px-4 py-3">{row.actorEmail ?? "-"}</td>
                       <td className="px-4 py-3">
-                        {row.resourceType ?? "—"}
+                        {row.resourceType ?? "-"}
                         {row.resourceId ? (
                           <p className="font-mono text-xs text-muted-foreground">
                             {row.resourceId}
@@ -136,7 +136,7 @@ export default function SuperadminActivityPage() {
                             {JSON.stringify(row.metadata, null, 2)}
                           </pre>
                         ) : (
-                          "—"
+                          "-"
                         )}
                       </td>
                     </tr>

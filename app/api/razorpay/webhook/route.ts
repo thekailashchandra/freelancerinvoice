@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { logActivity } from "@/lib/activity-log";
 import { verifyRazorpayWebhookSignature } from "@/lib/razorpay-server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { activateSubscription } from "@/lib/subscription-server";
 
 export async function POST(request: NextRequest) {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET?.trim();
   const rawBody = await request.text();
 
   if (!webhookSecret) {
-    console.error("RAZORPAY_WEBHOOK_SECRET is not set — rejecting webhook");
+    console.error("RAZORPAY_WEBHOOK_SECRET is not set - rejecting webhook");
     return NextResponse.json(
       { error: "Webhook verification is not configured." },
       { status: 503 }
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
 
       const { data: row } = await admin
         .from("razorpay_payments")
-        .select("invoice_id, user_id, purpose")
+        .select("invoice_id, user_id, purpose, template_id, metadata")
         .eq("razorpay_order_id", orderId)
         .single();
 
@@ -66,6 +67,21 @@ export async function POST(request: NextRequest) {
           .update({ status: "paid", updated_at: new Date().toISOString() })
           .eq("id", row.invoice_id)
           .eq("user_id", row.user_id);
+      }
+
+      const isSubscriptionPayment =
+        row?.purpose === "subscription" ||
+        (row?.purpose === "template" &&
+          row?.template_id === "cloud_monthly");
+
+      if (isSubscriptionPayment && row?.user_id) {
+        const interval =
+          row.metadata?.interval === "yearly" ? "yearly" : "monthly";
+        try {
+          await activateSubscription(row.user_id, paymentId, interval);
+        } catch (err) {
+          console.error("Webhook subscription activation failed:", err);
+        }
       }
 
       void logActivity({

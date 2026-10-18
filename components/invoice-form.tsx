@@ -30,17 +30,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, generateId } from "@/lib/utils";
 
 interface InvoiceFormProps {
   invoice: Invoice;
   onChange: (invoice: Invoice) => void;
-  /** Guest landing mode — logo uploads stay in-browser (no account). */
+  /** Guest landing mode - logo uploads stay in-browser (no account). */
   guestMode?: boolean;
   savedClients?: SavedClient[];
   onClientsChange?: (clients: SavedClient[]) => void;
-  /** Logged-in create page — customer first, compact layout */
+  /** Logged-in create page - customer first, compact layout */
   createFlow?: boolean;
+  /** Dense field spacing for the create invoice workspace */
+  compact?: boolean;
 }
 
 function taxEnabled(invoice: Invoice): boolean {
@@ -101,12 +103,18 @@ export function InvoiceForm({
   savedClients = [],
   onClientsChange,
   createFlow = false,
+  compact = false,
 }: InvoiceFormProps) {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const isLoggedInCreate = createFlow && !guestMode && !!onClientsChange;
   const isGuestRelaxed = guestMode && !createFlow;
-  const fieldClass = isLoggedInCreate || isGuestRelaxed ? "h-11" : undefined;
+  const isCompactCreate = isLoggedInCreate && compact;
+  const fieldClass = isCompactCreate
+    ? "h-9"
+    : isLoggedInCreate || isGuestRelaxed
+      ? "h-11"
+      : undefined;
 
   const currency = invoice.currencyCode;
   const currencySymbol = getCurrencySymbol(currency);
@@ -162,6 +170,42 @@ export function InvoiceForm({
 
   const updatePayment = (payment: Invoice["payment"]) => {
     onChange({ ...invoice, payment });
+  };
+
+  const additionalCharges = invoice.taxDiscount.additionalCharges ?? [];
+
+  const updateAdditionalCharges = (
+    charges: NonNullable<Invoice["taxDiscount"]["additionalCharges"]>
+  ) => {
+    onChange({
+      ...invoice,
+      taxDiscount: { ...invoice.taxDiscount, additionalCharges: charges },
+    });
+  };
+
+  const addAdditionalCharge = () => {
+    updateAdditionalCharges([
+      ...additionalCharges,
+      { id: generateId(), label: "", amount: 0 },
+    ]);
+  };
+
+  const removeAdditionalCharge = (id: string) => {
+    updateAdditionalCharges(
+      additionalCharges.filter((charge) => charge.id !== id)
+    );
+  };
+
+  const updateAdditionalCharge = (
+    id: string,
+    field: "label" | "amount",
+    value: string | number
+  ) => {
+    updateAdditionalCharges(
+      additionalCharges.map((charge) =>
+        charge.id === id ? { ...charge, [field]: value } : charge
+      )
+    );
   };
 
   const updateService = (
@@ -235,10 +279,16 @@ export function InvoiceForm({
     <div
       className={cn(
         "rounded-xl bg-muted/40",
-        isLoggedInCreate ? "p-5 md:p-6" : isGuestRelaxed ? "p-5 md:p-6" : "p-4 md:p-5"
+        isCompactCreate
+          ? "p-3"
+          : isLoggedInCreate
+            ? "p-5 md:p-6"
+            : isGuestRelaxed
+              ? "p-5 md:p-6"
+              : "p-4 md:p-5"
       )}
     >
-      <div className={cn(isLoggedInCreate || isGuestRelaxed ? "space-y-5" : "space-y-4")}>
+      <div className={cn(isCompactCreate ? "space-y-3" : isLoggedInCreate || isGuestRelaxed ? "space-y-5" : "space-y-4")}>
         {invoice.services.map((service) => {
           const lineTotal = service.quantity * service.price;
           return (
@@ -246,41 +296,46 @@ export function InvoiceForm({
               key={service.id}
               className={cn(
                 "rounded-xl border border-border/50 bg-background/60",
-                isLoggedInCreate || isGuestRelaxed ? "p-5" : "p-4"
+                isCompactCreate
+                  ? "p-3"
+                  : isLoggedInCreate || isGuestRelaxed
+                    ? "p-5"
+                    : "p-4"
               )}
             >
-              <div className="min-w-0 space-y-3">
-                <Label className="text-xs text-muted-foreground">Item</Label>
-                <Input
-                  className={fieldClass}
-                  placeholder="Product or service"
-                  value={service.name}
-                  onChange={(e) =>
-                    updateService(service.id, "name", e.target.value)
-                  }
-                />
-                <Textarea
-                  placeholder="Description (optional)"
-                  value={service.description}
-                  onChange={(e) =>
-                    updateService(service.id, "description", e.target.value)
-                  }
-                  rows={2}
-                  className="min-h-[56px] resize-y text-sm"
-                />
-              </div>
-
-              <div className="mt-3 space-y-3 sm:space-y-0">
-                <div className="grid grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-2">
-                  <div className="w-full shrink-0 sm:w-17">
-                    <Label className="mb-1.5 block text-xs text-muted-foreground">
-                      Qty
+              {isCompactCreate ? (
+                <div className="grid gap-2 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_56px_100px_100px_36px] md:items-end">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Item</Label>
+                    <Input
+                      className="h-9"
+                      placeholder="Product or service"
+                      value={service.name}
+                      onChange={(e) =>
+                        updateService(service.id, "name", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">
+                      Description
                     </Label>
+                    <Input
+                      className="h-9"
+                      placeholder="Description (optional)"
+                      value={service.description}
+                      onChange={(e) =>
+                        updateService(service.id, "description", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">Qty</Label>
                     <Input
                       type="number"
                       min={1}
                       inputMode="numeric"
-                      className="h-11 px-2 text-center tabular-nums sm:h-10"
+                      className="h-9 px-2 text-center tabular-nums"
                       value={service.quantity}
                       onChange={(e) =>
                         updateService(
@@ -291,13 +346,12 @@ export function InvoiceForm({
                       }
                     />
                   </div>
-
-                  <div className="min-w-0 flex-1">
-                    <Label className="mb-1.5 block text-xs text-muted-foreground">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">
                       Rate
                     </Label>
-                    <div className="flex h-11 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm sm:h-10">
-                      <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
+                    <div className="flex h-9 min-w-0 overflow-hidden rounded-lg border border-input bg-background">
+                      <span className="flex w-8 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
                         {currencySymbol}
                       </span>
                       <input
@@ -317,25 +371,21 @@ export function InvoiceForm({
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-end gap-2">
-                  <div className="min-w-0 flex-1">
-                    <Label className="mb-1.5 block text-xs text-muted-foreground">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] text-muted-foreground">
                       Amount
                     </Label>
-                    <div className="flex h-11 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-3 text-sm font-semibold tabular-nums sm:h-10">
+                    <div className="flex h-9 min-w-0 items-center justify-end rounded-lg border border-input bg-muted/30 px-2 text-sm font-semibold tabular-nums">
                       <span className="truncate">
                         {formatInvoiceMoney(lineTotal, currency)}
                       </span>
                     </div>
                   </div>
-
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-11 w-11 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive sm:h-10 sm:w-10"
+                    className="h-9 w-9 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     onClick={() => removeService(service.id)}
                     disabled={invoice.services.length <= 1}
                     aria-label="Remove line item"
@@ -343,13 +393,111 @@ export function InvoiceForm({
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="min-w-0 space-y-3">
+                    <Label className="text-xs text-muted-foreground">Item</Label>
+                    <Input
+                      className={fieldClass}
+                      placeholder="Product or service"
+                      value={service.name}
+                      onChange={(e) =>
+                        updateService(service.id, "name", e.target.value)
+                      }
+                    />
+                    <Textarea
+                      placeholder="Description (optional)"
+                      value={service.description}
+                      onChange={(e) =>
+                        updateService(service.id, "description", e.target.value)
+                      }
+                      rows={2}
+                      className="min-h-[56px] resize-y text-sm"
+                    />
+                  </div>
+
+                  <div className="mt-3 space-y-3 sm:space-y-0">
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-2">
+                      <div className="w-full shrink-0 sm:w-17">
+                        <Label className="mb-1.5 block text-xs text-muted-foreground">
+                          Qty
+                        </Label>
+                        <Input
+                          type="number"
+                          min={1}
+                          inputMode="numeric"
+                          className="h-11 px-2 text-center tabular-nums sm:h-10"
+                          value={service.quantity}
+                          onChange={(e) =>
+                            updateService(
+                              service.id,
+                              "quantity",
+                              Number(e.target.value) || 1
+                            )
+                          }
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <Label className="mb-1.5 block text-xs text-muted-foreground">
+                          Rate
+                        </Label>
+                        <div className="flex h-11 min-w-0 overflow-hidden rounded-xl border border-input bg-background/50 shadow-sm sm:h-10">
+                          <span className="flex w-9 shrink-0 items-center justify-center border-r border-input/60 text-xs text-muted-foreground">
+                            {currencySymbol}
+                          </span>
+                          <input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            inputMode="decimal"
+                            className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-sm tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                            value={service.price || ""}
+                            onChange={(e) =>
+                              updateService(
+                                service.id,
+                                "price",
+                                Number(e.target.value) || 0
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-end gap-2">
+                      <div className="min-w-0 flex-1">
+                        <Label className="mb-1.5 block text-xs text-muted-foreground">
+                          Amount
+                        </Label>
+                        <div className="flex h-11 min-w-0 items-center justify-end rounded-xl border border-input bg-muted/30 px-3 text-sm font-semibold tabular-nums sm:h-10">
+                          <span className="truncate">
+                            {formatInvoiceMoney(lineTotal, currency)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-11 w-11 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive sm:h-10 sm:w-10"
+                        onClick={() => removeService(service.id)}
+                        disabled={invoice.services.length <= 1}
+                        aria-label="Remove line item"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
             </article>
           );
         })}
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className={cn("flex justify-center", isCompactCreate ? "mt-3" : "mt-6")}>
         <Button
           type="button"
           variant="outline"
@@ -363,7 +511,87 @@ export function InvoiceForm({
     </div>
   );
 
-  const businessDetailsBlock = (
+  const businessFields = (
+    <div className={cn(isCompactCreate ? "grid gap-3 md:grid-cols-4" : "space-y-2")}>
+      <div className="space-y-1.5">
+        <Label htmlFor="companyName">Business name</Label>
+        <Input
+          id="companyName"
+          className={fieldClass}
+          placeholder="Your name or business name"
+          value={invoice.company.companyName}
+          onChange={(e) => updateCompany("companyName", e.target.value)}
+          required
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="companyEmail">Email</Label>
+        <Input
+          id="companyEmail"
+          className={fieldClass}
+          type="email"
+          placeholder="Email address"
+          value={invoice.company.companyEmail}
+          onChange={(e) => updateCompany("companyEmail", e.target.value)}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="companyPhone">Phone</Label>
+        <Input
+          id="companyPhone"
+          className={fieldClass}
+          type="tel"
+          placeholder="Phone"
+          value={invoice.company.companyPhone}
+          onChange={(e) => updateCompany("companyPhone", e.target.value)}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="companyGstin">GSTIN (optional)</Label>
+        <Input
+          id="companyGstin"
+          className={fieldClass}
+          placeholder="Your GSTIN (optional)"
+          value={invoice.company.gstin ?? ""}
+          onChange={(e) => updateCompany("gstin", e.target.value)}
+        />
+      </div>
+      <div className="space-y-1.5 md:col-span-4">
+        <Label htmlFor="companyAddress">Address</Label>
+        <Textarea
+          id="companyAddress"
+          placeholder="Street, city, state, country"
+          value={invoice.company.companyAddress}
+          onChange={(e) => updateCompany("companyAddress", e.target.value)}
+          rows={1}
+          className={cn(
+            "resize-y",
+            isCompactCreate ? "min-h-[38px]" : "min-h-[60px]"
+          )}
+        />
+      </div>
+    </div>
+  );
+
+  const businessDetailsBlock = isCompactCreate ? (
+    <details className="group rounded-xl border border-border bg-muted/20">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 marker:content-none [&::-webkit-details-marker]:hidden">
+        <span className="min-w-0 truncate text-sm font-medium">
+          {invoice.company.companyName || "Your business details"}
+          <span className="ml-1.5 font-normal text-muted-foreground">
+            - business details
+          </span>
+        </span>
+        <span className="shrink-0 text-xs text-muted-foreground group-open:hidden">
+          Edit
+        </span>
+        <span className="hidden shrink-0 text-xs text-muted-foreground group-open:inline">
+          Close
+        </span>
+      </summary>
+      <div className="border-t border-border p-3">{businessFields}</div>
+    </details>
+  ) : (
     <DetailBox
       title="Your business details"
       description={
@@ -378,60 +606,7 @@ export function InvoiceForm({
       }
       relaxed
     >
-      <div className="space-y-2">
-        <Label htmlFor="companyName">Business name</Label>
-        <Input
-          id="companyName"
-          className={fieldClass}
-          placeholder="Your name or business name"
-          value={invoice.company.companyName}
-          onChange={(e) => updateCompany("companyName", e.target.value)}
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="companyEmail">Email</Label>
-        <Input
-          id="companyEmail"
-          className={fieldClass}
-          type="email"
-          placeholder="Email address"
-          value={invoice.company.companyEmail}
-          onChange={(e) => updateCompany("companyEmail", e.target.value)}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="companyPhone">Phone</Label>
-        <Input
-          id="companyPhone"
-          className={fieldClass}
-          type="tel"
-          placeholder="Phone"
-          value={invoice.company.companyPhone}
-          onChange={(e) => updateCompany("companyPhone", e.target.value)}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="companyAddress">Address</Label>
-        <Textarea
-          id="companyAddress"
-          placeholder="Street, city, state, country"
-          value={invoice.company.companyAddress}
-          onChange={(e) => updateCompany("companyAddress", e.target.value)}
-          rows={3}
-          className="min-h-[96px] resize-y"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="companyGstin">GSTIN (optional)</Label>
-        <Input
-          id="companyGstin"
-          className={fieldClass}
-          placeholder="Your GSTIN (optional)"
-          value={invoice.company.gstin ?? ""}
-          onChange={(e) => updateCompany("gstin", e.target.value)}
-        />
-      </div>
+      {businessFields}
     </DetailBox>
   );
 
@@ -439,11 +614,13 @@ export function InvoiceForm({
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div
         className={cn(
-          isLoggedInCreate
-            ? "space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-7"
-            : isGuestRelaxed
-              ? "space-y-6 p-5 sm:p-6 lg:p-7"
-              : "space-y-5 p-4 sm:p-5"
+          isCompactCreate
+            ? "space-y-3 p-3 sm:p-4"
+            : isLoggedInCreate
+              ? "space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-7"
+              : isGuestRelaxed
+                ? "space-y-6 p-5 sm:p-6 lg:p-7"
+                : "space-y-5 p-4 sm:p-5"
         )}
       >
         {isLoggedInCreate && businessDetailsBlock}
@@ -456,7 +633,9 @@ export function InvoiceForm({
             onSelectClient={handleSelectClient}
             onClientsChange={onClientsChange}
             onEditClientField={updateClient}
-            relaxed
+            relaxed={!isCompactCreate}
+            compact={isCompactCreate}
+            showInlineFields={isCompactCreate}
           />
         )}
 
@@ -763,44 +942,71 @@ export function InvoiceForm({
         {!isLoggedInCreate && lineItemsBlock}
 
         {/* Notes + totals */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                placeholder="Thanks for your business."
-                value={invoice.notes}
-                onChange={(e) => update({ notes: e.target.value })}
-                rows={3}
-              />
+        <div className={cn("grid md:grid-cols-2", isCompactCreate ? "gap-4" : "gap-6")}>
+          <div className={cn(isCompactCreate ? "space-y-3" : "space-y-4")}>
+            <div className={cn(isCompactCreate && "grid gap-3 sm:grid-cols-2")}>
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Thanks for your business."
+                  value={invoice.notes}
+                  onChange={(e) => update({ notes: e.target.value })}
+                  rows={isCompactCreate ? 2 : 3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="termsAndConditions">Terms &amp; conditions</Label>
+                <Textarea
+                  id="termsAndConditions"
+                  placeholder="Optional legal or payment terms for the client."
+                  value={invoice.termsAndConditions ?? ""}
+                  onChange={(e) =>
+                    update({ termsAndConditions: e.target.value })
+                  }
+                  rows={isCompactCreate ? 2 : 3}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="termsAndConditions">Terms &amp; conditions</Label>
-              <Textarea
-                id="termsAndConditions"
-                placeholder="Optional legal or payment terms for the client."
-                value={invoice.termsAndConditions ?? ""}
-                onChange={(e) =>
-                  update({ termsAndConditions: e.target.value })
-                }
-                rows={3}
-              />
-            </div>
-            <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-4">
-              <Label className="text-sm font-semibold text-primary">
-                Bank account details
-              </Label>
-              <PaymentFieldsForm
-                countryCode={countryCode}
-                payment={sanitizePaymentForCountry(invoice.payment, countryCode)}
-                onChange={updatePayment}
-                idPrefix="invoice-pay"
-              />
-            </div>
+            {isCompactCreate ? (
+              <details className="rounded-xl border border-border/60 bg-muted/20">
+                <summary className="cursor-pointer list-none px-3 py-2 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
+                  Bank account details
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </summary>
+                <div className="px-3 pb-3">
+                  <PaymentFieldsForm
+                    countryCode={countryCode}
+                    payment={sanitizePaymentForCountry(
+                      invoice.payment,
+                      countryCode
+                    )}
+                    onChange={updatePayment}
+                    idPrefix="invoice-pay"
+                  />
+                </div>
+              </details>
+            ) : (
+              <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-4">
+                <Label className="text-sm font-semibold text-primary">
+                  Bank account details
+                </Label>
+                <PaymentFieldsForm
+                  countryCode={countryCode}
+                  payment={sanitizePaymentForCountry(
+                    invoice.payment,
+                    countryCode
+                  )}
+                  onChange={updatePayment}
+                  idPrefix="invoice-pay"
+                />
+              </div>
+            )}
           </div>
 
-          <div className="space-y-3 rounded-xl border border-border/60 bg-muted/30 p-5">
+          <div className={cn("space-y-3 rounded-xl border border-border/60 bg-muted/30", isCompactCreate ? "p-4" : "p-5")}>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Invoice summary
             </h3>
@@ -964,26 +1170,78 @@ export function InvoiceForm({
               />
             </div>
 
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <Label htmlFor="shipping" className="text-muted-foreground">
-                Shipping fee
-              </Label>
-              <Input
-                id="shipping"
-                type="number"
-                min={0}
-                className="h-8 w-28 text-right"
-                value={invoice.taxDiscount.shippingFee || ""}
-                onChange={(e) =>
-                  onChange({
-                    ...invoice,
-                    taxDiscount: {
-                      ...invoice.taxDiscount,
-                      shippingFee: Number(e.target.value) || 0,
-                    },
-                  })
-                }
-              />
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-muted-foreground">
+                  Additional charges
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 gap-1 px-2 text-xs"
+                  onClick={addAdditionalCharge}
+                >
+                  <Plus className="h-3 w-3" />
+                  Add charge
+                </Button>
+              </div>
+              {additionalCharges.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Add setup fees, travel, hosting, or any custom amount.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {additionalCharges.map((charge) => (
+                    <div key={charge.id} className="flex items-center gap-2">
+                      <Input
+                        aria-label="Charge label"
+                        placeholder="Charge label"
+                        value={charge.label}
+                        onChange={(e) =>
+                          updateAdditionalCharge(
+                            charge.id,
+                            "label",
+                            e.target.value
+                          )
+                        }
+                        className="h-8 min-w-0 flex-1 text-xs"
+                      />
+                      <div className="flex h-8 w-28 shrink-0 overflow-hidden rounded-lg border border-input bg-background">
+                        <span className="flex w-7 shrink-0 items-center justify-center text-xs text-muted-foreground">
+                          {currencySymbol}
+                        </span>
+                        <input
+                          aria-label={`${charge.label || "Additional charge"} amount`}
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          inputMode="decimal"
+                          className="min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-xs tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          value={charge.amount || ""}
+                          onChange={(e) =>
+                            updateAdditionalCharge(
+                              charge.id,
+                              "amount",
+                              Number(e.target.value) || 0
+                            )
+                          }
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => removeAdditionalCharge(charge.id)}
+                        aria-label="Remove additional charge"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between border-t border-border pt-3 text-base font-bold">

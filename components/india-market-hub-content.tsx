@@ -53,7 +53,7 @@ export function IndiaMarketHubContent({ workspace }: IndiaMarketHubContentProps)
 
       <LandingWorkflowSteps
         heading="Three steps to a GST-compliant contractor invoice"
-        subheading="Fill SAC-coded line items, preview CGST/SGST or IGST lines, and download your PDF — no signup required."
+        subheading="Fill SAC-coded line items, preview CGST/SGST or IGST lines, and export your PDF on Cloud."
       />
 
       <section className="mt-14" aria-labelledby="india-paths-heading">
@@ -86,7 +86,7 @@ export function IndiaMarketHubContent({ workspace }: IndiaMarketHubContentProps)
           Cross-border payout channels for Indian freelancers
         </h2>
         <p className="mt-3 max-w-3xl text-muted-foreground">
-          Compare local and international payout rails — conversion fees, speed,
+          Compare local and international payout rails - conversion fees, speed,
           and tax withholding declarations before you choose how US and EU clients
           pay you.
         </p>
@@ -101,7 +101,7 @@ export function IndiaMarketHubContent({ workspace }: IndiaMarketHubContentProps)
 
       <div className="mt-12 rounded-2xl border border-primary/20 bg-primary/5 px-6 py-8 text-center">
         <p className="text-sm text-muted-foreground">
-          {siteConfig.name} — built for Indian independent contractors and global
+          {siteConfig.name} - built for Indian independent contractors and global
           freelancers alike.
         </p>
         <Button className="mt-4 gap-2" asChild>

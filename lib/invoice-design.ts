@@ -1,4 +1,4 @@
-/** Shared invoice document design tokens (hex only — PDF-safe) */
+/** Shared invoice document design tokens (hex only - PDF-safe) */
 
 import {
   invoicePdfFontFamily,
@@ -51,11 +51,11 @@ export function getLogoDimensions(logoHeight?: number) {
   };
 }
 
-/** @deprecated Use getInvoicePageSpec() — kept for legacy imports */
+/** @deprecated Use getInvoicePageSpec() - kept for legacy imports */
 export const invoiceDesign = {
-  /** Screen preview — self-hosted Geist via CSS variable */
+  /** Screen preview - self-hosted Geist via CSS variable */
   font: invoicePreviewFontFamily,
-  /** PDF export — system fonts only (no external font requests in iframe) */
+  /** PDF export - system fonts only (no external font requests in iframe) */
   pdfFont: invoicePdfFontFamily,
   fontMono: "'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace",
   page: {
@@ -79,13 +79,13 @@ export const invoiceDesign = {
     textMuted: "#6b7280",
     label: "#4b5563",
     accent: "#0f172a",
-    accentBlue: "#1d4ed8",
-    accentLine: "#1d4ed8",
+    accentBlue: "#111111",
+    accentLine: "#111111",
     tableHeader: "#111827",
     tableHeaderText: "#ffffff",
     balanceDueBg: "#f3f4f6",
     total: "#111827",
-    discount: "#047857",
+    discount: "#111111",
   },
   logo: {
     defaultHeight: 80,
@@ -98,7 +98,7 @@ export const invoiceDesign = {
     maxHeight: 52,
     maxWidth: 180,
   },
-  /** Long text in table cells / notes — prevents horizontal overflow */
+  /** Long text in table cells / notes - prevents horizontal overflow */
   wrapText: {
     wordBreak: "break-word",
     overflowWrap: "anywhere",
@@ -120,10 +120,10 @@ export const invoiceDesign = {
 } as const;
 
 export const invoiceStatusColors = {
-  draft: { bg: "#f3f4f6", color: "#4b5563", border: "#d1d5db" },
-  paid: { bg: "#ecfdf5", color: "#047857", border: "#6ee7b7" },
-  pending: { bg: "#fffbeb", color: "#b45309", border: "#fcd34d" },
-  sent: { bg: "#eff6ff", color: "#1d4ed8", border: "#93c5fd" },
-  overdue: { bg: "#fef2f2", color: "#b91c1c", border: "#fca5a5" },
+  draft: { bg: "#f3f3f3", color: "#555555", border: "#d1d1d1" },
+  paid: { bg: "#111111", color: "#fafafa", border: "#111111" },
+  pending: { bg: "#ffffff", color: "#111111", border: "#c9c9c9" },
+  sent: { bg: "#f1f1f1", color: "#111111", border: "#d1d1d1" },
+  overdue: { bg: "#ffffff", color: "#111111", border: "#111111" },
 } as const;
 

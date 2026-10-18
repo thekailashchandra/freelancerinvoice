@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchClients } from "@/lib/clients-repository";
 import { fetchInvoiceById } from "@/lib/invoice-repository";
 import { fetchProfile } from "@/lib/profile-repository";
+import { getSubscriptionAccess } from "@/lib/subscription-server";
 
 type PageProps = {
   searchParams: Promise<{ id?: string }>;
@@ -12,11 +13,13 @@ type PageProps = {
 export default async function CreateInvoicePage({ searchParams }: PageProps) {
   const { id: editId } = await searchParams;
 
-  const [initialSettings, initialInvoice, initialClients] = await Promise.all([
-    fetchProfile(),
-    editId ? fetchInvoiceById(editId) : Promise.resolve(null),
-    fetchClients(),
-  ]);
+  const [initialSettings, initialInvoice, initialClients, subscription] =
+    await Promise.all([
+      fetchProfile(),
+      editId ? fetchInvoiceById(editId) : Promise.resolve(null),
+      fetchClients(),
+      getSubscriptionAccess(),
+    ]);
 
   return (
     <Suspense
@@ -34,6 +37,7 @@ export default async function CreateInvoicePage({ searchParams }: PageProps) {
         initialSettings={initialSettings}
         initialInvoice={initialInvoice}
         initialClients={initialClients}
+        subscription={subscription}
       />
     </Suspense>
   );

@@ -54,7 +54,7 @@ export function formatInvoiceMoney(amount: number, currencyCode: string): string
   return `${symbol}${formatted}`;
 }
 
-/** HTML snippet for PDF export — symbol + amount only. */
+/** HTML snippet for PDF export - symbol + amount only. */
 export function invoiceMoneyHtml(amount: number, currencyCode: string): string {
   const money = formatInvoiceMoney(amount, currencyCode);
   return `<span style="white-space:nowrap">${money}</span>`;

@@ -76,7 +76,7 @@ export const faqItems = [
   {
     question: "Is this invoice generator free for freelancers?",
     answer:
-      "Yes. Invoice for Freelance offers a free account so you can create professional freelancer invoices, store them securely in the cloud, and export PDFs without manual formatting in Word or Excel.",
+      "The source is open source and free to self-host. On the hosted Cloud service, creating, editing, and previewing invoices is free. PDF download and printing are part of the Cloud plan - ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere.",
   },
   {
     question: "What should a freelancer invoice include?",
@@ -106,7 +106,7 @@ export const faqItems = [
   {
     question: "What is a freelance invoice used for?",
     answer:
-      "A freelance invoice is the formal bill you send after completing work. It tells your client what you delivered, what they owe, when payment is due, and how to pay you — so you get paid on time without awkward follow-ups.",
+      "A freelance invoice is the formal bill you send after completing work. It tells your client what you delivered, what they owe, when payment is due, and how to pay you - so you get paid on time without awkward follow-ups.",
   },
   {
     question: "How do I generate invoice for freelancers quickly?",
@@ -116,7 +116,7 @@ export const faqItems = [
   {
     question: "Why use an invoice template built for freelancers?",
     answer:
-      "Generic Word or Excel templates leave awkward blank space and miss fields freelancers need — project names, hourly blocks, international payment details, and branding. A purpose-built tool keeps every bill consistent and professional.",
+      "Generic Word or Excel templates leave awkward blank space and miss fields freelancers need - project names, hourly blocks, international payment details, and branding. A purpose-built tool keeps every bill consistent and professional.",
   },
   {
     question: "Who should use a self-employed invoice template?",
@@ -126,7 +126,7 @@ export const faqItems = [
   {
     question: "How can I get paid faster as a freelancer?",
     answer:
-      "Put clear payment terms and accepted methods directly on the invoice — bank transfer, UPI, Wise, PayPal, or wire details. Send the PDF promptly, track status in your dashboard, and follow up before the due date passes.",
+      "Put clear payment terms and accepted methods directly on the invoice - bank transfer, UPI, Wise, PayPal, or wire details. Send the PDF promptly, track status in your dashboard, and follow up before the due date passes.",
   },
   {
     question: "Can I print or download my freelance invoice?",
@@ -139,6 +139,7 @@ export const publicRoutes = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
   { path: "/features", changeFrequency: "monthly" as const, priority: 0.9 },
   { path: "/pricing", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/self-host", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/about", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "/contact", changeFrequency: "monthly" as const, priority: 0.6 },
   { path: "/blog", changeFrequency: "weekly" as const, priority: 0.9 },

@@ -4,7 +4,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
   slug: "how-to-create-freelance-invoice-in-india",
   title: "How to Create a Freelance Invoice in India",
   description:
-    "Step-by-step guide for Indian freelancers: GST invoices, HSN/SAC codes, UPI payments, export billing, international USD payments, and TDS — with tables, definitions, and FAQs.",
+    "Step-by-step guide for Indian freelancers: GST invoices, HSN/SAC codes, UPI payments, export billing, international USD payments, and TDS - with tables, definitions, and FAQs.",
   keywords: [
     "how to create freelance invoice in India",
     "freelancer invoice India GST",
@@ -63,7 +63,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
       step: 5,
       title: "Calculate GST or export treatment",
       description:
-        "Intra-state: CGST + SGST. Inter-state: IGST. Export under LUT may be zero-rated — confirm with your chartered accountant. Show tax breakdown explicitly.",
+        "Intra-state: CGST + SGST. Inter-state: IGST. Export under LUT may be zero-rated - confirm with your chartered accountant. Show tax breakdown explicitly.",
     },
     {
       step: 6,
@@ -97,7 +97,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
     {
       term: "Export invoice",
       definition:
-        "Invoice for services supplied to a foreign client. May be zero-rated under GST when export conditions and LUT/bond requirements are met — seek CA advice.",
+        "Invoice for services supplied to a foreign client. May be zero-rated under GST when export conditions and LUT/bond requirements are met - seek CA advice.",
     },
     {
       term: "International payment",
@@ -122,7 +122,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
     {
       term: "FIRC",
       definition:
-        "Foreign Inward Remittance Certificate — bank proof that foreign currency was received against an export invoice. Useful for GST and income records.",
+        "Foreign Inward Remittance Certificate - bank proof that foreign currency was received against an export invoice. Useful for GST and income records.",
     },
   ],
   tables: [
@@ -149,7 +149,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
         [
           "Consulting / professional",
           "998312",
-          "Business consulting — confirm exact SAC with CA",
+          "Business consulting - confirm exact SAC with CA",
         ],
         [
           "Photography / video production",
@@ -203,7 +203,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
         [
           "Same state client",
           "CGST + SGST",
-          "9% + 9% on taxable value (18% total — rate varies by service)",
+          "9% + 9% on taxable value (18% total - rate varies by service)",
         ],
         [
           "Different state client",
@@ -213,7 +213,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
         [
           "Export with LUT",
           "Zero-rated",
-          "No IGST if conditions met — note LUT on invoice",
+          "No IGST if conditions met - note LUT on invoice",
         ],
         [
           "Not GST registered",
@@ -276,7 +276,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
         {
           aspect: "GST",
           left: "CGST/SGST or IGST if registered",
-          right: "Zero-rated export possible with LUT — consult CA",
+          right: "Zero-rated export possible with LUT - consult CA",
         },
         {
           aspect: "TDS",
@@ -305,7 +305,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
     {
       question: "What SAC code should I use on a freelance invoice?",
       answer:
-        "Use the SAC matching your primary service — e.g. IT services often use 998314. SAC codes vary by activity; confirm with a chartered accountant before filing returns.",
+        "Use the SAC matching your primary service - e.g. IT services often use 998314. SAC codes vary by activity; confirm with a chartered accountant before filing returns.",
     },
     {
       question: "Should I put UPI on my invoice?",
@@ -330,7 +330,7 @@ export const howToCreateFreelanceInvoiceInIndia: AiGuide = {
     {
       question: "Can I use a free tool to create India freelancer invoices?",
       answer:
-        "Yes. Invoice for Freelance supports INR, UPI fields, GST-related details, PDF export, and templates for India, GST, and USD billing — free for freelancers.",
+        "Yes. Invoice for Freelance supports INR, UPI fields, GST-related details, PDF export, and templates for India, GST, and USD billing - free for freelancers.",
     },
   ],
   relatedLinks: [

@@ -82,8 +82,8 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
   onRemoveBranding,
 }: InvoicePreviewBoldProps) {
   const d = useMemo(
-    () => resolveTemplateDesign(invoice.templateId ?? "bold"),
-    [invoice.templateId]
+    () => resolveTemplateDesign(invoice.templateId ?? "bold", invoice.company.brandColor),
+    [invoice.templateId, invoice.company.brandColor]
   );
   const showPoweredBy =
     showBranding ?? shouldShowInvoiceBranding(invoice.company.hideInvoiceBranding);
@@ -102,7 +102,6 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
     invoice.taxDiscount.gstPercentage ??
     0;
   const taxAmt = totals.taxAmount ?? totals.gstAmount ?? 0;
-  const shipping = totals.shippingFee ?? 0;
 
   const headerMessage = getSimpleHeaderMessage(invoice);
   const footerTagline = getSimpleFooterTagline(invoice);
@@ -373,7 +372,7 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
             ) : null}
           </div>
 
-          {/* Right column — table */}
+          {/* Right column - table */}
           <div style={{ padding: "24px 0 0 24px" }}>
             <table
               style={{
@@ -548,20 +547,22 @@ export const InvoicePreviewBold = memo(function InvoicePreviewBold({
                     }}
                   />
                 ) : null}
-                {shipping > 0 ? (
+                {totals.additionalCharges.map((charge) => (
                   <div
+                    key={charge.id}
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
+                      gap: 12,
                       padding: "6px 0",
                       fontSize: 12,
                       color: c.textMuted,
                     }}
                   >
-                    <span>Shipping</span>
-                    <InvoiceMoney amount={shipping} currencyCode={currency} />
+                    <span>{charge.label || "Additional charge"}</span>
+                    <InvoiceMoney amount={charge.amount} currencyCode={currency} />
                   </div>
-                ) : null}
+                ))}
                 <div
                   style={{
                     display: "flex",

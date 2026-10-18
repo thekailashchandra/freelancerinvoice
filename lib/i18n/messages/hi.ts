@@ -58,7 +58,7 @@ const hiCore: MessageTree = {
   },
   support: {
     title: "सहायता",
-    subtitle: "अपना अनुरोध भेजें — यह हमारी सहायता ईमेल पर जाएगा।",
+    subtitle: "अपना अनुरोध भेजें - यह हमारी सहायता ईमेल पर जाएगा।",
   },
   cookie: {
     message:

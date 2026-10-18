@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Heart, Loader2 } from "lucide-react";
-import { siteConfig } from "@/data/site";
-import { SupportTipLink } from "@/components/support-tip-link";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { CheckCircle2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -67,27 +64,19 @@ export function InvoicePdfDialog({
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" aria-hidden />
+                <CheckCircle2 className="h-5 w-5" aria-hidden />
                 PDF downloaded
               </DialogTitle>
               <DialogDescription className="text-left leading-relaxed">
-                Your invoice PDF is ready. {siteConfig.name} is free to use — if
-                it saves you time, consider supporting the project.
+                Your invoice PDF is ready and has been downloaded.
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <SupportTipLink
-                showIcon={false}
-                className={cn(
-                  buttonVariants(),
-                  "flex-1 no-underline hover:no-underline"
-                )}
-              >
-                <Heart className="mr-2 h-4 w-4" aria-hidden />
-                Tip on Ko-fi
-              </SupportTipLink>
+              <Button asChild className="flex-1">
+                <Link href="/invoice-history">Back to invoices</Link>
+              </Button>
               <Button variant="outline" asChild className="flex-1">
-                <Link href="/pricing">View pricing</Link>
+                <Link href="/pricing">View plans</Link>
               </Button>
             </div>
             <Button

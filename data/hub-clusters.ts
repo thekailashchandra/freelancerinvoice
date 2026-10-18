@@ -23,7 +23,7 @@ export const freelanceInvoicingCluster: HubCluster = {
   slug: "freelance-invoicing-getting-paid",
   title: "The Ultimate Guide to Freelance Invoicing & Getting Paid On Time",
   description:
-    "Everything freelancers need to invoice professionally, set payment terms, chase overdue payments, meet legal requirements, and resolve billing disputes — with templates and actionable steps.",
+    "Everything freelancers need to invoice professionally, set payment terms, chase overdue payments, meet legal requirements, and resolve billing disputes - with templates and actionable steps.",
   keywords: [
     "freelance invoicing guide",
     "get paid on time freelancer",
@@ -38,7 +38,7 @@ export const freelanceInvoicingCluster: HubCluster = {
       slug: "overdue-invoice-email",
       title: "How to Write a Polite but Firm Overdue Invoice Email",
       description:
-        "Copy-paste email templates for chasing late payments — from friendly reminders to final notices.",
+        "Copy-paste email templates for chasing late payments - from friendly reminders to final notices.",
       articleSlug: "overdue-invoice-email-templates",
     },
     {
@@ -52,7 +52,7 @@ export const freelanceInvoicingCluster: HubCluster = {
       slug: "legal-invoice-requirements",
       title: "What Information Is Legally Required on a Freelance Invoice?",
       description:
-        "Mandatory fields by region — and what to include so clients pay faster.",
+        "Mandatory fields by region - and what to include so clients pay faster.",
       articleSlug: "legally-required-freelance-invoice-information",
     },
     {

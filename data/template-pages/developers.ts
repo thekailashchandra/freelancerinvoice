@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const invoiceTemplateForDevelopers: TemplatePage = {
   slug: "invoice-template-for-developers",
-  title: "Invoice Template for Developers — Freelance & Contract Work",
+  title: "Invoice Template for Developers - Freelance & Contract Work",
   description:
     "Free invoice template for freelance developers and engineers. Bill hourly, sprint, or milestone work with clear technical deliverables and PDF export.",
   keywords: [
@@ -33,11 +33,11 @@ export const invoiceTemplateForDevelopers: TemplatePage = {
       id: "line-item-examples",
       heading: "Line item examples for dev work",
       list: [
-        "Sprint 4 — API integration and auth (fixed milestone)",
-        "40 hours — frontend bug fixes @ hourly rate",
-        "DevOps setup — CI/CD pipeline (project fee)",
-        "Code review and documentation — 8 hours",
-        "Emergency support — off-hours rate with date range",
+        "Sprint 4 - API integration and auth (fixed milestone)",
+        "40 hours - frontend bug fixes @ hourly rate",
+        "DevOps setup - CI/CD pipeline (project fee)",
+        "Code review and documentation - 8 hours",
+        "Emergency support - off-hours rate with date range",
       ],
     },
     {
@@ -79,7 +79,7 @@ export const invoiceTemplateForDevelopers: TemplatePage = {
     {
       question: "Is there a free invoice tool for freelance developers?",
       answer:
-        "Yes — Invoice for Freelance offers free accounts, PDF export, multi-currency fields, and invoice history built for solo contractors.",
+        "Yes - Invoice for Freelance offers free accounts, PDF export, multi-currency fields, and invoice history built for solo contractors.",
     },
   ],
 };

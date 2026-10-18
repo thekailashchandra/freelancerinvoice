@@ -13,12 +13,13 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive/15 text-destructive",
         outline: "text-foreground",
-        draft: "border-slate-500/30 bg-slate-500/15 text-slate-400",
-        paid: "border-emerald-500/30 bg-emerald-500/15 text-emerald-400",
-        pending: "border-primary/40 bg-primary/20 text-foreground",
-        sent: "border-blue-500/30 bg-blue-500/15 text-blue-400",
-        overdue: "border-red-500/30 bg-red-500/15 text-red-400",
-        void: "border-zinc-500/30 bg-zinc-500/15 text-zinc-500",
+        draft: "border-border bg-muted/60 text-muted-foreground",
+        paid: "border-transparent bg-foreground text-background",
+        pending: "border-border bg-background text-foreground",
+        sent: "border-border bg-muted text-foreground",
+        overdue:
+          "border-foreground bg-background text-foreground font-semibold",
+        void: "border-dashed border-border bg-transparent text-muted-foreground",
       },
     },
     defaultVariants: {

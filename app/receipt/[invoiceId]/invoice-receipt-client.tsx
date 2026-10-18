@@ -124,11 +124,11 @@ export function InvoiceReceiptClient({
   return (
     <div className="mx-auto w-full max-w-lg space-y-6">
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-        <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-6 text-white">
-          <span className="absolute right-5 top-5 rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-bold tracking-widest">
+        <div className="relative bg-foreground px-6 py-6 text-background">
+          <span className="absolute right-5 top-5 rounded-full bg-background px-3 py-1 text-[10px] font-bold tracking-widest text-foreground">
             PAID
           </span>
-          <p className="text-xs font-semibold uppercase tracking-wider text-white/70">
+          <p className="text-xs font-semibold uppercase tracking-wider text-background/70">
             Payment receipt
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight">
@@ -136,7 +136,7 @@ export function InvoiceReceiptClient({
           </h1>
         </div>
 
-        <div className="-mt-4 mx-6 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 px-5 py-4 text-white shadow-md">
+        <div className="-mt-4 mx-6 rounded-xl bg-foreground px-5 py-4 text-background shadow-md">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-white/85">
             Amount received
           </p>
@@ -148,7 +148,7 @@ export function InvoiceReceiptClient({
         <div className="space-y-5 px-6 pb-6 pt-5">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-foreground">
                 Received from
               </p>
               <p className="mt-1 font-semibold">{receipt.client.name}</p>
@@ -157,7 +157,7 @@ export function InvoiceReceiptClient({
               ) : null}
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-foreground">
                 Invoice
               </p>
               <p className="mt-1 font-semibold">{receipt.invoiceNumber}</p>

@@ -61,12 +61,22 @@ export function calculateTotals(
   taxLabel = ""
 ): InvoiceTotals {
   const { enabled, percent, discount, gstSupplyType } = normalizeTax(taxDiscount);
-  const shipping = Math.max(0, taxDiscount.shippingFee ?? 0);
+  const additionalCharges = (taxDiscount.additionalCharges ?? [])
+    .map((charge) => ({
+      ...charge,
+      label: charge.label.trim(),
+      amount: Math.max(0, Number(charge.amount) || 0),
+    }))
+    .filter((charge) => charge.label || charge.amount > 0);
+  const additionalChargesTotal = additionalCharges.reduce(
+    (sum, charge) => sum + charge.amount,
+    0
+  );
   const subtotal = calculateSubtotal(services);
   const discountAmount = Math.min(discount, subtotal);
   const afterDiscount = subtotal - discountAmount;
   const taxAmount = enabled ? (afterDiscount * percent) / 100 : 0;
-  const total = afterDiscount + taxAmount + shipping;
+  const total = afterDiscount + taxAmount + additionalChargesTotal;
   const useGstSplit = enabled && isIndianGstInvoice(taxLabel);
 
   return {
@@ -74,7 +84,8 @@ export function calculateTotals(
     taxAmount,
     gstAmount: taxAmount,
     discountAmount,
-    shippingFee: shipping,
+    additionalCharges,
+    additionalChargesTotal,
     total,
     gstBreakdown: buildGstBreakdown(
       taxAmount,

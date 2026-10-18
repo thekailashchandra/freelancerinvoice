@@ -1,6 +1,6 @@
 /**
  * Live Razorpay integration reference for merchants and Razorpay review.
- * Keys are BYOK — each user adds Live Mode keys in Settings.
+ * Keys are BYOK - each user adds Live Mode keys in Settings.
  */
 
 export const razorpayIntegrationGuide = {

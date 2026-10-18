@@ -1,16 +1,32 @@
 # Invoice for Freelance
 
-Freelancer invoice SaaS at [invoiceforfreelance.com](https://www.invoiceforfreelance.com/). Built with **Next.js 15**, **TypeScript**, **Tailwind CSS**, **Supabase**, and **Framer Motion**.
+A monochrome invoicing studio for freelancers - live preview, cloud history, and
+client-ready PDFs. **Open source and free to self-host.** The hosted Cloud plan
+(₹299/month or ₹999/year in India, $5/month or $19/year elsewhere) funds the
+public instance.
 
 ## Features
 
-- 📊 Dashboard with animated analytics
+- 📊 Dashboard with invoice analytics
 - ✍️ Create & edit invoices with live preview
 - 📄 PDF export & print (jsPDF + html2canvas)
+- ➕ Custom additional charges with labels
 - 📁 Invoice history with search & status filter
-- 🌙 Dark mode (default) with theme toggle
+- 🖤 Black-and-white editorial UI with light/dark mode
 - ☁️ Supabase cloud sync (auth, profiles, invoices)
+- 🔐 Row-level security for every account
 - 📱 Fully responsive (mobile drawer sidebar)
+
+## Editions
+
+| Edition | Price | What you get |
+| --- | --- | --- |
+| **Cloud** | ₹299/month or ₹999/year in India · $5/month or $19/year elsewhere | Hosted workspace, PDF download, print, brand colors, every template |
+| **Cloud preview** | Free | Create, edit, and preview invoices; exports locked |
+| **Self-hosted** | Free, MIT | Every feature unlocked on your own server |
+
+Set `NEXT_PUBLIC_SELF_HOSTED=true` to run the self-hosted edition. See
+[`docs/SELF_HOSTING.md`](docs/SELF_HOSTING.md).
 
 ## Getting Started
 
@@ -22,6 +38,15 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) (the dev script always uses port **3000**).
+
+### Cloud billing
+
+The hosted plan uses Razorpay. Add the live keys and webhook secret from your
+Razorpay merchant account, then run the latest Supabase migrations:
+`018_cloud_subscription.sql`, `019_brand_color.sql`,
+`020_invoice_template.sql`, and `021_invoice_additional_charges.sql`. Leave
+`NEXT_PUBLIC_SELF_HOSTED` unset. Full steps:
+[`docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself`](docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself).
 
 ### Dev server stuck on "Starting…" or EPERM errors?
 

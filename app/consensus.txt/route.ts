@@ -3,7 +3,7 @@ import { geoConsensus, geoEntityStatement } from "@/data/geo";
 /** Machine-readable consensus block for directories, LLM crawlers, and profile copy-paste. */
 export function GET() {
   const body = [
-    "# Consensus block — Invoice for Freelance",
+    "# Consensus block - Invoice for Freelance",
     "# Copy verbatim to Product Hunt, Crunchbase, LinkedIn, and portfolio bios.",
     "",
     `Brand: ${geoConsensus.brandName}`,

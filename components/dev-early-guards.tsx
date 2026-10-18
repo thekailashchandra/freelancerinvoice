@@ -3,7 +3,7 @@ type DevEarlyGuardsProps = {
 };
 
 /**
- * Synchronous dev-only guards in <head> — must run before React/webpack chunks
+ * Synchronous dev-only guards in <head> - must run before React/webpack chunks
  * so stale HMR modules cannot POST deleted Server Action IDs.
  */
 export function DevEarlyGuards({ buildId }: DevEarlyGuardsProps) {

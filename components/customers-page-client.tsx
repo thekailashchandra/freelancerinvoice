@@ -239,7 +239,7 @@ function CustomerCard({
             <dd className="font-medium">
               {client.lastInvoiceDate
                 ? formatDate(client.lastInvoiceDate)
-                : "—"}
+                : "-"}
             </dd>
           </div>
         </dl>

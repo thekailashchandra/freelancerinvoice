@@ -4,7 +4,7 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
   slug: "overdue-invoice-email-templates",
   title: "How to Write a Polite but Firm Overdue Invoice Email (With Templates)",
   description:
-    "Copy-paste overdue invoice email templates for freelancers — friendly reminders, firm follow-ups, and final notices that recover payment without damaging client relationships.",
+    "Copy-paste overdue invoice email templates for freelancers - friendly reminders, firm follow-ups, and final notices that recover payment without damaging client relationships.",
   keywords: [
     "overdue invoice email template",
     "late payment email freelancer",
@@ -54,10 +54,10 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       heading: "Principles for overdue invoice emails",
       list: [
         "Reference the specific invoice number, amount, and due date every time",
-        "Assume good intent — the invoice may be stuck in accounts payable",
+        "Assume good intent - the invoice may be stuck in accounts payable",
         "Escalate tone gradually over 2–3 weeks, not in the first email",
         "Attach the original invoice PDF to every message",
-        "Keep emails short — busy clients skim, not read essays",
+        "Keep emails short - busy clients skim, not read essays",
         "CC the project sponsor if the billing contact is unresponsive",
       ],
     },
@@ -65,11 +65,11 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       id: "template-1",
       heading: "Template 1: Friendly pre-due reminder (3 days before)",
       paragraphs: [
-        "Subject: Reminder — Invoice #[NUMBER] due [DATE]",
+        "Subject: Reminder - Invoice #[NUMBER] due [DATE]",
         "",
         "Hi [Name],",
         "",
-        "Hope you're well. A quick heads-up that Invoice #[NUMBER] for [PROJECT/SERVICE] — amount [CURRENCY][AMOUNT] — is due on [DATE].",
+        "Hope you're well. A quick heads-up that Invoice #[NUMBER] for [PROJECT/SERVICE] - amount [CURRENCY][AMOUNT] - is due on [DATE].",
         "",
         "I've attached the invoice for convenience. Please let me know if you need anything from my side to process payment.",
         "",
@@ -81,7 +81,7 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       id: "template-2",
       heading: "Template 2: Due-date reminder (day of)",
       paragraphs: [
-        "Subject: Invoice #[NUMBER] due today — [CURRENCY][AMOUNT]",
+        "Subject: Invoice #[NUMBER] due today - [CURRENCY][AMOUNT]",
         "",
         "Hi [Name],",
         "",
@@ -97,7 +97,7 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       id: "template-3",
       heading: "Template 3: Polite overdue notice (+3 days)",
       paragraphs: [
-        "Subject: Overdue — Invoice #[NUMBER] ([CURRENCY][AMOUNT])",
+        "Subject: Overdue - Invoice #[NUMBER] ([CURRENCY][AMOUNT])",
         "",
         "Hi [Name],",
         "",
@@ -115,13 +115,13 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       id: "template-4",
       heading: "Template 4: Firm follow-up (+7 days overdue)",
       paragraphs: [
-        "Subject: Second notice — Invoice #[NUMBER] now 7 days overdue",
+        "Subject: Second notice - Invoice #[NUMBER] now 7 days overdue",
         "",
         "Hi [Name],",
         "",
         "I'm following up again on Invoice #[NUMBER] for [CURRENCY][AMOUNT], originally due [DATE]. Per our agreement, payment was due within [NET TERMS] of the invoice date.",
         "",
-        "Please arrange payment by [NEW DEADLINE — e.g. 5 business days] or let me know if there is a dispute I should address.",
+        "Please arrange payment by [NEW DEADLINE - e.g. 5 business days] or let me know if there is a dispute I should address.",
         "",
         "Regards,",
         "[Your name]",
@@ -131,7 +131,7 @@ export const overdueInvoiceEmailTemplates: GuideArticle = {
       id: "template-5",
       heading: "Template 5: Final notice before late fees (+14 days)",
       paragraphs: [
-        "Subject: Final notice — Invoice #[NUMBER] — late fee may apply",
+        "Subject: Final notice - Invoice #[NUMBER] - late fee may apply",
         "",
         "Hi [Name],",
         "",

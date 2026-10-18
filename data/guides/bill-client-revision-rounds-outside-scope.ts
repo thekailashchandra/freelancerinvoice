@@ -4,7 +4,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
   slug: "how-to-bill-client-revision-rounds-outside-scope",
   title: "How to Bill a Client for Revision Rounds Outside Scope",
   description:
-    "Step-by-step guide for freelancers billing extra revision rounds — contract language, change orders, invoice line items, and email scripts when clients ask for work beyond agreed rounds.",
+    "Step-by-step guide for freelancers billing extra revision rounds - contract language, change orders, invoice line items, and email scripts when clients ask for work beyond agreed rounds.",
   keywords: [
     "how to bill a client for revision rounds outside scope",
     "extra revisions invoice freelancer",
@@ -34,7 +34,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       {
         title: "Get written approval (email is sufficient)",
         description:
-          "Save the approval — it becomes your change-order documentation.",
+          "Save the approval - it becomes your change-order documentation.",
       },
       {
         title: "Complete the revision round",
@@ -44,7 +44,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       {
         title: "Invoice with a dedicated line item",
         description:
-          'Label it "Additional revision round — [Project], Change Order #[N]" with the approved amount.',
+          'Label it "Additional revision round - [Project], Change Order #[N]" with the approved amount.',
       },
     ],
   },
@@ -59,7 +59,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       "or [flat fee per round] and require written approval before work begins.",
       "",
       "── CHANGE ORDER EMAIL ──",
-      "Subject: Change order — additional revision round, [Project name]",
+      "Subject: Change order - additional revision round, [Project name]",
       "",
       "Hi [Name],",
       "Happy to do another revision round. Per our agreement, rounds beyond [2]",
@@ -67,7 +67,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       "Reply to approve and I'll add it to the next invoice.",
       "",
       "── INVOICE LINE ITEMS ──",
-      "Additional revision round — Homepage v3 feedback (CR-004) | 4 hrs × $95 | $380",
+      "Additional revision round - Homepage v3 feedback (CR-004) | 4 hrs × $95 | $380",
       "Out-of-scope layout changes per email 12 Jun (CR-005) | 2 hrs × $95 | $190",
       "",
       "Notes: Original scope included 2 revision rounds per SOW dated [date].",
@@ -81,7 +81,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       id: "problem",
       heading: "The revision round problem",
       paragraphs: [
-        "Clients often treat revisions as unlimited. Designers, developers, and writers absorb extra rounds because saying no feels awkward — then wonder why the project was unprofitable.",
+        "Clients often treat revisions as unlimited. Designers, developers, and writers absorb extra rounds because saying no feels awkward - then wonder why the project was unprofitable.",
         "Revision rounds outside scope are billable work. The fix is contractual clarity plus a simple billing process you run every time.",
       ],
     },
@@ -89,7 +89,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       id: "define-rounds",
       heading: "Define what counts as a revision round",
       paragraphs: [
-        "A revision round is one batch of consolidated feedback applied to a deliverable — not every Slack message or email.",
+        "A revision round is one batch of consolidated feedback applied to a deliverable - not every Slack message or email.",
       ],
       list: [
         "Round 1: client submits all feedback in one document or call",
@@ -115,7 +115,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       id: "billing-process",
       heading: "How to bill extra revision rounds",
       paragraphs: [
-        "Step 1: Client requests another round. Acknowledge and quote — do not start work.",
+        "Step 1: Client requests another round. Acknowledge and quote - do not start work.",
         "Step 2: Send a one-line change order email with hours or flat fee.",
         "Step 3: Get written approval (email reply is enough).",
         "Step 4: Complete the work.",
@@ -126,7 +126,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       id: "invoice-line-items",
       heading: "Invoice line items for revision billing",
       list: [
-        "Label: \"Additional revision round — [deliverable] (CR-00X)\"",
+        "Label: \"Additional revision round - [deliverable] (CR-00X)\"",
         "Show hours × rate OR flat fee per round",
         "Reference change order date and approval email in notes",
         "Separate from the original milestone invoice when possible",
@@ -137,7 +137,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
       id: "scripts",
       heading: "Scripts when clients push back",
       paragraphs: [
-        "\"Our agreement includes two revision rounds — we're now on round four. I can absolutely keep going; rounds three and four are [$X] as quoted in my email on [date].\"",
+        "\"Our agreement includes two revision rounds - we're now on round four. I can absolutely keep going; rounds three and four are [$X] as quoted in my email on [date].\"",
         "",
         "\"I want this to stay fair for both of us. Extra rounds are billed at my standard rate so I can prioritize your project properly.\"",
       ],
@@ -149,7 +149,7 @@ export const billClientRevisionRoundsOutsideScope: GuideArticle = {
         "Send deliverables with \"included rounds remaining\" in the handoff email",
         "Require consolidated feedback in a single Figma comment pass or doc",
         "Charge deposits so clients have skin in the game",
-        "Use milestone billing — revisions on locked milestones cost extra",
+        "Use milestone billing - revisions on locked milestones cost extra",
         "Link to your scope creep guide for larger additions",
       ],
     },

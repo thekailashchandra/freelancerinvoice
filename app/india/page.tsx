@@ -20,7 +20,7 @@ const LandingInteractiveWorkspace = dynamic(
 );
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "India Freelance Invoicing Hub — GST, UPI & Cross-Border Billing",
+  title: "India Freelance Invoicing Hub - GST, UPI & Cross-Border Billing",
   description:
     "GST-compliant invoice templates for Indian independent contractors. Compare payout channels, currency conversion fees, and tax withholding for US and EU clients.",
   path: "/india",

@@ -6,6 +6,7 @@ import type {
   InvoiceStatus,
   PaymentDetails,
   ServiceItem,
+  AdditionalCharge,
 } from "@/types/invoice";
 import { resolveInvoicePageSize } from "@/lib/invoice-design";
 import { normalizeCountryCode, sanitizePaymentForCountry } from "@/lib/country";
@@ -37,6 +38,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
     companyAddress: profile.address ?? "",
     logo: profile.logo_url,
     logoHeight: profile.logo_height ?? 80,
+    brandColor: profile.brand_color ?? "#111111",
     signature: profile.signature_url,
     hideSignatureTextFallback: profile.hide_signature_text_fallback ?? false,
     countryCode: normalizeCountryCode(profile.country_code),
@@ -49,8 +51,7 @@ export function profileToCompanySettings(profile: ProfileRow): CompanySettings {
   };
 }
 
-function mapDbStatusToUi(status: InvoiceRow["status"]): InvoiceStatus {
-  if (status === "void") return "void";
+function mapDbStatusToUi(status: InvoiceRow["status"]): InvoiceStatus {  if (status === "void") return "void";
   if (status === "draft" || status === "sent") return "pending";
   if (status === "paid" || status === "pending" || status === "overdue") {
     return status;
@@ -60,6 +61,24 @@ function mapDbStatusToUi(status: InvoiceRow["status"]): InvoiceStatus {
 
 function mapUiStatusToDb(status: InvoiceStatus): InvoiceRow["status"] {
   return status;
+}
+
+function parseAdditionalCharges(value: unknown): AdditionalCharge[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item, index) => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Record<string, unknown>;
+      return {
+        id:
+          typeof record.id === "string" && record.id
+            ? record.id
+            : `charge-${index}`,
+        label: typeof record.label === "string" ? record.label : "",
+        amount: Number(record.amount) || 0,
+      };
+    })
+    .filter((item): item is AdditionalCharge => item !== null);
 }
 
 export function dbInvoiceToApp(
@@ -105,6 +124,7 @@ export function dbInvoiceToApp(
       taxEnabled: Number(row.tax_percent) > 0,
       taxPercentage: Number(row.tax_percent),
       discount: Number(row.discount_amount),
+      additionalCharges: parseAdditionalCharges(row.additional_charges),
       gstSupplyType:
         row.gst_supply_type === "inter" ? "inter" : "intra",
     },
@@ -124,6 +144,7 @@ export function dbInvoiceToApp(
     pageSize: resolveInvoicePageSize(
       (row.page_size as InvoicePageSize | undefined) ?? "a4"
     ),
+    templateId: (row.template_id as Invoice["templateId"]) ?? "classic",
     company: {
       ...company,
       gstin: row.seller_gstin ?? "",
@@ -183,6 +204,9 @@ export function appInvoiceToDbPayload(
       bank_address: payment.bankAddress,
       sort_code: payment.sortCode,
       page_size: resolveInvoicePageSize(invoice.pageSize),
+      template_id: invoice.templateId ?? "classic",
+      additional_charges: (invoice.taxDiscount
+        .additionalCharges ?? []) as unknown as InvoiceRow["additional_charges"],
     },
     items: invoice.services.map((s, index) => ({
       service_name: s.name,

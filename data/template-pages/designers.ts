@@ -2,7 +2,7 @@ import type { TemplatePage } from "./types";
 
 export const invoiceTemplateForDesigners: TemplatePage = {
   slug: "invoice-template-for-designers",
-  title: "Invoice Template for Designers — Free Freelance Billing",
+  title: "Invoice Template for Designers - Free Freelance Billing",
   description:
     "Create professional invoices for freelance designers. Free template for branding, UI/UX, illustration, and creative project billing with PDF export and line items clients understand.",
   keywords: [
@@ -26,7 +26,7 @@ export const invoiceTemplateForDesigners: TemplatePage = {
       id: "why-designers-need-a-dedicated-invoice",
       heading: "Why designers need a dedicated invoice template",
       paragraphs: [
-        "Design work is rarely a single line item. You might bill for discovery, concepts, revisions, asset handoff, and licensing — sometimes across multiple milestones. A generic invoice template forces clients to guess what they are paying for, which slows approvals and payments.",
+        "Design work is rarely a single line item. You might bill for discovery, concepts, revisions, asset handoff, and licensing - sometimes across multiple milestones. A generic invoice template forces clients to guess what they are paying for, which slows approvals and payments.",
         "An invoice template built for designers makes deliverables explicit: brand identity packages, UI screens, social creatives, or illustration licensing each get clear descriptions, quantities, and rates. That clarity protects your scope and helps finance teams approve faster.",
       ],
     },
@@ -34,7 +34,7 @@ export const invoiceTemplateForDesigners: TemplatePage = {
       id: "what-to-include",
       heading: "What to include on a designer invoice",
       list: [
-        "Project or sprint name (e.g. Website redesign — Phase 2)",
+        "Project or sprint name (e.g. Website redesign - Phase 2)",
         "Deliverable-based line items (logo concepts, UI kit, export files)",
         "Revision rounds included vs billable extra revisions",
         "Usage or license terms when selling rights (web, print, exclusive)",
@@ -47,11 +47,11 @@ export const invoiceTemplateForDesigners: TemplatePage = {
       id: "line-item-examples",
       heading: "Line item examples for design projects",
       list: [
-        "Brand identity — logo suite + style guide (fixed project fee)",
-        "UI/UX design — 12 screens at hourly or day rate",
-        "Social media template pack — 10 layouts (per deliverable)",
-        "Revision round beyond scope — 3 hours at agreed rate",
-        "Source file handoff and licensing — one-time fee",
+        "Brand identity - logo suite + style guide (fixed project fee)",
+        "UI/UX design - 12 screens at hourly or day rate",
+        "Social media template pack - 10 layouts (per deliverable)",
+        "Revision round beyond scope - 3 hours at agreed rate",
+        "Source file handoff and licensing - one-time fee",
       ],
       note: "Describe deliverables in language your client’s marketing or product team will recognize on their PO.",
     },
@@ -87,7 +87,7 @@ export const invoiceTemplateForDesigners: TemplatePage = {
     {
       question: "Can I use a free invoice template for design clients?",
       answer:
-        "Yes. Invoice for Freelance offers a free designer-friendly template with live preview, PDF export, your logo, and cloud history — no Excel or Word formatting required.",
+        "Yes. Invoice for Freelance offers a free designer-friendly template with live preview, PDF export, your logo, and cloud history - no Excel or Word formatting required.",
     },
   ],
 };

@@ -22,7 +22,7 @@ export const productFeatures: FeatureItem[] = [
     icon: FileText,
     title: "Professional freelancer invoices",
     description:
-      "Build polished invoices with live preview, your logo, itemized line items, taxes, and payment terms — ready to send in minutes.",
+      "Build polished invoices with live preview, your logo, itemized line items, taxes, and payment terms - ready to send in minutes.",
   },
   {
     icon: Download,

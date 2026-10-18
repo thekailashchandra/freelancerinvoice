@@ -102,7 +102,7 @@ export function AiGuideContent({ guide }: AiGuideContentProps) {
             Definitions
           </h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Key terms for Indian freelance invoicing — GST, SAC, UPI, export, TDS, and more.
+            Key terms for Indian freelance invoicing - GST, SAC, UPI, export, TDS, and more.
           </p>
           <dl className="geo-key-facts mt-6 space-y-5 rounded-2xl border border-border/50 bg-card/50 p-6">
             {guide.definitions.map((item) => (

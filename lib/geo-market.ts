@@ -11,7 +11,7 @@ export type MarketRegion = "IN" | "GLOBAL";
 
 export const GEO_COUNTRY_COOKIE = "iff-geo-country";
 export const GEO_MARKET_COOKIE = "iff-geo-market";
-/** IP-detected country for legal consent — not changed by locale switcher. */
+/** IP-detected country for legal consent - not changed by locale switcher. */
 export const GEO_IP_COUNTRY_COOKIE = "iff-geo-ip-country";
 
 const NORTH_AMERICA = new Set(["US", "CA", "MX"]);
@@ -93,6 +93,7 @@ export function getDefaultCompanySettingsForCountry(
       companyPhone: "+91 98765 43210",
       companyAddress: "Bandra Kurla Complex, Mumbai, Maharashtra 400051",
       logo: null,
+      brandColor: "#111111",
       signature: null,
       countryCode: "IN",
       currencyCode: "INR",
@@ -113,6 +114,7 @@ export function getDefaultCompanySettingsForCountry(
       companyPhone: "+49 30 1234 5678",
       companyAddress: "Friedrichstraße 123, 10117 Berlin, Germany",
       logo: null,
+      brandColor: "#111111",
       signature: null,
       countryCode: config.code,
       currencyCode: "EUR",
@@ -132,6 +134,7 @@ export function getDefaultCompanySettingsForCountry(
       companyPhone: "+44 20 7946 0958",
       companyAddress: "10 Downing Street, London SW1A 2AA",
       logo: null,
+      brandColor: "#111111",
       signature: null,
       countryCode: "GB",
       currencyCode: "GBP",
@@ -151,6 +154,7 @@ export function getDefaultCompanySettingsForCountry(
     companyPhone: "+1 (628) 555-0142",
     companyAddress: "742 Evergreen Terrace, Austin, TX 78701",
     logo: null,
+    brandColor: "#111111",
     signature: null,
     countryCode: defaults.countryCode,
     currencyCode: defaults.currencyCode,

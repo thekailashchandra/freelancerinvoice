@@ -47,7 +47,7 @@ export function SettingsRazorpayCard({
             type="password"
             placeholder={
               razorpaySecretStored
-                ? "••••••••  (saved — enter new value to replace)"
+                ? "••••••••  (saved - enter new value to replace)"
                 : "Paste Live Mode secret from Razorpay Dashboard → API Keys"
             }
             value={form.razorpayKeySecret ?? ""}

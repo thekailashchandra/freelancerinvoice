@@ -114,12 +114,12 @@ export default function SuperadminInvoicesPage() {
                         {invoice.invoiceNumber}
                       </td>
                       <td className="px-4 py-3">
-                        <p>{invoice.companyName || "—"}</p>
+                        <p>{invoice.companyName || "-"}</p>
                         <p className="text-xs text-muted-foreground">
                           {invoice.userEmail}
                         </p>
                       </td>
-                      <td className="px-4 py-3">{invoice.clientName || "—"}</td>
+                      <td className="px-4 py-3">{invoice.clientName || "-"}</td>
                       <td className="px-4 py-3">
                         <StatusBadge status={invoice.status as InvoiceStatus} />
                       </td>
