@@ -57,12 +57,15 @@ export function useSubscriptionCheckout({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ market, interval }),
       });
-      const orderData = await orderRes.json();
+      const orderData = await orderRes.json().catch(() => ({}));
       if (!orderRes.ok) {
         if (orderRes.status === 401) {
           throw new Error("Sign in to subscribe.");
         }
-        throw new Error(orderData.error ?? "Could not start checkout");
+        throw new Error(
+          orderData.error ??
+            `Could not start checkout (HTTP ${orderRes.status}).`
+        );
       }
 
       const payment = await openRazorpayCheckout({
@@ -85,9 +88,11 @@ export function useSubscriptionCheckout({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payment),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyRes.ok) {
-        throw new Error(verifyData.error ?? "Payment verification failed");
+        throw new Error(
+          verifyData.error ?? `Payment verification failed (HTTP ${verifyRes.status}).`
+        );
       }
 
       setDialogOpen(false);

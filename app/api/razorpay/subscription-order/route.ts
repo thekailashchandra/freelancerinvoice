@@ -74,18 +74,49 @@ export async function POST(request: NextRequest) {
   const pricing = getSubscriptionPricing(market, interval);
   const razorpay = createRazorpayClient(credentials);
 
-  const order = await razorpay.orders.create({
-    amount: pricing.amountMinor,
-    currency: pricing.currency,
-    receipt: `sub_${user.id.slice(0, 8)}_${Date.now()}`.slice(0, 40),
-    notes: {
-      purpose: "subscription",
-      plan: pricing.planId,
-      interval,
-      user_id: user.id,
+  let order: { id: string };
+  try {
+    order = (await razorpay.orders.create({
+      amount: pricing.amountMinor,
+      currency: pricing.currency,
+      receipt: `sub_${user.id.slice(0, 8)}_${Date.now()}`.slice(0, 40),
+      notes: {
+        purpose: "subscription",
+        plan: pricing.planId,
+        interval,
+        user_id: user.id,
+        market,
+      },
+    })) as unknown as { id: string };
+  } catch (err) {
+    const razorpayError = err as {
+      statusCode?: number;
+      error?: { code?: string; description?: string; reason?: string };
+      message?: string;
+    };
+    console.error("Razorpay subscription order failed", {
       market,
-    },
-  });
+      interval,
+      currency: pricing.currency,
+      amount: pricing.amountMinor,
+      statusCode: razorpayError.statusCode,
+      code: razorpayError.error?.code,
+      description: razorpayError.error?.description,
+    });
+    return NextResponse.json(
+      {
+        error:
+          razorpayError.error?.description ||
+          razorpayError.error?.reason ||
+          razorpayError.message ||
+          "Razorpay could not create the order.",
+        code: razorpayError.error?.code || "RAZORPAY_ORDER_FAILED",
+        market,
+        currency: pricing.currency,
+      },
+      { status: 502 }
+    );
+  }
 
   const admin = createAdminClient();
   const { error } = await admin.from("razorpay_payments").insert({

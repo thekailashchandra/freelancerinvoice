@@ -26,6 +26,7 @@ export function securityHeaders(): Record<string, string> {
     "https://pagead2.googlesyndication.com",
     "https://accounts.google.com",
     "https://checkout.razorpay.com",
+    "https://*.razorpay.com",
     "https://apis.google.com",
     ...(umamiOrigin ? [umamiOrigin] : []),
   ].join(" ");
@@ -43,6 +44,8 @@ export function securityHeaders(): Record<string, string> {
     "https://pagead2.googlesyndication.com",
     "https://googleads.g.doubleclick.net",
     "https://api.razorpay.com",
+    "https://*.razorpay.com",
+    "https://lumberjack.razorpay.com",
     ...(umamiOrigin ? [umamiOrigin] : []),
   ].join(" ");
 
@@ -50,19 +53,21 @@ export function securityHeaders(): Record<string, string> {
     "https://accounts.google.com/gsi/",
     "https://accounts.google.com/o/fedcm/",
     "https://checkout.razorpay.com",
+    "https://api.razorpay.com",
+    "https://*.razorpay.com",
     "https://googleads.g.doubleclick.net",
   ].join(" ");
 
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",
-    "form-action 'self'",
+    "form-action 'self' https://*.razorpay.com https://api.razorpay.com",
     "frame-ancestors 'none'",
     "object-src 'none'",
     `script-src ${scriptSrc}`,
-    "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style",
+    "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style https://*.razorpay.com",
     "img-src 'self' data: blob: https: *.supabase.co",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://*.razorpay.com",
     `connect-src ${connectSrc}`,
     `frame-src ${frameSrc}`,
   ].join("; ");
