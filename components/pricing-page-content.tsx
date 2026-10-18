@@ -11,6 +11,7 @@ import { siteConfig } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import {
   CLOUD_PLAN_FEATURES,
+  getSubscriptionPriceOptions,
   isSelfHostedMode,
 } from "@/lib/subscription";
 
@@ -45,6 +46,8 @@ const COMPARISON = [
 
 export function PricingPageContent() {
   const selfHosted = isSelfHostedMode();
+  const india = getSubscriptionPriceOptions("IN");
+  const global = getSubscriptionPriceOptions("GLOBAL");
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-14 md:px-8 md:py-20 lg:px-10">
@@ -107,12 +110,52 @@ export function PricingPageContent() {
               </span>
             </div>
 
-            <div className="mt-8 flex items-baseline gap-2">
-              <span className="display-serif text-5xl leading-none">₹299</span>
-              <span className="text-sm text-background/60">/month</span>
+            <div className="mt-8 grid gap-2 sm:grid-cols-2">
+              <div className="rounded-xl border border-background/15 bg-background/[0.04] p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-background/55">
+                    Monthly
+                  </span>
+                </div>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="display-serif text-4xl leading-none">
+                    {india.monthly.displayAmount}
+                  </span>
+                  <span className="text-xs text-background/55">
+                    {india.monthly.intervalLabel}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[10px] text-background/45">
+                  30 days of access
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-background/30 bg-background/10 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-background/55">
+                    Yearly
+                  </span>
+                  <span className="rounded-full bg-background px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-foreground">
+                    Save 72%
+                  </span>
+                </div>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="display-serif text-4xl leading-none">
+                    {india.yearly.displayAmount}
+                  </span>
+                  <span className="text-xs text-background/55">
+                    {india.yearly.intervalLabel}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-[10px] text-background/45">
+                  {india.yearly.monthlyEquivalent} · 365 days of access
+                </p>
+              </div>
             </div>
-            <p className="mt-1.5 text-xs text-background/55">
-              India. Yearly ₹999. Outside India, $5/month or $19/year.
+            <p className="mt-2.5 text-[11px] text-background/50">
+              India pricing. Outside India: {global.monthly.displayAmount}
+              {global.monthly.intervalLabel} or {global.yearly.displayAmount}
+              {global.yearly.intervalLabel}.
             </p>
 
             <ul className="mt-7 flex-1 space-y-3 text-sm">
