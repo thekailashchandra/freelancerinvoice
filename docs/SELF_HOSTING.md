@@ -102,7 +102,11 @@ If you are the operator of the public instance and want to charge for Cloud:
 5. Add a Dodo webhook pointing to `https://your-domain/api/dodo/webhook`
    and subscribe to `payment.succeeded`. Each successful USD payment adds
    30 or 365 days of access, matching the no-auto-renew model used for India.
-6. Leave `NEXT_PUBLIC_SELF_HOSTED` unset.
+6. Redeploy, then open `/api/subscription/status`. It should return
+   `"dodoCheckoutAvailable": true` once the Dodo keys and both product IDs are
+   present. If it is false, check that the key, environment, and product IDs all
+   belong to the same Dodo mode.
+7. Leave `NEXT_PUBLIC_SELF_HOSTED` unset.
 
 Prices live in [`lib/subscription.ts`](../lib/subscription.ts): ₹299/month or
 ₹999/year for India, and $5/month or $19/year for the rest of the world. Indian
