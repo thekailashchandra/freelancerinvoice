@@ -80,7 +80,7 @@ npm start        # production server
 If you are the operator of the public instance and want to charge for Cloud:
 
 1. Create a Razorpay merchant account for Indian INR payments and copy the live key ID and secret.
-2. Create one-time Dodo Payments products priced at $5 and $19, then copy the API key, webhook key, and product IDs.
+2. Create one-time Dodo Payments products priced at $5 and $19, then copy the API key, webhook key, and product IDs. Test mode and live mode use separate keys and product IDs, so create a set for each mode you use.
 3. Set:
 
    ```env
