@@ -74,7 +74,8 @@ export function SubscribePageClient({
       : access.plan === "cloud_monthly"
         ? "Cloud monthly"
         : "Cloud plan";
-  const latestPayment = history[0] ?? null;
+  const latestPayment =
+    history.find((payment) => payment.status === "paid") ?? history[0] ?? null;
 
   return (
     <PageTransition className="mx-auto max-w-4xl px-6 py-12 lg:px-10 lg:py-16">
