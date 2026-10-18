@@ -64,6 +64,14 @@ the latest Supabase migrations:
 `022_subscription_provider.sql`. Leave `NEXT_PUBLIC_SELF_HOSTED` unset. Full steps:
 [`docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself`](docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself).
 
+### Keep a free Supabase project active
+
+`vercel.json` schedules `/api/cron/keepalive` once a day at 03:00 UTC. The route
+runs a tiny service-role query so a free Supabase project does not pause after a
+week without traffic. Set `CRON_SECRET` in Vercel to protect the endpoint;
+Vercel sends it automatically as a Bearer token. If a project is already paused,
+restore it from the Supabase dashboard first.
+
 ### Dev server stuck on "Starting…" or EPERM errors?
 
 On Windows this usually means **several `next dev` processes** are still running and locking `.next`.
