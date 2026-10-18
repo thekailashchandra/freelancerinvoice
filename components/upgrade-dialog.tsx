@@ -50,6 +50,7 @@ type UpgradeDialogProps = {
   onIntervalChange: (interval: SubscriptionBillingInterval) => void;
   reason?: UpgradeReason;
   checkoutAvailable: boolean;
+  provider?: "dodo" | "razorpay";
   paying: boolean;
   onSubscribe: () => void | Promise<void>;
 };
@@ -62,6 +63,7 @@ export function UpgradeDialog({
   onIntervalChange,
   reason = "generic",
   checkoutAvailable,
+  provider = "razorpay",
   paying,
   onSubscribe,
 }: UpgradeDialogProps) {
@@ -180,7 +182,7 @@ export function UpgradeDialog({
               Refund policy
             </Link>{" "}
             · Payments are processed by{" "}
-            {pricing.market === "GLOBAL" ? "Dodo Payments" : "Razorpay"}.
+            {provider === "dodo" ? "Dodo Payments" : "Razorpay"}.
           </p>
         </div>
       </DialogContent>

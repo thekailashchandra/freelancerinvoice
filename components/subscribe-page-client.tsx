@@ -43,6 +43,7 @@ export function SubscribePageClient({
     setInterval,
     reason,
     checkoutAvailable,
+    provider: checkoutProvider,
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: access.checkoutAvailable,
@@ -262,6 +263,7 @@ export function SubscribePageClient({
         interval={interval}
         onIntervalChange={setInterval}
         checkoutAvailable={checkoutAvailable}
+        provider={checkoutProvider}
         paying={paying}
         onSubscribe={pay}
       />

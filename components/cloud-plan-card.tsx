@@ -36,6 +36,7 @@ export function CloudPlanCard({
     setInterval,
     reason,
     checkoutAvailable,
+    provider: checkoutProvider,
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: subscription.checkoutAvailable,
@@ -161,6 +162,7 @@ export function CloudPlanCard({
         interval={interval}
         onIntervalChange={setInterval}
         checkoutAvailable={checkoutAvailable}
+        provider={checkoutProvider}
         paying={paying}
         onSubscribe={pay}
       />

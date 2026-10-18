@@ -103,6 +103,7 @@ export function CreateInvoiceClient({
     interval: subscriptionInterval,
     setInterval: setSubscriptionInterval,
     checkoutAvailable,
+    provider: checkoutProvider,
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: subscription.checkoutAvailable,
@@ -494,6 +495,7 @@ export function CreateInvoiceClient({
         interval={subscriptionInterval}
         onIntervalChange={setSubscriptionInterval}
         checkoutAvailable={checkoutAvailable}
+        provider={checkoutProvider}
         paying={payingSubscription}
         onSubscribe={payForSubscription}
       />
