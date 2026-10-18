@@ -1,10 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
-  Check,
   Circle,
   CreditCard,
   FileText,
@@ -14,27 +12,9 @@ import {
   Users,
 } from "lucide-react";
 import { useTranslation } from "@/components/locale-provider";
-import { demoInvoice } from "@/data/demo-invoice";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
-const InvoicePreviewFrame = dynamic(
-  () =>
-    import("@/components/invoice-preview-frame").then((m) => ({
-      default: m.InvoicePreviewFrame,
-    })),
-  { loading: () => <Skeleton className="h-[260px] w-full rounded-md" /> }
-);
-
-const InvoicePreview = dynamic(
-  () =>
-    import("@/components/invoice-preview").then((m) => ({
-      default: m.InvoicePreview,
-    })),
-  { loading: () => <Skeleton className="h-[260px] w-full rounded-md" /> }
-);
 
 const SIDEBAR_ITEMS = [
   { label: "Overview", icon: LayoutDashboard, active: true },
@@ -197,48 +177,6 @@ export function HeroInvoiceDemo() {
           </div>
         </div>
       </motion.figure>
-
-      {/* Floating live invoice */}
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 24, rotate: -5 }}
-        animate={reduceMotion ? undefined : { opacity: 1, y: 0, rotate: -3.5 }}
-        transition={{ duration: 0.7, delay: 0.42, ease: EASE_OUT }}
-        className="absolute -bottom-12 -left-2 hidden w-[190px] sm:block lg:-left-6 lg:w-[210px]"
-      >
-        <div className="mb-1.5 flex items-center justify-between px-1">
-          <span className="eyebrow text-[7px] text-muted-foreground">
-            Live document
-          </span>
-          <span className="rounded border border-border bg-card px-1 py-0.5 font-mono text-[7px] text-muted-foreground">
-            PDF
-          </span>
-        </div>
-        <div className="overflow-hidden rounded-lg border border-border bg-white p-1.5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.45)]">
-          <InvoicePreviewFrame pageSize={demoInvoice.pageSize} maxScale={0.3}>
-            <InvoicePreview
-              invoice={demoInvoice}
-              previewId="hero-invoice-demo"
-              showBranding
-            />
-          </InvoicePreviewFrame>
-        </div>
-      </motion.div>
-
-      {/* Floating status chip */}
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
-        animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.6, ease: EASE_OUT }}
-        className="absolute right-0 top-14 hidden items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 shadow-lg md:flex lg:-right-2"
-      >
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background">
-          <Check className="h-3 w-3" />
-        </span>
-        <div>
-          <p className="text-[9px] font-semibold leading-none">Payment received</p>
-          <p className="mt-0.5 text-[8px] text-muted-foreground">$4,200 · just now</p>
-        </div>
-      </motion.div>
     </div>
   );
 }

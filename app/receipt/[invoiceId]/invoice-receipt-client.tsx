@@ -37,7 +37,9 @@ export function InvoiceReceiptClient({
         const query = receiptToken
           ? `?token=${encodeURIComponent(receiptToken)}`
           : "";
-        const res = await fetch(`/api/receipt/${encodeURIComponent(invoiceId)}${query}`);
+        const res = await fetch(
+          `/api/receipt/${encodeURIComponent(invoiceId)}${query}`
+        );
         const data = await res.json();
         if (!res.ok) {
           if (!cancelled) setError(data.error ?? "Receipt not found");
@@ -122,73 +124,73 @@ export function InvoiceReceiptClient({
   });
 
   return (
-    <div className="mx-auto w-full max-w-lg space-y-6">
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-        <div className="relative bg-foreground px-6 py-6 text-background">
-          <span className="absolute right-5 top-5 rounded-full bg-background px-3 py-1 text-[10px] font-bold tracking-widest text-foreground">
+    <div className="mx-auto w-full max-w-lg space-y-5">
+      <article className="overflow-hidden rounded-2xl border border-border bg-card">
+        <header className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+          <div className="min-w-0">
+            <p className="eyebrow text-muted-foreground">Payment receipt</p>
+            <h1 className="display-serif mt-2 truncate text-2xl">
+              {receipt.merchant.name}
+            </h1>
+          </div>
+          <span className="shrink-0 rounded-full bg-foreground px-3 py-1 text-[10px] font-bold tracking-[0.14em] text-background">
             PAID
           </span>
-          <p className="text-xs font-semibold uppercase tracking-wider text-background/70">
-            Payment receipt
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight">
-            {receipt.merchant.name}
-          </h1>
-        </div>
+        </header>
 
-        <div className="-mt-4 mx-6 rounded-xl bg-foreground px-5 py-4 text-background shadow-md">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-white/85">
+        <div className="px-6 py-6">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Amount received
           </p>
-          <p className="mt-1 text-3xl font-extrabold tracking-tight">
+          <p className="display-serif mt-1 text-4xl leading-none">
             {receipt.amountDisplay}
           </p>
-        </div>
 
-        <div className="space-y-5 px-6 pb-6 pt-5">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="mt-6 grid grid-cols-2 gap-5 border-t border-border pt-5 text-sm">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 Received from
               </p>
-              <p className="mt-1 font-semibold">{receipt.client.name}</p>
+              <p className="mt-1.5 font-medium">{receipt.client.name}</p>
               {receipt.client.company ? (
                 <p className="text-muted-foreground">{receipt.client.company}</p>
               ) : null}
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-foreground">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 Invoice
               </p>
-              <p className="mt-1 font-semibold">{receipt.invoiceNumber}</p>
-              <p className="text-muted-foreground">{receipt.receiptNumber}</p>
+              <p className="mt-1.5 font-medium">{receipt.invoiceNumber}</p>
+              <p className="font-mono text-xs text-muted-foreground">
+                {receipt.receiptNumber}
+              </p>
             </div>
           </div>
 
-          <dl className="divide-y divide-border text-sm">
-            <div className="flex justify-between gap-4 py-2.5">
+          <dl className="mt-5 divide-y divide-border border-t border-border text-sm">
+            <div className="flex justify-between gap-4 py-3">
               <dt className="text-muted-foreground">Payment date</dt>
-              <dd className="font-medium text-right">{paidDate}</dd>
+              <dd className="text-right font-medium">{paidDate}</dd>
             </div>
-            <div className="flex justify-between gap-4 py-2.5">
+            <div className="flex justify-between gap-4 py-3">
               <dt className="text-muted-foreground">Payment method</dt>
-              <dd className="font-medium text-right">{receipt.paymentMethod}</dd>
+              <dd className="text-right font-medium">{receipt.paymentMethod}</dd>
             </div>
             {receipt.transactionId ? (
-              <div className="flex justify-between gap-4 py-2.5">
+              <div className="flex justify-between gap-4 py-3">
                 <dt className="text-muted-foreground">Transaction ID</dt>
-                <dd className="max-w-[55%] break-all text-right font-mono text-xs font-medium">
+                <dd className="max-w-[60%] break-all text-right font-mono text-xs font-medium">
                   {receipt.transactionId}
                 </dd>
               </div>
             ) : null}
           </dl>
 
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-5 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
             This receipt confirms payment for invoice {receipt.invoiceNumber}.
           </p>
         </div>
-      </div>
+      </article>
 
       <div className="flex flex-wrap gap-2">
         <Button className="gap-2" onClick={() => void handleDownload()} disabled={downloading}>
