@@ -60,8 +60,9 @@ The hosted plan uses Razorpay for India and Dodo Payments for international
 USD passes. Add the live keys, product IDs, and webhook secrets, then run
 the latest Supabase migrations:
 `018_cloud_subscription.sql`, `019_brand_color.sql`,
-`020_invoice_template.sql`, `021_invoice_additional_charges.sql`, and
-`022_subscription_provider.sql`. Leave `NEXT_PUBLIC_SELF_HOSTED` unset. Full steps:
+`020_invoice_template.sql`, `021_invoice_additional_charges.sql`,
+`022_subscription_provider.sql`, and `023_dodo_payments.sql`. Leave
+`NEXT_PUBLIC_SELF_HOSTED` unset. Full steps:
 [`docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself`](docs/SELF_HOSTING.md#running-the-hosted-cloud-plan-yourself).
 
 ### Keep a free Supabase project active

@@ -8,12 +8,13 @@ import { resolveMarketFromCountry } from "@/lib/geo-market";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { getSubscriptionAccess } from "@/lib/subscription-server";
+import { fetchBillingHistory } from "@/lib/billing-history";
 
 export const dynamic = "force-dynamic";
 
-const title = "Cloud plan";
+const title = "Billing";
 const description =
-  "Unlock PDF downloads, printing, brand colors, and every template on the hosted Cloud plan. ₹299/month or ₹999/year in India, and $5/month or $19/year elsewhere. Self-host for free.";
+  "Manage your Cloud plan, review payment history, and download receipts.";
 
 export const metadata: Metadata = {
   title,
@@ -28,6 +29,9 @@ export default async function SubscribePage({
 }: {
   searchParams: Promise<{ dodo?: string }>;
 }) {
+  let userId: string | null = null;
+  let userEmail: string | null = null;
+
   if (isSupabaseConfigured()) {
     const supabase = await createClient();
     const {
@@ -37,6 +41,9 @@ export default async function SubscribePage({
     if (!user) {
       redirect("/login?redirect=/subscribe");
     }
+
+    userId = user.id;
+    userEmail = user.email ?? null;
   }
 
   const [{ dodo }, access, countryCode] = await Promise.all([
@@ -45,12 +52,25 @@ export default async function SubscribePage({
     readConsentCountryFromServerCookies(),
   ]);
   const market = resolveMarketFromCountry(countryCode ?? "US");
+  let history: Awaited<ReturnType<typeof fetchBillingHistory>> = [];
+
+  if (userId) {
+    try {
+      history = await fetchBillingHistory(userId, userEmail);
+    } catch (error) {
+      console.error(
+        "Could not load billing history",
+        error instanceof Error ? error.message : error
+      );
+    }
+  }
 
   return (
     <PublicPageShell>
       <SubscribePageClient
         access={access}
         market={market}
+        history={history}
         dodoStatus={dodo === "success" || dodo === "cancelled" ? dodo : null}
       />
     </PublicPageShell>

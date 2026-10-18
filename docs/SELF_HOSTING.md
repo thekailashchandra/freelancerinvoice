@@ -82,9 +82,10 @@ Run every file in [`supabase/migrations`](../supabase/migrations) in order in th
 Supabase SQL editor (or with the Supabase CLI). The subscription migration
 (`018_cloud_subscription.sql`), brand color (`019_brand_color.sql`), invoice
 template (`020_invoice_template.sql`), additional charges
-(`021_invoice_additional_charges.sql`), and subscription provider
-(`022_subscription_provider.sql`) migrations are recommended on all installs;
-the app falls back gracefully if they are missing.
+(`021_invoice_additional_charges.sql`), subscription provider
+(`022_subscription_provider.sql`), and Dodo payment history
+(`023_dodo_payments.sql`) migrations are recommended on all installs; the app
+falls back gracefully if they are missing.
 
 ## 4. Turn off cloud billing
 

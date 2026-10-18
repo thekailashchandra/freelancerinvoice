@@ -10,6 +10,13 @@ export const dynamic = "force-dynamic";
 type DodoPaymentPayload = {
   payment_id: string;
   status?: string;
+  total_amount?: number;
+  currency?: string;
+  created_at?: string;
+  invoice_url?: string | null;
+  payment_method?: string | null;
+  payment_method_type?: string | null;
+  refund_status?: "partial" | "full" | null;
   metadata?: Record<string, string> | null;
   customer?: { email?: string; customer_id?: string } | null;
   product_cart?: Array<{ product_id?: string }> | null;
@@ -97,6 +104,42 @@ export async function POST(request: NextRequest) {
       customerId: data.customer?.customer_id,
     });
     return NextResponse.json({ ok: true });
+  }
+
+  const paidAt =
+    data.created_at && !Number.isNaN(new Date(data.created_at).getTime())
+      ? data.created_at
+      : new Date().toISOString();
+
+  try {
+    const { error } = await admin.from("dodo_payments").upsert(
+      {
+        user_id: userId,
+        payment_id: data.payment_id,
+        status: data.refund_status ? "refunded" : data.status ?? "succeeded",
+        amount: data.total_amount ?? 0,
+        currency: data.currency ?? "USD",
+        plan: resolved.plan,
+        interval: resolved.interval,
+        customer_email: data.customer?.email ?? null,
+        invoice_url: data.invoice_url ?? null,
+        payment_method:
+          data.payment_method_type ?? data.payment_method ?? null,
+        metadata: data.metadata ?? {},
+        paid_at: paidAt,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "payment_id" }
+    );
+
+    if (error) {
+      console.error("Could not store Dodo payment history", error.message);
+    }
+  } catch (error) {
+    console.error(
+      "Could not store Dodo payment history",
+      error instanceof Error ? error.message : error
+    );
   }
 
   await activateSubscription(

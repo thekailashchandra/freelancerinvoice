@@ -41,7 +41,7 @@ export interface ProfileRow {
   razorpay_key_id?: string;
   razorpay_key_secret?: string;
   subscription_status?: "none" | "active" | "past_due" | "canceled";
-  subscription_plan?: "cloud_monthly" | null;
+  subscription_plan?: "cloud_monthly" | "cloud_yearly" | null;
   subscription_started_at?: string | null;
   subscription_expires_at?: string | null;
   subscription_last_payment_id?: string | null;
@@ -51,6 +51,24 @@ export interface ProfileRow {
   privacy_policy_version?: string | null;
   terms_accepted_at?: string | null;
   terms_version?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DodoPaymentRow {
+  id: string;
+  user_id: string;
+  payment_id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  plan: "cloud_monthly" | "cloud_yearly" | null;
+  interval: "monthly" | "yearly" | null;
+  customer_email: string | null;
+  invoice_url: string | null;
+  payment_method: string | null;
+  metadata: Json;
+  paid_at: string;
   created_at: string;
   updated_at: string;
 }
@@ -213,6 +231,28 @@ export interface Database {
           sort_order?: number;
         };
         Update: Partial<InvoiceItemRow>;
+        Relationships: [];
+      };
+      dodo_payments: {
+        Row: DodoPaymentRow;
+        Insert: {
+          id?: string;
+          user_id: string;
+          payment_id: string;
+          status?: string;
+          amount?: number;
+          currency?: string;
+          plan?: "cloud_monthly" | "cloud_yearly" | null;
+          interval?: "monthly" | "yearly" | null;
+          customer_email?: string | null;
+          invoice_url?: string | null;
+          payment_method?: string | null;
+          metadata?: Json;
+          paid_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<DodoPaymentRow>;
         Relationships: [];
       };
     };
