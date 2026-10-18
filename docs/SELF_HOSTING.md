@@ -6,9 +6,56 @@ database.
 
 ## What you need
 
-- Node.js 20+
+- Node.js 20+ (skip if you use Docker)
+- Docker Engine 24+ with Compose v2 (optional, for the Docker path)
 - A Supabase project (Postgres, auth, and asset storage)
 - Any Node host: a VPS, Railway, Render, Fly.io, or Vercel
+
+## Run with Docker Compose
+
+Docker runs the Next.js app in a small production image. Supabase stays external:
+use Supabase Cloud or your own Supabase deployment. Complete **steps 2 and 3**
+below first, then:
+
+```bash
+cp .env.docker.example .env
+# Fill in NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+# SUPABASE_SECRET_KEY, and NEXT_PUBLIC_SITE_URL
+
+docker compose up -d --build
+```
+
+Open `http://localhost:3000`, or the URL in `NEXT_PUBLIC_SITE_URL`. Check the
+container with:
+
+```bash
+docker compose logs -f app
+docker compose ps
+```
+
+To stop it:
+
+```bash
+docker compose down
+```
+
+To update:
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+Notes:
+
+- `NEXT_PUBLIC_*` values are compiled into the browser bundle. Change them in
+  `.env`, then rebuild with `docker compose up -d --build`.
+- Set `NEXT_PUBLIC_SITE_URL` to the public URL of the container, for example
+  `https://invoices.example.com`. Add that URL to the Supabase auth redirect
+  settings.
+- If port 3000 is already in use, set `APP_PORT=3001` in `.env`.
+- The image runs as a non-root user and exposes port 3000 internally.
+- Docker does not bundle Supabase. There is no SQLite mode yet.
 
 ## 1. Clone and install
 

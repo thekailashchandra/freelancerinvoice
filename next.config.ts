@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
+  // Produce a self-contained server bundle for the Docker image.
+  output: "standalone",
   // Local dev uses `.next-dev` to avoid stale locked `.next` on Windows; Vercel/production uses `.next`
   distDir:
     process.env.NODE_ENV === "production"

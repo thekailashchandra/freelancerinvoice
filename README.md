@@ -39,6 +39,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) (the dev script always uses port **3000**).
 
+### Docker
+
+Docker runs the app, while Supabase remains your external project. After
+creating the Supabase project and running the migrations:
+
+```bash
+cp .env.docker.example .env
+# Fill in Supabase URL, publishable key, secret key, and public site URL
+docker compose up -d --build
+```
+
+Open [http://localhost:3000](http://localhost:3000). See
+[`docs/SELF_HOSTING.md`](docs/SELF_HOSTING.md#run-with-docker-compose) for
+updates, ports, and rebuild notes.
+
 ### Cloud billing
 
 The hosted plan uses Razorpay for India and Dodo Payments for international
