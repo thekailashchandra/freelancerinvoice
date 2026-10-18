@@ -34,7 +34,7 @@ SUPABASE_SECRET_KEY=sb_secret_...`,
   },
   {
     title: "Run the migrations",
-    body: "Apply every SQL file in supabase/migrations in order, including 018_cloud_subscription.sql, 019_brand_color.sql, 020_invoice_template.sql, and 021_invoice_additional_charges.sql.",
+    body: "Apply every SQL file in supabase/migrations in order, including 018_cloud_subscription.sql, 019_brand_color.sql, 020_invoice_template.sql, 021_invoice_additional_charges.sql, and 022_subscription_provider.sql.",
     code: `supabase db push
 # or paste the files into the Supabase SQL editor`,
   },

@@ -106,6 +106,7 @@ export function CreateInvoiceClient({
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: subscription.checkoutAvailable,
+    dodoCheckoutAvailable: subscription.dodoCheckoutAvailable,
   });
 
   useEffect(() => {

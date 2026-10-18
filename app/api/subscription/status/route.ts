@@ -13,6 +13,7 @@ export async function GET() {
     expiresAt: access.expiresAt,
     billingEnabled: access.billingEnabled,
     checkoutAvailable: access.checkoutAvailable,
+    dodoCheckoutAvailable: access.dodoCheckoutAvailable,
     source: access.source,
   });
 }

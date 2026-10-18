@@ -45,6 +45,7 @@ export interface ProfileRow {
   subscription_started_at?: string | null;
   subscription_expires_at?: string | null;
   subscription_last_payment_id?: string | null;
+  subscription_provider?: "razorpay" | "dodo" | null;
   role?: string;
   privacy_policy_accepted_at?: string | null;
   privacy_policy_version?: string | null;

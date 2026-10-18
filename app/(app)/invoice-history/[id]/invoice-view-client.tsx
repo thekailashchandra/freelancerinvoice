@@ -112,6 +112,7 @@ export function InvoiceViewClient({
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: subscription.checkoutAvailable,
+    dodoCheckoutAvailable: subscription.dodoCheckoutAvailable,
   });
 
   useEffect(() => {

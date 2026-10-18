@@ -25,6 +25,8 @@ export type SubscriptionAccess = {
   billingEnabled: boolean;
   /** True when Razorpay keys are ready. */
   checkoutAvailable: boolean;
+  /** True when Dodo Payments is configured for USD subscriptions. */
+  dodoCheckoutAvailable: boolean;
   source: "cloud" | "self-hosted";
 };
 
@@ -36,6 +38,7 @@ export const SELF_HOSTED_ACCESS: SubscriptionAccess = {
   expiresAt: null,
   billingEnabled: false,
   checkoutAvailable: false,
+  dodoCheckoutAvailable: false,
   source: "self-hosted",
 };
 

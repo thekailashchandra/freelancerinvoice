@@ -24,11 +24,13 @@ import type { MarketRegion } from "@/lib/geo-market";
 type SubscribePageClientProps = {
   access: SubscriptionAccess;
   market: MarketRegion;
+  dodoStatus?: "success" | "cancelled" | null;
 };
 
 export function SubscribePageClient({
   access,
   market,
+  dodoStatus = null,
 }: SubscribePageClientProps) {
   const {
     openUpgrade,
@@ -44,6 +46,7 @@ export function SubscribePageClient({
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: access.checkoutAvailable,
+    dodoCheckoutAvailable: access.dodoCheckoutAvailable,
   });
   const options = getSubscriptionPriceOptions(market);
   const expiry = formatSubscriptionExpiry(access.expiresAt);
@@ -51,6 +54,33 @@ export function SubscribePageClient({
 
   return (
     <PageTransition className="mx-auto max-w-5xl px-6 py-14 lg:px-10 lg:py-20">
+      {dodoStatus === "success" ? (
+        <div className="mb-6 flex flex-col gap-2 rounded-xl border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium">Payment received</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Your Cloud plan is being activated. If it does not appear in a few
+              seconds, refresh this page.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.reload()}
+          >
+            Refresh plan
+          </Button>
+        </div>
+      ) : null}
+      {dodoStatus === "cancelled" ? (
+        <div className="mb-6 rounded-xl border border-border bg-card px-4 py-3">
+          <p className="text-sm font-medium">Checkout cancelled</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            No payment was taken. You can try again whenever you are ready.
+          </p>
+        </div>
+      ) : null}
+
       <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
         <div>
           <p className="eyebrow text-muted-foreground">Cloud plan</p>
@@ -203,7 +233,11 @@ export function SubscribePageClient({
               </Button>
 
               <p className="mt-3 text-center text-[10px] leading-relaxed text-background/45">
-                Paid securely via Razorpay. No automatic renewal.
+                Paid securely via{" "}
+          {market === "GLOBAL" && access.dodoCheckoutAvailable
+            ? "Dodo Payments"
+            : "Razorpay"}
+          . No automatic renewal.
               </p>
             </>
           )}

@@ -39,6 +39,7 @@ export function CloudPlanCard({
   } = useSubscriptionCheckout({
     market,
     checkoutAvailable: subscription.checkoutAvailable,
+    dodoCheckoutAvailable: subscription.dodoCheckoutAvailable,
     onSubscribed: () => {
       void subscription.refresh();
     },

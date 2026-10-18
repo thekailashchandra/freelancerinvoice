@@ -23,7 +23,11 @@ export const metadata: Metadata = {
   ...buildSocialMetadata({ title, description, path: "/subscribe" }),
 };
 
-export default async function SubscribePage() {
+export default async function SubscribePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ dodo?: string }>;
+}) {
   if (isSupabaseConfigured()) {
     const supabase = await createClient();
     const {
@@ -35,7 +39,8 @@ export default async function SubscribePage() {
     }
   }
 
-  const [access, countryCode] = await Promise.all([
+  const [{ dodo }, access, countryCode] = await Promise.all([
+    searchParams,
     getSubscriptionAccess(),
     readConsentCountryFromServerCookies(),
   ]);
@@ -43,7 +48,11 @@ export default async function SubscribePage() {
 
   return (
     <PublicPageShell>
-      <SubscribePageClient access={access} market={market} />
+      <SubscribePageClient
+        access={access}
+        market={market}
+        dodoStatus={dodo === "success" || dodo === "cancelled" ? dodo : null}
+      />
     </PublicPageShell>
   );
 }

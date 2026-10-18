@@ -15,6 +15,7 @@ const INITIAL: SubscriptionClientState = {
   expiresAt: null,
   billingEnabled: true,
   checkoutAvailable: false,
+  dodoCheckoutAvailable: false,
   source: "cloud",
   loading: true,
 };
@@ -36,6 +37,7 @@ export function useSubscription() {
         expiresAt: data.expiresAt ?? null,
         billingEnabled: data.billingEnabled !== false,
         checkoutAvailable: Boolean(data.checkoutAvailable),
+        dodoCheckoutAvailable: Boolean(data.dodoCheckoutAvailable),
         source: data.source ?? "cloud",
         loading: false,
       });

@@ -70,8 +70,8 @@ export default function RefundPolicyPage() {
           <Link href="/contact" className="text-primary hover:underline">
             contact page
           </Link>{" "}
-          with your Razorpay payment ID, date, and amount. We aim to respond within
-          5–7 business days. Approved refunds are returned to the original payment
+          with your payment ID, date, and amount. We aim to respond within 5–7
+          business days. Approved refunds are returned to the original payment
           method.
         </p>
       </section>
@@ -79,9 +79,10 @@ export default function RefundPolicyPage() {
       <section>
         <h2 className="text-lg font-semibold">Payment processor</h2>
         <p className="mt-2">
-          Cloud payments are processed by Razorpay. Their terms and dispute
-          processes may also apply. For platform-specific issues, you may contact
-          Razorpay support in addition to reaching out to us.
+          Cloud payments in India are processed by Razorpay. International USD
+          payments are processed by Dodo Payments. Their terms and dispute
+          processes may also apply. For processor-specific issues, you may contact
+          Razorpay or Dodo Payments support in addition to reaching out to us.
         </p>
       </section>
 

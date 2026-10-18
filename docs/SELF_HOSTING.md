@@ -34,9 +34,10 @@ SUPABASE_SECRET_KEY=sb_secret_...
 Run every file in [`supabase/migrations`](../supabase/migrations) in order in the
 Supabase SQL editor (or with the Supabase CLI). The subscription migration
 (`018_cloud_subscription.sql`), brand color (`019_brand_color.sql`), invoice
-template (`020_invoice_template.sql`), and additional charges
-(`021_invoice_additional_charges.sql`) migrations are recommended on all
-installs; the app falls back gracefully if they are missing.
+template (`020_invoice_template.sql`), additional charges
+(`021_invoice_additional_charges.sql`), and subscription provider
+(`022_subscription_provider.sql`) migrations are recommended on all installs;
+the app falls back gracefully if they are missing.
 
 ## 4. Turn off cloud billing
 
@@ -78,24 +79,34 @@ npm start        # production server
 
 If you are the operator of the public instance and want to charge for Cloud:
 
-1. Create a Razorpay merchant account and copy the live key ID and secret.
-2. Set:
+1. Create a Razorpay merchant account for Indian INR payments and copy the live key ID and secret.
+2. Create one-time Dodo Payments products priced at $5 and $19, then copy the API key, webhook key, and product IDs.
+3. Set:
 
    ```env
    NEXT_PUBLIC_RAZORPAY_ENABLED=true
    RAZORPAY_KEY_ID=rzp_live_xxxxxxxx
    RAZORPAY_KEY_SECRET=your-live-secret
    RAZORPAY_WEBHOOK_SECRET=whsec_from_razorpay_dashboard
+
+   DODO_PAYMENTS_API_KEY=your-dodo-api-key
+   DODO_PAYMENTS_WEBHOOK_KEY=your-dodo-webhook-key
+   DODO_PAYMENTS_ENVIRONMENT=live_mode
+   DODO_PAYMENTS_PRODUCT_ID_MONTHLY=pdt_xxxxxxxxxxxxxxxxx
+   DODO_PAYMENTS_PRODUCT_ID_YEARLY=pdt_xxxxxxxxxxxxxxxxx
    ```
 
-3. Add a Razorpay webhook pointing to `https://your-domain/api/razorpay/webhook`
+4. Add a Razorpay webhook pointing to `https://your-domain/api/razorpay/webhook`
    with the events `payment.captured`, `payment.failed`, and
    `refund.processed`.
-4. Leave `NEXT_PUBLIC_SELF_HOSTED` unset.
+5. Add a Dodo webhook pointing to `https://your-domain/api/dodo/webhook`
+   and subscribe to `payment.succeeded`. Each successful USD payment adds
+   30 or 365 days of access, matching the no-auto-renew model used for India.
+6. Leave `NEXT_PUBLIC_SELF_HOSTED` unset.
 
 Prices live in [`lib/subscription.ts`](../lib/subscription.ts): ₹299/month or
-₹999/year for India, and $5/month or $19/year for the rest of the world. Monthly
-payments grant 30 days of access; yearly payments grant 365 days. Adding another
+₹999/year for India, and $5/month or $19/year for the rest of the world. Indian
+customers use Razorpay. International customers use Dodo Payments. Adding another
 payment extends from the current expiry.
 
 ## Notes

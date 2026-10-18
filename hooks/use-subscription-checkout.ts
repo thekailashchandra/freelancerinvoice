@@ -13,13 +13,17 @@ import type { MarketRegion } from "@/lib/geo-market";
 
 type UseSubscriptionCheckoutOptions = {
   market: MarketRegion;
+  /** Razorpay availability for INR checkout. */
   checkoutAvailable: boolean;
+  /** Dodo availability for USD checkout. */
+  dodoCheckoutAvailable?: boolean;
   onSubscribed?: () => void;
 };
 
 export function useSubscriptionCheckout({
   market,
   checkoutAvailable,
+  dodoCheckoutAvailable = false,
   onSubscribed,
 }: UseSubscriptionCheckoutOptions) {
   const router = useRouter();
@@ -32,6 +36,8 @@ export function useSubscriptionCheckout({
   >("generic");
 
   const pricing: SubscriptionPricing = getSubscriptionPricing(market, interval);
+  const useDodo = market === "GLOBAL" && dodoCheckoutAvailable;
+  const canCheckout = useDodo ? dodoCheckoutAvailable : checkoutAvailable;
 
   const openUpgrade = useCallback(
     (nextReason: typeof reason = "generic") => {
@@ -42,7 +48,7 @@ export function useSubscriptionCheckout({
   );
 
   const pay = useCallback(async () => {
-    if (!checkoutAvailable) {
+    if (!canCheckout) {
       toast.error("Cloud billing is not available yet", {
         description:
           "This deployment has not finished setting up payments. Try again later.",
@@ -52,6 +58,23 @@ export function useSubscriptionCheckout({
 
     setPaying(true);
     try {
+      if (useDodo) {
+        const checkoutRes = await fetch("/api/dodo/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ interval }),
+        });
+        const checkoutData = await checkoutRes.json().catch(() => ({}));
+        if (!checkoutRes.ok || !checkoutData.checkoutUrl) {
+          throw new Error(
+            checkoutData.error ??
+              `Could not start USD checkout (HTTP ${checkoutRes.status}).`
+          );
+        }
+        window.location.assign(checkoutData.checkoutUrl as string);
+        return;
+      }
+
       const orderRes = await fetch("/api/razorpay/subscription-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,7 +132,7 @@ export function useSubscriptionCheckout({
     } finally {
       setPaying(false);
     }
-  }, [checkoutAvailable, interval, market, onSubscribed, router]);
+  }, [canCheckout, interval, market, onSubscribed, router, useDodo]);
 
   return {
     dialogOpen,
@@ -121,6 +144,7 @@ export function useSubscriptionCheckout({
     interval,
     setInterval,
     reason,
-    checkoutAvailable,
+    checkoutAvailable: canCheckout,
+    provider: useDodo ? ("dodo" as const) : ("razorpay" as const),
   };
 }

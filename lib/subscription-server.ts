@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { isPlatformRazorpayConfigured } from "@/lib/razorpay-server";
+import { isDodoConfigured } from "@/lib/dodo-payments";
 import {
   SELF_HOSTED_ACCESS,
   SUBSCRIPTION_PERIOD_DAYS,
@@ -22,6 +23,7 @@ type SubscriptionProfileRow = Pick<
 >;
 
 let schemaReadyCache: boolean | null = null;
+let providerSchemaReadyCache: boolean | null = null;
 
 type PaidSubscriptionRow = {
   created_at: string;
@@ -100,6 +102,23 @@ export async function isSubscriptionSchemaReady(): Promise<boolean> {
   }
 }
 
+/** True when the 022 provider migration has been applied. */
+async function isSubscriptionProviderSchemaReady(): Promise<boolean> {
+  if (providerSchemaReadyCache === true) return true;
+  try {
+    const admin = createAdminClient();
+    const { error } = await admin
+      .from("profiles")
+      .select("subscription_provider")
+      .limit(1);
+    providerSchemaReadyCache = !error;
+    return providerSchemaReadyCache;
+  } catch {
+    providerSchemaReadyCache = false;
+    return false;
+  }
+}
+
 function resolveStatus(
   row: SubscriptionProfileRow | null
 ): { status: SubscriptionStatus; active: boolean } {
@@ -120,7 +139,10 @@ function resolveStatus(
   return { status: "active", active: true };
 }
 
-const INACTIVE_ACCESS: Omit<SubscriptionAccess, "billingEnabled" | "checkoutAvailable" | "source"> = {
+const INACTIVE_ACCESS: Omit<
+  SubscriptionAccess,
+  "billingEnabled" | "checkoutAvailable" | "dodoCheckoutAvailable" | "source"
+> = {
   active: false,
   status: "none",
   plan: null,
@@ -134,6 +156,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
   }
 
   const billingEnabled = isCloudBillingEnabled();
+  const dodoCheckoutAvailable = billingEnabled && isDodoConfigured();
   const checkoutAvailable =
     billingEnabled && isPlatformRazorpayConfigured();
 
@@ -148,6 +171,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
         ...INACTIVE_ACCESS,
         billingEnabled,
         checkoutAvailable,
+        dodoCheckoutAvailable,
         source: "cloud",
       };
     }
@@ -171,6 +195,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
           expiresAt: fallback.expiresAt,
           billingEnabled,
           checkoutAvailable,
+        dodoCheckoutAvailable,
           source: "cloud",
         };
       }
@@ -178,6 +203,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
         ...INACTIVE_ACCESS,
         billingEnabled,
         checkoutAvailable,
+        dodoCheckoutAvailable,
         source: "cloud",
       };
     }
@@ -196,6 +222,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
           expiresAt: fallback.expiresAt,
           billingEnabled,
           checkoutAvailable,
+        dodoCheckoutAvailable,
           source: "cloud",
         };
       }
@@ -209,6 +236,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
       expiresAt: row.subscription_expires_at ?? null,
       billingEnabled,
       checkoutAvailable,
+      dodoCheckoutAvailable,
       source: "cloud",
     };
   } catch {
@@ -216,6 +244,7 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
       ...INACTIVE_ACCESS,
       billingEnabled,
       checkoutAvailable,
+      dodoCheckoutAvailable,
       source: "cloud",
     };
   }
@@ -224,8 +253,9 @@ export async function getSubscriptionAccess(): Promise<SubscriptionAccess> {
 /** Extend access by one monthly or yearly period from the later of now or expiry. */
 export async function activateSubscription(
   userId: string,
-  razorpayPaymentId: string,
-  interval: SubscriptionBillingInterval = "monthly"
+  paymentId: string,
+  interval: SubscriptionBillingInterval = "monthly",
+  provider: "razorpay" | "dodo" = "razorpay"
 ): Promise<{ expiresAt: string; startedAt: string; plan: SubscriptionPlanId }> {
   const admin = createAdminClient();
   const now = Date.now();
@@ -235,7 +265,7 @@ export async function activateSubscription(
     const { data: payment } = await admin
       .from("razorpay_payments")
       .select("created_at")
-      .eq("razorpay_payment_id", razorpayPaymentId)
+      .eq("razorpay_payment_id", paymentId)
       .maybeSingle();
     const started = payment?.created_at
       ? new Date(payment.created_at).getTime()
@@ -260,7 +290,7 @@ export async function activateSubscription(
 
   // Verify route and webhook can both report the same payment - credit once.
   if (
-    existing?.subscription_last_payment_id === razorpayPaymentId &&
+    existing?.subscription_last_payment_id === paymentId &&
     existing.subscription_expires_at
   ) {
     return {
@@ -281,15 +311,17 @@ export async function activateSubscription(
   const startedAt = existing?.subscription_started_at ?? new Date(now).toISOString();
   const plan: SubscriptionPlanId =
     interval === "yearly" ? "cloud_yearly" : "cloud_monthly";
+  const providerReady = await isSubscriptionProviderSchemaReady();
 
   const { error } = await admin
     .from("profiles")
     .update({
       subscription_status: "active",
       subscription_plan: plan,
+      ...(providerReady ? { subscription_provider: provider } : {}),
       subscription_started_at: startedAt,
       subscription_expires_at: expiresAt,
-      subscription_last_payment_id: razorpayPaymentId,
+      subscription_last_payment_id: paymentId,
       updated_at: new Date().toISOString(),
     })
     .eq("id", userId);

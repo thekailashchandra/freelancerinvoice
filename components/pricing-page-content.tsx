@@ -41,7 +41,7 @@ const COMPARISON = [
   { label: "Brand color customization", preview: true, cloud: true, self: true },
   { label: "Cloud invoice history", preview: true, cloud: true, self: true },
   { label: "Remove invoice branding", preview: false, cloud: true, self: true },
-  { label: "Monthly subscription", preview: false, cloud: true, self: false },
+  { label: "Cloud access pass", preview: false, cloud: true, self: false },
 ] as const;
 
 export function PricingPageContent() {

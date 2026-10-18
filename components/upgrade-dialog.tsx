@@ -179,7 +179,8 @@ export function UpgradeDialog({
             <Link href="/refund-policy" className="underline underline-offset-4">
               Refund policy
             </Link>{" "}
-            · Access continues to the end of the paid period if you cancel.
+            · Payments are processed by{" "}
+            {pricing.market === "GLOBAL" ? "Dodo Payments" : "Razorpay"}.
           </p>
         </div>
       </DialogContent>
